@@ -25,6 +25,12 @@ export interface User {
 interface AuthContextValue {
   user: User | null;
   isAuthenticated: boolean;
+  /**
+   * False until the stored session has been restored on the client.
+   * Consumers that redirect unauthenticated users (e.g. /mypage) must wait
+   * for this to avoid bouncing a logged-in user during hydration.
+   */
+  hydrated: boolean;
   /** Stub email login. Always "succeeds" for any input. */
   loginWithEmail: (email: string, password: string) => Promise<User>;
   /** Stub email signup. */
@@ -40,6 +46,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [hydrated, setHydrated] = useState(false);
 
   // Restore a previously stored stub session on mount. Kept in an effect (not a
   // lazy initializer) to avoid SSR/hydration mismatch since localStorage is
@@ -56,6 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time hydration of client-only storage
       setUser(restored);
     }
+    setHydrated(true);
   }, []);
 
   const persist = useCallback((next: User | null) => {
@@ -104,12 +112,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       user,
       isAuthenticated: user !== null,
+      hydrated,
       loginWithEmail,
       signupWithEmail,
       loginWithKakao,
       logout,
     }),
-    [user, loginWithEmail, signupWithEmail, loginWithKakao, logout],
+    [user, hydrated, loginWithEmail, signupWithEmail, loginWithKakao, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

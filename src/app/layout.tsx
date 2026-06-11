@@ -1,13 +1,35 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import { GtmScript, GtmNoScript } from "@/components/GtmScript";
 
+const SITE_TITLE = "셀프마케팅 — 대행사 없이 시작하는 우리 매장 마케팅";
+const SITE_DESCRIPTION =
+  "소상공인·온라인 셀러·매장 운영자를 위한 셀프 마케팅 플랫폼. 플레이스 상위 노출, 쇼핑·블로그 광고, 광고비 환급을 직접 손쉽게 시작하세요.";
+
 export const metadata: Metadata = {
-  title: "셀프마케팅 — 대행사 없이 시작하는 우리 매장 마케팅",
-  description:
-    "소상공인·온라인 셀러·매장 운영자를 위한 셀프 마케팅 플랫폼. 플레이스 상위 노출, 쇼핑·블로그 광고, 광고비 환급을 직접 손쉽게 시작하세요.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.example",
+  ),
+  title: {
+    default: SITE_TITLE,
+    template: "%s — 셀프마케팅",
+  },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    type: "website",
+    locale: "ko_KR",
+    siteName: "셀프마케팅",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#059669",
 };
 
 export default function RootLayout({
@@ -17,6 +39,7 @@ export default function RootLayout({
     <html lang="ko" className="h-full antialiased">
       <head>
         {/* Pretendard via CDN (dynamic subset). Falls back to system fonts. */}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"

@@ -4,7 +4,7 @@
 // All transitions happen within this single screen (no URL navigation between
 // steps), driven by local state.
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AuthEntry } from "@/components/AuthEntry";
 import { Onboarding } from "@/components/Onboarding";
@@ -16,6 +16,11 @@ type Stage = "entry" | "onboarding" | "signup" | "login";
 
 export default function StartPage() {
   const [stage, setStage] = useState<Stage>("entry");
+
+  // Long forms on mobile: snap back to the top whenever the stage changes.
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [stage]);
 
   return (
     <main className="flex min-h-screen flex-col bg-slate-50">

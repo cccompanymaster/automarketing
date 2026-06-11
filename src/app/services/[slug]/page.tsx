@@ -1,8 +1,25 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { TrackedCta } from "@/components/TrackedCta";
 import { getProduct, PRODUCT_SLUGS } from "@/lib/products";
+
+// Per-product page titles/descriptions for search & social sharing.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const product = getProduct(slug);
+  if (!product) return {};
+  return {
+    title: product.name,
+    description: product.detail.subhead,
+  };
+}
 
 // Pre-render all known product detail pages.
 export function generateStaticParams() {
@@ -110,12 +127,13 @@ export default async function ServiceDetailPage({
 
           {/* CTA */}
           <section className="mt-12 text-center">
-            <Link
+            <TrackedCta
               href="/start"
+              slug={product.slug}
               className={`inline-block w-full rounded-xl py-4 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:w-auto sm:px-12 ${accent.button}`}
             >
               {product.cta}
-            </Link>
+            </TrackedCta>
             <p className="mt-3 text-xs text-slate-400">
               가입 후 더 자세한 진단과 견적을 받아볼 수 있습니다.
             </p>

@@ -1,7 +1,9 @@
 "use client";
 
 // Minimal logged-in skeleton. Redirects to /start when not authenticated.
+// Waits for auth hydration to avoid bouncing a logged-in user on refresh.
 // TODO(backend): populate with real account data, campaigns, refunds, etc.
+// TODO(payment): wire credits/payment methods to the real billing backend.
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -10,16 +12,19 @@ import { useAuth } from "@/components/AuthProvider";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PRODUCT_LIST } from "@/lib/products";
+import { WALLET_STUB } from "@/lib/payments";
 
 export default function MyPage() {
   const router = useRouter();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, hydrated } = useAuth();
 
   useEffect(() => {
-    if (!isAuthenticated) router.replace("/start");
-  }, [isAuthenticated, router]);
+    // Only redirect once the stored session has been restored — otherwise a
+    // logged-in user refreshing /mypage would be bounced to /start.
+    if (hydrated && !isAuthenticated) router.replace("/start");
+  }, [hydrated, isAuthenticated, router]);
 
-  if (!isAuthenticated) return null;
+  if (!hydrated || !isAuthenticated) return null;
 
   return (
     <>
@@ -31,7 +36,38 @@ export default function MyPage() {
             {user?.name ? `${user.name}님, ` : ""}환영합니다. ({user?.email})
           </p>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          {/* Wallet / billing summary — payment backend is upcoming. */}
+          <section
+            aria-label="크레딧 및 결제"
+            className="mt-8 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-bold text-slate-900">내 크레딧</h2>
+                <p className="mt-1 text-2xl font-extrabold text-emerald-600">
+                  {WALLET_STUB.credits.toLocaleString("ko-KR")}
+                  <span className="ml-1 text-sm font-semibold text-slate-400">크레딧</span>
+                </p>
+                <p className="mt-1 text-xs text-slate-400">
+                  이번 달 예상 환급액 {WALLET_STUB.expectedRefund.toLocaleString("ko-KR")}원
+                </p>
+              </div>
+              <button
+                type="button"
+                disabled
+                className="rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-400"
+                title="결제 기능 준비 중"
+              >
+                충전하기 (준비 중)
+              </button>
+            </div>
+            <p className="mt-3 text-xs text-slate-400">
+              결제·충전 기능은 곧 제공될 예정입니다. 표시된 값은 예시입니다.
+            </p>
+          </section>
+
+          <h2 className="mt-10 text-lg font-bold text-slate-900">서비스 현황</h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {PRODUCT_LIST.map((p) => (
               <div
                 key={p.slug}
@@ -41,7 +77,7 @@ export default function MyPage() {
                   <span className="text-2xl" aria-hidden="true">
                     {p.icon}
                   </span>
-                  <h2 className="text-base font-bold text-slate-900">{p.name}</h2>
+                  <h3 className="text-base font-bold text-slate-900">{p.name}</h3>
                 </div>
                 <p className="mt-2 text-sm text-slate-500">
                   {/* TODO(backend): show real campaign / refund status. */}

@@ -73,7 +73,8 @@ export function Landing() {
             </p>
           </div>
 
-          <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {/* 2x2 on md+ so the 4 stories never leave an orphan card. */}
+          <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2">
             {SUCCESS_STORIES.map((story) => (
               <SuccessStory key={story.industry} story={story} />
             ))}

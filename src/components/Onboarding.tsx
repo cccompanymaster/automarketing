@@ -64,11 +64,11 @@ export function Onboarding({ onComplete }: { onComplete: () => void }) {
           />
         ))}
       </div>
-      <p className="mt-3 text-xs font-medium text-slate-400">
-        {index + 1} / {STEPS.length}
+      <p className="mt-3 text-xs font-medium text-slate-400" aria-live="polite">
+        {STEPS.length}단계 중 {index + 1}단계
       </p>
 
-      <div className="mt-6 text-center">
+      <div className="mt-6 text-center" aria-live="polite">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-3xl">
           {step.icon}
         </div>

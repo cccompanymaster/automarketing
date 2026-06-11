@@ -12,6 +12,9 @@ import { KakaoButton } from "@/components/KakaoButton";
 import { LegalModal } from "@/components/LegalModal";
 import { track } from "@/lib/analytics";
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PASSWORD_MIN_LENGTH = 8;
+
 export function SignupForm({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
   const router = useRouter();
   const { signupWithEmail } = useAuth();
@@ -46,6 +49,14 @@ export function SignupForm({ onSwitchToLogin }: { onSwitchToLogin: () => void })
     e.preventDefault();
     if (!email || !password) {
       toast.error("이메일과 비밀번호를 입력해 주세요.");
+      return;
+    }
+    if (!EMAIL_PATTERN.test(email)) {
+      toast.error("올바른 이메일 주소를 입력해 주세요.");
+      return;
+    }
+    if (password.length < PASSWORD_MIN_LENGTH) {
+      toast.error(`비밀번호는 ${PASSWORD_MIN_LENGTH}자 이상 입력해 주세요.`);
       return;
     }
     if (!agreed) {

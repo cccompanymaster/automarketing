@@ -1,5 +1,5 @@
-// Footer with business / legal registration info (dummy values from
-// COMPANY constants) and links to terms / privacy.
+// Footer with business / legal registration info (from the business
+// registration certificate) and links to terms / privacy.
 
 import Link from "next/link";
 import { COMPANY } from "@/lib/company";
@@ -9,7 +9,8 @@ export function SiteFooter() {
     { label: "상호", value: COMPANY.companyName },
     { label: "대표", value: COMPANY.ceo },
     { label: "사업자등록번호", value: COMPANY.businessRegistrationNumber },
-    { label: "통신판매업신고", value: COMPANY.mailOrderSalesNumber },
+    { label: "업태", value: COMPANY.businessType },
+    { label: "종목", value: COMPANY.businessItem },
     { label: "주소", value: COMPANY.address },
     { label: "이메일", value: COMPANY.email },
   ];
@@ -49,7 +50,6 @@ export function SiteFooter() {
 
         <p className="mt-8 text-xs text-slate-400">
           © {new Date().getFullYear()} {COMPANY.companyName}. All rights reserved.
-          <span className="ml-2">표시된 사업자 정보는 예시용 더미 데이터입니다.</span>
         </p>
       </div>
     </footer>

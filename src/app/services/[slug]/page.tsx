@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TrackedCta } from "@/components/TrackedCta";
+import { RefundLanding } from "@/components/RefundLanding";
 import { getProduct, PRODUCT_SLUGS } from "@/lib/products";
 
 // Per-product page titles/descriptions for search & social sharing.
@@ -34,6 +35,17 @@ export default async function ServiceDetailPage({
   const { slug } = await params;
   const product = getProduct(slug);
   if (!product) notFound();
+
+  // The refund product gets a richer, dedicated landing.
+  if (product.slug === "refund") {
+    return (
+      <>
+        <SiteHeader />
+        <RefundLanding />
+        <SiteFooter />
+      </>
+    );
+  }
 
   const { detail, accent } = product;
 

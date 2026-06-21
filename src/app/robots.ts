@@ -1,5 +1,8 @@
 import type { MetadataRoute } from "next";
 
+// Emit a static robots.txt at build time (required by output: "export").
+export const dynamic = "force-static";
+
 // TODO(backend): set NEXT_PUBLIC_SITE_URL to the production domain.
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.example";
 

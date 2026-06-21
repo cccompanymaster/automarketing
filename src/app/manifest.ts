@@ -13,8 +13,8 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "셀프마케팅 — 대행사 없이 시작하는 우리 매장 마케팅",
-    short_name: "셀프마케팅",
+    name: "마케팅방주 — 대행사 없이 시작하는 우리 매장 마케팅",
+    short_name: "마케팅방주",
     description:
       "소상공인·온라인 셀러·매장 운영자를 위한 셀프 마케팅 플랫폼. 플레이스·쇼핑·블로그 광고와 광고비 환급을 직접 시작하세요.",
     start_url: `${BASE}/`,

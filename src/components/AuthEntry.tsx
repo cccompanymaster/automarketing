@@ -14,7 +14,7 @@ export function AuthEntry({
     <div className="text-center">
       <h1 className="text-2xl font-bold text-slate-900">반갑습니다 👋</h1>
       <p className="mt-2 text-sm text-slate-500">
-        셀프마케팅을 처음 이용하시나요?
+        마케팅방주를 처음 이용하시나요?
       </p>
 
       <div className="mt-8 space-y-3">

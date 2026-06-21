@@ -4,7 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import { GtmScript, GtmNoScript } from "@/components/GtmScript";
 
-const SITE_TITLE = "셀프마케팅 — 대행사 없이 시작하는 우리 매장 마케팅";
+const SITE_TITLE = "마케팅방주 — 대행사 없이 시작하는 우리 매장 마케팅";
 const SITE_DESCRIPTION =
   "소상공인·온라인 셀러·매장 운영자를 위한 셀프 마케팅 플랫폼. 플레이스 상위 노출, 쇼핑·블로그 광고, 광고비 환급을 직접 손쉽게 시작하세요.";
 
@@ -14,14 +14,14 @@ export const metadata: Metadata = {
   ),
   title: {
     default: SITE_TITLE,
-    template: "%s — 셀프마케팅",
+    template: "%s — 마케팅방주",
   },
   description: SITE_DESCRIPTION,
   manifest: "/manifest.webmanifest",
-  applicationName: "셀프마케팅",
+  applicationName: "마케팅방주",
   appleWebApp: {
     capable: true,
-    title: "셀프마케팅",
+    title: "마케팅방주",
     statusBarStyle: "default",
   },
   icons: {
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     type: "website",
     locale: "ko_KR",
-    siteName: "셀프마케팅",
+    siteName: "마케팅방주",
   },
 };
 

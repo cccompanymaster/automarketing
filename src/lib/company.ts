@@ -3,8 +3,8 @@
 // TODO(backend): source these from a verified company profile / CMS.
 
 export const COMPANY = {
-  serviceName: "셀프마케팅",
-  companyName: "(주)셀프마케팅", // 상호
+  serviceName: "마케팅방주",
+  companyName: "(주)마케팅방주", // 상호
   ceo: "홍길동", // 대표
   businessRegistrationNumber: "000-00-00000", // 사업자등록번호
   mailOrderSalesNumber: "제0000-서울강남-00000호", // 통신판매업신고번호

@@ -21,6 +21,12 @@ export function SiteHeader() {
           {isAuthenticated ? (
             <>
               <Link
+                href="/pricing"
+                className="rounded-lg px-3 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+              >
+                상품·요금
+              </Link>
+              <Link
                 href="/mypage"
                 className="rounded-lg px-3 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
               >

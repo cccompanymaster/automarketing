@@ -1,0 +1,93 @@
+// Detailed product price list shown in the logged-in area (/pricing).
+// Single source of truth so the upcoming payment/checkout flow can read the
+// same catalog. All prices are reference values.
+// TODO(payment): wire each item to the real billing API (payments.ts).
+
+export interface PricingItem {
+  name: string;
+  /** Display price, e.g. "30,000원 ~" or "별도 문의". */
+  price: string;
+  /** Per-unit suffix, e.g. "1타당", "1건". */
+  unit?: string;
+  /** Extra conditions shown under the item name. */
+  note?: string;
+  /** Requires a quote / inquiry rather than a fixed price. */
+  inquiry?: boolean;
+}
+
+export interface PricingGroup {
+  key: string;
+  icon: string;
+  title: string;
+  description: string;
+  items: PricingItem[];
+}
+
+export const PRICING: PricingGroup[] = [
+  {
+    key: "blog",
+    icon: "✍️",
+    title: "블로그",
+    description: "상위노출 보장형부터 실명 배포·원고 작성까지.",
+    items: [
+      {
+        name: "블로그 상위노출 보장형",
+        price: "키워드별 견적",
+        inquiry: true,
+        note: "키워드 문의 필수 · 키워드별 단가 상이 · 24시간 내 견적 회신",
+      },
+      {
+        name: "블로그 최적 배포",
+        price: "30,000원 ~",
+        note: "키워드에 따라 단가 상이",
+      },
+      { name: "블로그 준최적 배포", price: "20,000원" },
+      { name: "블로그 실명 배포", price: "1,000원" },
+      {
+        name: "블로그용 원고 작성",
+        price: "1,000원",
+        unit: "1건",
+        note: "발행용 원고 제작",
+      },
+    ],
+  },
+  {
+    key: "reward",
+    icon: "📈",
+    title: "리워드 트래픽",
+    description: "플레이스·검색 노출을 끌어올리는 트래픽 상품.",
+    items: [
+      {
+        name: "플레이스 일반 키워드 고품질 트래픽",
+        price: "50원",
+        unit: "1타당",
+      },
+      { name: "일반 리워드 트래픽", price: "30원", unit: "1타당" },
+      { name: "체류형 트래픽", price: "100원", unit: "1타당" },
+      {
+        name: "쇼핑 리워드",
+        price: "준비 중",
+        note: "단가 협의 예정",
+      },
+      {
+        name: "쿠팡 트래픽",
+        price: "별도 문의",
+        inquiry: true,
+      },
+    ],
+  },
+  {
+    key: "place",
+    icon: "📍",
+    title: "플레이스",
+    description: "리뷰·메타데이터 세팅으로 지역 노출을 강화합니다.",
+    items: [
+      { name: "플레이스 영수증 리뷰", price: "1,000원" },
+      {
+        name: "플레이스 메타데이터 기반 SEO 전문 세팅",
+        price: "50,000원",
+        note: "1회 세팅",
+      },
+    ],
+  },
+];

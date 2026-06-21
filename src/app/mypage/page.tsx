@@ -66,6 +66,22 @@ export default function MyPage() {
             </p>
           </section>
 
+          {/* Quick link to the full product & price list. */}
+          <Link
+            href="/pricing"
+            className="mt-6 flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md"
+          >
+            <div>
+              <h2 className="text-base font-bold text-slate-900">상품 · 요금 보기</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                블로그·리워드·플레이스 상품 단가와 견적형 상품을 확인하세요.
+              </p>
+            </div>
+            <span className="text-emerald-600" aria-hidden="true">
+              →
+            </span>
+          </Link>
+
           <h2 className="mt-10 text-lg font-bold text-slate-900">서비스 현황</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {PRODUCT_LIST.map((p) => (

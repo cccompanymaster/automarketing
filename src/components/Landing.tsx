@@ -5,6 +5,8 @@ import Link from "next/link";
 import { PRODUCT_LIST } from "@/lib/products";
 import { SUCCESS_STORIES } from "@/lib/successStories";
 import { Hero } from "@/components/Hero";
+import { Stats } from "@/components/Stats";
+import { Channels } from "@/components/Channels";
 import { ServiceCard } from "@/components/ServiceCard";
 import { SuccessStory } from "@/components/SuccessStory";
 
@@ -32,12 +34,18 @@ export function Landing() {
         </div>
       </section>
 
+      {/* Trust stats band */}
+      <Stats />
+
+      {/* Supported channels */}
+      <Channels />
+
       {/* Success stories */}
       <section className="bg-slate-50">
         <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-              직접 시작한 사장님들의 성과
+              마케팅방주와 함께한 고객 후기
             </h2>
             <p className="mt-3 text-sm text-slate-600 sm:text-base">
               업종과 기간, 그리고 수치로 확인하는 실제 변화입니다.

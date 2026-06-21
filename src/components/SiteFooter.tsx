@@ -15,8 +15,8 @@ export function SiteFooter() {
   ];
 
   return (
-    <footer className="mt-auto border-t border-slate-100 bg-slate-50">
-      <div className="mx-auto max-w-6xl px-5 py-10">
+    <footer className="safe-bottom mt-auto border-t border-slate-100 bg-slate-50">
+      <div className="safe-x mx-auto max-w-6xl px-5 py-10">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <div className="flex items-center gap-2 font-extrabold text-slate-900">

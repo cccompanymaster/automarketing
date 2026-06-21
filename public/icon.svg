@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="셀프마케팅">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#10b981"/>
+      <stop offset="1" stop-color="#047857"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- Stylized sprout / growth mark -->
+  <path d="M256 392 V236" stroke="#ffffff" stroke-width="26" stroke-linecap="round"/>
+  <path d="M256 268 C256 196 196 156 132 156 C132 228 192 268 256 268 Z" fill="#ffffff" opacity="0.95"/>
+  <path d="M256 248 C256 184 312 148 372 148 C372 214 316 248 256 248 Z" fill="#d1fae5"/>
+</svg>

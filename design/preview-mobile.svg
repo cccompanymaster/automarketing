@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1180" viewBox="0 0 1440 1180" font-family="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, -apple-system, 'Noto Sans KR', sans-serif">
+  <defs>
+    <linearGradient id="heroGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ecfdf5"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <linearGradient id="cE" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ecfdf5"/><stop offset="1" stop-color="#ffffff"/></linearGradient>
+    <linearGradient id="cO" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff7ed"/><stop offset="1" stop-color="#ffffff"/></linearGradient>
+    <linearGradient id="cS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0f9ff"/><stop offset="1" stop-color="#ffffff"/></linearGradient>
+    <clipPath id="screen"><rect x="0" y="0" width="360" height="820" rx="28"/></clipPath>
+    <style>
+      .brand{font-weight:800;font-size:15px;fill:#0f172a}
+      .chip{font-weight:600;font-size:10px;fill:#047857}
+      .h1{font-weight:800;font-size:22px;fill:#0f172a}
+      .h1s{font-weight:800;font-size:18px;fill:#0f172a}
+      .sub{font-size:11px;fill:#475569}
+      .secttl{font-weight:700;font-size:15px;fill:#0f172a}
+      .cardttl{font-weight:700;font-size:14px;fill:#0f172a}
+      .cardsum{font-size:10.5px;fill:#475569}
+      .ctaw{font-weight:700;font-size:11px;fill:#ffffff}
+      .btnpri{font-weight:700;font-size:13px;fill:#ffffff}
+      .small{font-size:9px;fill:#94a3b8}
+      .price{font-weight:800;font-size:16px;fill:#0f172a}
+      .label{font-weight:700;font-size:11px;fill:#0f172a}
+      .ko{fill:#0f172a}
+    </style>
+  </defs>
+
+  <rect width="1440" height="1180" fill="#f1f5f9"/>
+  <text x="60" y="58" font-weight="800" font-size="26" fill="#0f172a">셀프마케팅 — 모바일 시안</text>
+  <text x="60" y="86" font-size="14" fill="#64748b">반응형 웹앱 (PWA) · 실제 컬러/카피 기준 · 360px 뷰포트</text>
+
+  <!-- ===================== PHONE 1 — Landing ===================== -->
+  <g transform="translate(74,146)">
+    <rect x="-14" y="-16" width="388" height="852" rx="46" fill="#0f172a"/>
+    <rect x="0" y="0" width="360" height="820" rx="28" fill="#ffffff"/>
+    <g clip-path="url(#screen)">
+      <rect x="150" y="12" width="60" height="8" rx="4" fill="#0f172a" opacity="0.85"/>
+      <!-- header -->
+      <text x="20" y="50" font-size="16">🌱</text>
+      <text x="44" y="50" class="brand">셀프마케팅</text>
+      <rect x="262" y="30" width="78" height="30" rx="8" fill="#059669"/>
+      <text x="301" y="50" text-anchor="middle" class="ctaw">시작하기</text>
+      <line x1="0" y1="72" x2="360" y2="72" stroke="#f1f5f9"/>
+      <!-- hero -->
+      <rect x="0" y="72" width="360" height="232" fill="url(#heroGrad)"/>
+      <rect x="40" y="92" width="280" height="22" rx="11" fill="#d1fae5"/>
+      <text x="180" y="107" text-anchor="middle" class="chip">소상공인 · 온라인 셀러 · 매장 운영자</text>
+      <text x="20" y="150" class="h1">대행사 없이도 손쉽게</text>
+      <text x="20" y="180" class="h1">마케팅을 시작하세요</text>
+      <text x="20" y="208" class="sub">복잡한 광고를 직접 손쉽게 운영하고</text>
+      <text x="20" y="224" class="sub">결과로 바로 확인하세요.</text>
+      <rect x="20" y="242" width="320" height="44" rx="12" fill="#059669"/>
+      <text x="180" y="269" text-anchor="middle" class="btnpri">무료로 시작하기</text>
+      <!-- section -->
+      <text x="180" y="332" text-anchor="middle" class="secttl">무엇을 해결하고 싶으신가요?</text>
+      <text x="180" y="352" text-anchor="middle" class="small">필요한 것부터 골라 바로 시작하세요</text>
+      <!-- card 1 place -->
+      <rect x="20" y="374" width="320" height="180" rx="16" fill="url(#cE)" stroke="#ecfdf5"/>
+      <rect x="40" y="394" width="42" height="42" rx="11" fill="#d1fae5"/>
+      <text x="61" y="423" text-anchor="middle" font-size="20">📍</text>
+      <text x="40" y="464" class="cardttl">플레이스 광고</text>
+      <text x="40" y="486" class="cardsum">지역 검색 상위 노출로</text>
+      <text x="40" y="502" class="cardsum">매장 방문 고객을 늘립니다</text>
+      <rect x="40" y="514" width="280" height="34" rx="10" fill="#059669"/>
+      <text x="180" y="536" text-anchor="middle" class="ctaw">플레이스 진단 받기</text>
+      <!-- card 2 shopping -->
+      <rect x="20" y="574" width="320" height="180" rx="16" fill="url(#cO)" stroke="#fff7ed"/>
+      <rect x="40" y="594" width="42" height="42" rx="11" fill="#ffedd5"/>
+      <text x="61" y="623" text-anchor="middle" font-size="20">🛍️</text>
+      <text x="40" y="664" class="cardttl">네이버 쇼핑 광고</text>
+      <text x="40" y="686" class="cardsum">쇼핑 검색 상위 노출로</text>
+      <text x="40" y="702" class="cardsum">판매량을 극대화합니다</text>
+      <rect x="40" y="714" width="280" height="34" rx="10" fill="#f97316"/>
+      <text x="180" y="736" text-anchor="middle" class="ctaw">쇼핑 광고 신청하기</text>
+      <!-- card 3 blog peeking -->
+      <rect x="20" y="774" width="320" height="120" rx="16" fill="url(#cS)" stroke="#f0f9ff"/>
+      <rect x="40" y="794" width="42" height="42" rx="11" fill="#e0f2fe"/>
+      <text x="61" y="823" text-anchor="middle" font-size="20">✍️</text>
+      <text x="96" y="814" class="cardttl">네이버 블로그 광고</text>
+    </g>
+  </g>
+  <text x="254" y="1010" text-anchor="middle" font-weight="700" font-size="14" fill="#334155">① 랜딩 /</text>
+
+  <!-- ===================== PHONE 2 — Start (onboarding + signup) ===================== -->
+  <g transform="translate(530,146)">
+    <rect x="-14" y="-16" width="388" height="852" rx="46" fill="#0f172a"/>
+    <rect x="0" y="0" width="360" height="820" rx="28" fill="#f8fafc"/>
+    <g clip-path="url(#screen)">
+      <rect x="150" y="12" width="60" height="8" rx="4" fill="#0f172a" opacity="0.85"/>
+      <text x="20" y="50" font-size="16">🌱</text>
+      <text x="44" y="50" class="brand">셀프마케팅</text>
+      <!-- onboarding card -->
+      <rect x="20" y="74" width="320" height="476" rx="20" fill="#ffffff" stroke="#eef2f7"/>
+      <rect x="44" y="104" width="88" height="6" rx="3" fill="#10b981"/>
+      <rect x="140" y="104" width="88" height="6" rx="3" fill="#e2e8f0"/>
+      <rect x="236" y="104" width="80" height="6" rx="3" fill="#e2e8f0"/>
+      <text x="44" y="132" class="small">3단계 중 1단계</text>
+      <circle cx="180" cy="192" r="34" fill="#ecfdf5"/>
+      <text x="180" y="203" text-anchor="middle" font-size="30">📍</text>
+      <text x="180" y="252" text-anchor="middle" class="secttl">플레이스 상위노출</text>
+      <text x="180" y="280" text-anchor="middle" class="sub">지역 검색에서 우리 매장을 상위에</text>
+      <text x="180" y="297" text-anchor="middle" class="sub">노출해 방문 고객을 늘립니다.</text>
+      <rect x="44" y="330" width="272" height="44" rx="12" fill="#059669"/>
+      <text x="180" y="357" text-anchor="middle" class="btnpri">다음</text>
+      <text x="180" y="410" text-anchor="middle" class="small">1 / 3 · 슬라이드 전환 (URL 이동 없음)</text>
+      <line x1="44" y1="438" x2="316" y2="438" stroke="#f1f5f9"/>
+      <text x="180" y="462" text-anchor="middle" class="small">⌄ 온보딩 후 같은 화면에서 가입으로 전환</text>
+      <!-- signup card -->
+      <rect x="20" y="566" width="320" height="248" rx="20" fill="#ffffff" stroke="#eef2f7"/>
+      <text x="40" y="598" class="label">회원가입</text>
+      <rect x="40" y="610" width="280" height="30" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+      <text x="52" y="630" class="small">이메일</text>
+      <rect x="40" y="648" width="280" height="30" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+      <text x="52" y="668" class="small">비밀번호 (8자 이상)</text>
+      <rect x="40" y="688" width="13" height="13" rx="3" fill="#ffffff" stroke="#94a3b8"/>
+      <text x="60" y="699" class="small">이용약관 및 개인정보처리방침 동의</text>
+      <rect x="40" y="710" width="280" height="34" rx="10" fill="#059669"/>
+      <text x="180" y="732" text-anchor="middle" class="ctaw">이메일로 가입하기</text>
+      <rect x="40" y="752" width="280" height="34" rx="10" fill="#FEE500"/>
+      <text x="180" y="774" text-anchor="middle" font-weight="700" font-size="11" fill="#191600">💬  카카오로 시작하기</text>
+    </g>
+  </g>
+  <text x="710" y="1010" text-anchor="middle" font-weight="700" font-size="14" fill="#334155">② 분기·온보딩·가입 /start</text>
+
+  <!-- ===================== PHONE 3 — Service detail ===================== -->
+  <g transform="translate(986,146)">
+    <rect x="-14" y="-16" width="388" height="852" rx="46" fill="#0f172a"/>
+    <rect x="0" y="0" width="360" height="820" rx="28" fill="#ffffff"/>
+    <g clip-path="url(#screen)">
+      <rect x="150" y="12" width="60" height="8" rx="4" fill="#0f172a" opacity="0.85"/>
+      <text x="20" y="50" font-size="16">🌱</text>
+      <text x="44" y="50" class="brand">셀프마케팅</text>
+      <text x="20" y="74" class="small">← 전체 서비스</text>
+      <!-- hero -->
+      <rect x="0" y="86" width="360" height="214" fill="url(#heroGrad)"/>
+      <rect x="20" y="104" width="92" height="22" rx="11" fill="#d1fae5"/>
+      <text x="66" y="119" text-anchor="middle" class="chip">플레이스 광고</text>
+      <rect x="20" y="136" width="48" height="48" rx="12" fill="#d1fae5"/>
+      <text x="44" y="169" text-anchor="middle" font-size="24">📍</text>
+      <text x="20" y="214" class="h1s">지역 검색 상위 노출로</text>
+      <text x="20" y="238" class="h1s">매장 방문 고객을 늘리세요</text>
+      <text x="20" y="264" class="sub">노출 키워드를 진단하고 상위 노출</text>
+      <text x="20" y="280" class="sub">전략을 제안해 드립니다.</text>
+      <!-- benefits -->
+      <text x="20" y="332" class="label">이런 결과를 기대할 수 있어요</text>
+      <text x="20" y="360" font-size="12" fill="#059669" font-weight="700">✓</text>
+      <text x="38" y="360" class="sub">지역 키워드 상위 노출로 방문 증가</text>
+      <text x="20" y="384" font-size="12" fill="#059669" font-weight="700">✓</text>
+      <text x="38" y="384" class="sub">리뷰·예약·문의 전환 동선 설계</text>
+      <text x="20" y="408" font-size="12" fill="#059669" font-weight="700">✓</text>
+      <text x="38" y="408" class="sub">경쟁 매장 대비 노출 위치 비교</text>
+      <!-- cost box -->
+      <rect x="20" y="430" width="320" height="122" rx="16" fill="#f8fafc"/>
+      <text x="40" y="458" class="small">예상 비용 범위</text>
+      <text x="40" y="486" class="price">월 15만 원 ~ 50만 원</text>
+      <text x="40" y="508" class="small">지역·업종·경쟁 강도에 따라 달라집니다</text>
+      <text x="40" y="530" class="small">• 진단은 무료, 비용 동의 후에만 과금</text>
+      <!-- cta -->
+      <rect x="20" y="568" width="320" height="46" rx="12" fill="#059669"/>
+      <text x="180" y="596" text-anchor="middle" class="btnpri">플레이스 진단 받기</text>
+      <text x="180" y="634" text-anchor="middle" class="small">가입 후 더 자세한 진단과 견적을 받아볼 수 있어요</text>
+    </g>
+  </g>
+  <text x="1166" y="1010" text-anchor="middle" font-weight="700" font-size="14" fill="#334155">③ 상품 상세 /services/[slug]</text>
+
+  <text x="60" y="1120" font-size="13" fill="#94a3b8">컬러: 프라이머리 #059669 · 플레이스(그린) / 쇼핑(오렌지) / 블로그(스카이) / 환급(바이올렛) · 폰트 Pretendard</text>
+</svg>

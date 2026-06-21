@@ -17,6 +17,17 @@ export const metadata: Metadata = {
     template: "%s — 셀프마케팅",
   },
   description: SITE_DESCRIPTION,
+  manifest: "/manifest.webmanifest",
+  applicationName: "셀프마케팅",
+  appleWebApp: {
+    capable: true,
+    title: "셀프마케팅",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
   openGraph: {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
@@ -29,6 +40,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  // Extend under notches/rounded corners so safe-area insets can be used.
+  viewportFit: "cover",
   themeColor: "#059669",
 };
 

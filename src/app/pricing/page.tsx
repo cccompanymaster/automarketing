@@ -4,17 +4,24 @@
 // can review costs before ordering. Redirects to /start when not authenticated.
 // TODO(payment): turn each row into an orderable item via the billing API.
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
+import { useWallet } from "@/components/WalletProvider";
+import { ChargeModal } from "@/components/ChargeModal";
+import { OrderModal } from "@/components/OrderModal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { PRICING } from "@/lib/pricing";
+import { PRICING, type PricingItem } from "@/lib/pricing";
+import { formatCash } from "@/lib/cash";
 
 export default function PricingPage() {
   const router = useRouter();
   const { isAuthenticated, hydrated } = useAuth();
+  const { balance } = useWallet();
+  const [orderItem, setOrderItem] = useState<PricingItem | null>(null);
+  const [chargeOpen, setChargeOpen] = useState(false);
 
   useEffect(() => {
     if (hydrated && !isAuthenticated) router.replace("/start");
@@ -27,11 +34,20 @@ export default function PricingPage() {
       <SiteHeader />
       <main className="flex-1 bg-slate-50">
         <div className="mx-auto max-w-4xl px-5 py-12">
-          <header>
-            <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">상품 · 요금</h1>
-            <p className="mt-2 text-sm text-slate-500">
-              필요한 상품을 골라 바로 시작하세요. 표시 금액은 부가세 별도이며, 견적형 상품은 키워드·조건에 따라 달라집니다.
-            </p>
+          <header className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">상품 · 요금</h1>
+              <p className="mt-2 text-sm text-slate-500">
+                캐시로 바로 주문하세요. 표시 금액은 부가세 별도, 견적형은 키워드·조건에 따라 달라집니다.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setChargeOpen(true)}
+              className="rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+            >
+              보유 {formatCash(balance)} · 충전
+            </button>
           </header>
 
           <div className="mt-8 space-y-6">
@@ -69,10 +85,28 @@ export default function PricingPage() {
                           <p className="mt-1 text-xs text-slate-400">{item.note}</p>
                         )}
                       </div>
-                      <div className="shrink-0 text-right">
-                        <span className="text-base font-extrabold text-emerald-600">{item.price}</span>
-                        {item.unit && (
-                          <span className="ml-1 text-xs font-semibold text-slate-400">/ {item.unit}</span>
+                      <div className="flex shrink-0 items-center gap-3">
+                        <div className="text-right">
+                          <span className="text-base font-extrabold text-emerald-600">{item.price}</span>
+                          {item.unit && (
+                            <span className="ml-1 text-xs font-semibold text-slate-400">/ {item.unit}</span>
+                          )}
+                        </div>
+                        {item.amountKrw != null && !item.inquiry ? (
+                          <button
+                            type="button"
+                            onClick={() => setOrderItem(item)}
+                            className="rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700"
+                          >
+                            주문
+                          </button>
+                        ) : (
+                          <Link
+                            href="/mypage"
+                            className="rounded-lg border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-500 transition hover:bg-slate-50"
+                          >
+                            문의
+                          </Link>
                         )}
                       </div>
                     </li>
@@ -99,6 +133,13 @@ export default function PricingPage() {
         </div>
       </main>
       <SiteFooter />
+
+      <OrderModal
+        item={orderItem}
+        onClose={() => setOrderItem(null)}
+        onNeedCharge={() => setChargeOpen(true)}
+      />
+      <ChargeModal open={chargeOpen} onClose={() => setChargeOpen(false)} />
     </>
   );
 }

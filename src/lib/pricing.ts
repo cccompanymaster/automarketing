@@ -13,6 +13,11 @@ export interface PricingItem {
   note?: string;
   /** Requires a quote / inquiry rather than a fixed price. */
   inquiry?: boolean;
+  /**
+   * Orderable price in KRW (1원=1캐시). For unit items this is the per-unit
+   * price (quantity chosen at order time). Absent => quote/inquiry only.
+   */
+  amountKrw?: number;
 }
 
 export interface PricingGroup {
@@ -41,12 +46,13 @@ export const PRICING: PricingGroup[] = [
         price: "30,000원 ~",
         note: "키워드에 따라 단가 상이",
       },
-      { name: "블로그 준최적 배포", price: "20,000원" },
-      { name: "블로그 실명 배포", price: "1,000원" },
+      { name: "블로그 준최적 배포", price: "20,000원", amountKrw: 20_000 },
+      { name: "블로그 실명 배포", price: "1,000원", amountKrw: 1_000 },
       {
         name: "블로그용 원고 작성",
         price: "1,000원",
         unit: "1건",
+        amountKrw: 1_000,
         note: "발행용 원고 제작",
       },
     ],
@@ -61,9 +67,10 @@ export const PRICING: PricingGroup[] = [
         name: "플레이스 일반 키워드 고품질 트래픽",
         price: "50원",
         unit: "1타당",
+        amountKrw: 50,
       },
-      { name: "일반 리워드 트래픽", price: "30원", unit: "1타당" },
-      { name: "체류형 트래픽", price: "100원", unit: "1타당" },
+      { name: "일반 리워드 트래픽", price: "30원", unit: "1타당", amountKrw: 30 },
+      { name: "체류형 트래픽", price: "100원", unit: "1타당", amountKrw: 100 },
       {
         name: "쇼핑 리워드",
         price: "준비 중",
@@ -82,10 +89,11 @@ export const PRICING: PricingGroup[] = [
     title: "플레이스",
     description: "리뷰·메타데이터 세팅으로 지역 노출을 강화합니다.",
     items: [
-      { name: "플레이스 영수증 리뷰", price: "1,000원" },
+      { name: "플레이스 영수증 리뷰", price: "1,000원", amountKrw: 1_000 },
       {
         name: "플레이스 메타데이터 기반 SEO 전문 세팅",
         price: "50,000원",
+        amountKrw: 50_000,
         note: "1회 세팅",
       },
     ],

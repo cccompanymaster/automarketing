@@ -25,6 +25,8 @@ interface WalletContextValue {
   loading: boolean;
   /** Top up the given KRW amount (credits 1캐시 per 1원 on success). */
   charge: (krw: number) => Promise<void>;
+  /** Spend cash on a product. Throws when the balance is insufficient. */
+  spend: (amountCash: number, memo: string) => Promise<void>;
 }
 
 const WalletContext = createContext<WalletContextValue | null>(null);
@@ -151,9 +153,50 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     [supabase, user, refresh],
   );
 
+  const spend = useCallback(
+    async (amountCash: number, memo: string) => {
+      if (!user) throw new Error("로그인이 필요합니다.");
+      if (amountCash <= 0) throw new Error("금액이 올바르지 않습니다.");
+      setLoading(true);
+      try {
+        if (supabase) {
+          const { error } = await supabase.rpc("use_cash", {
+            p_amount: amountCash,
+            p_memo: memo,
+          });
+          if (error) throw new Error(error.message);
+          await refresh();
+          return;
+        }
+
+        const w = loadStub(user.id);
+        if (w.balance < amountCash) throw new Error("캐시가 부족합니다.");
+        const nextBalance = w.balance - amountCash;
+        const txn: CashTxn = {
+          id: newId(),
+          type: "use",
+          amount: -amountCash,
+          balanceAfter: nextBalance,
+          memo,
+          createdAt: new Date().toISOString(),
+        };
+        const next: StoredWallet = {
+          balance: nextBalance,
+          transactions: [txn, ...w.transactions].slice(0, 100),
+        };
+        saveStub(user.id, next);
+        setBalance(next.balance);
+        setTransactions(next.transactions);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [supabase, user, refresh],
+  );
+
   const value = useMemo<WalletContextValue>(
-    () => ({ balance, transactions, loading, charge }),
-    [balance, transactions, loading, charge],
+    () => ({ balance, transactions, loading, charge, spend }),
+    [balance, transactions, loading, charge, spend],
   );
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;

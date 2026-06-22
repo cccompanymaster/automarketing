@@ -57,3 +57,39 @@ begin
   return v_balance;
 end;
 $$;
+
+-- 사용(주문) RPC: 잔액에서 차감하고 원장에 기록. 잔액 부족 시 예외. ----------
+create or replace function public.use_cash(p_amount bigint, p_memo text)
+returns bigint
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_uid uuid := auth.uid();
+  v_balance bigint;
+begin
+  if v_uid is null then
+    raise exception 'not authenticated';
+  end if;
+  if p_amount <= 0 then
+    raise exception 'amount must be positive';
+  end if;
+
+  select coalesce((
+    select balance_after from public.cash_transactions
+    where user_id = v_uid order by created_at desc limit 1
+  ), 0) into v_balance;
+
+  if v_balance < p_amount then
+    raise exception '캐시가 부족합니다';
+  end if;
+
+  v_balance := v_balance - p_amount;
+
+  insert into public.cash_transactions (user_id, type, amount, balance_after, memo)
+  values (v_uid, 'use', -p_amount, v_balance, coalesce(p_memo, '사용'));
+
+  return v_balance;
+end;
+$$;

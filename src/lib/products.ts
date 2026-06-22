@@ -169,7 +169,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
         { title: "2. 원고 준비·검수", desc: "원고를 등록하거나 대필을 신청하면 업종 가능 여부를 사전 검수합니다." },
         { title: "3. 송출·링크 전달", desc: "평균 2~3시간 내 선택 매체로 송출하고 기사 링크를 전달드립니다." },
       ],
-      costRange: "1건 40,000원부터 (VAT 별도)",
+      costRange: "1건 50,000원부터 (VAT 별도)",
       costNote: "업종·매체별 단가가 다르며, 옵션(원고 대필·이미지 제작)은 별도입니다.",
       conditions: [
         "접수 이후 기사 수정·변경·삭제가 불가할 수 있습니다.",

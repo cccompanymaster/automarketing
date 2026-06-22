@@ -106,9 +106,9 @@ export const PRICING: PricingGroup[] = [
     items: [
       {
         name: "보도자료 언론 송출 (일반)",
-        price: "40,000원 ~",
+        price: "50,000원 ~",
         inquiry: true,
-        note: "업종·매체별 단가 상이 (일반 40,000원 ~ / 메디컬·블록체인 등 상이) · VAT 별도",
+        note: "업종·매체별 단가 상이 (일반 50,000원 ~ / 메디컬·블록체인 등 상이) · VAT 별도",
       },
       {
         name: "원고 대필",

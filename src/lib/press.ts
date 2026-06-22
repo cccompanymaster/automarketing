@@ -31,7 +31,7 @@ export interface PressFaq {
 }
 
 /** Base distribution starting price (일반 카테고리 기준), VAT 별도. */
-export const PRESS_BASE_FROM = 40_000;
+export const PRESS_BASE_FROM = 50_000;
 
 /** Headline selling points shown as chips. */
 export const PRESS_FEATURES = [
@@ -46,8 +46,8 @@ export const PRESS_CATEGORIES: PressCategory[] = [
     key: "general",
     name: "일반",
     mediaCount: 100,
-    priceMin: 40_000,
-    priceMax: 350_000,
+    priceMin: 50_000,
+    priceMax: 380_000,
     samples: [
       "파이낸셜뉴스",
       "이데일리",
@@ -67,56 +67,56 @@ export const PRESS_CATEGORIES: PressCategory[] = [
     key: "startup",
     name: "창업",
     mediaCount: 20,
-    priceMin: 80_000,
-    priceMax: 350_000,
+    priceMin: 90_000,
+    priceMax: 380_000,
     samples: ["IT비즈뉴스", "잡포스트", "서울경제TV", "한국경제TV", "데일리안", "한국일보"],
   },
   {
     key: "realestate",
     name: "부동산",
     mediaCount: 38,
-    priceMin: 80_000,
-    priceMax: 400_000,
+    priceMin: 90_000,
+    priceMax: 430_000,
     samples: ["국토일보", "파이낸셜뉴스", "이데일리", "헤럴드경제", "조선비즈", "아시아경제", "땅집고"],
   },
   {
     key: "legal",
     name: "법률",
     mediaCount: 22,
-    priceMin: 80_000,
-    priceMax: 300_000,
+    priceMin: 90_000,
+    priceMax: 330_000,
     samples: [],
   },
   {
     key: "beauty",
     name: "뷰티헬스",
     mediaCount: 24,
-    priceMin: 110_000,
-    priceMax: 400_000,
+    priceMin: 120_000,
+    priceMax: 430_000,
     samples: [],
   },
   {
     key: "medical",
     name: "메디컬",
     mediaCount: 35,
-    priceMin: 110_000,
-    priceMax: 400_000,
+    priceMin: 120_000,
+    priceMax: 430_000,
     samples: ["메디컬투데이", "라포르시안", "청년의사", "중앙일보", "디지틀조선일보"],
   },
   {
     key: "healthfood",
     name: "건강식품",
     mediaCount: 18,
-    priceMin: 110_000,
-    priceMax: 300_000,
+    priceMin: 120_000,
+    priceMax: 330_000,
     samples: [],
   },
   {
     key: "blockchain",
     name: "블록체인",
     mediaCount: 9,
-    priceMin: 250_000,
-    priceMax: 500_000,
+    priceMin: 260_000,
+    priceMax: 530_000,
     samples: [],
   },
 ];

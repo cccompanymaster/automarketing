@@ -3,7 +3,7 @@
 // dummy content for the landing + funnel; real pricing comes from backend.
 // TODO(backend): replace cost ranges / refund rates with live data.
 
-export type ProductSlug = "place" | "shopping" | "blog" | "refund";
+export type ProductSlug = "place" | "shopping" | "blog" | "press" | "refund";
 
 export interface ProductDetailStep {
   title: string;
@@ -143,6 +143,41 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       ],
     },
   },
+  press: {
+    slug: "press",
+    icon: "📰",
+    name: "언론홍보",
+    summary: ["원하는 매체를 골라 보도자료를 송출하고", "브랜드 신뢰도와 검색 노출을 높입니다."],
+    cta: "언론보도 신청하기",
+    accent: {
+      chip: "bg-indigo-50 text-indigo-700",
+      iconBg: "bg-indigo-100",
+      cardRing: "hover:ring-indigo-200",
+      button: "bg-indigo-600 hover:bg-indigo-700 text-white",
+      gradient: "from-indigo-50 to-white",
+    },
+    detail: {
+      headline: "원하는 매체를 골라 보도자료를 셀프 송출하세요",
+      subhead: "업종별 매체를 직접 선택해 보도자료를 송출합니다. 가입비 무료, 1건부터, 평균 2~3시간 내 송출됩니다.",
+      benefits: [
+        "100개 이상 매체를 업종별로 직접 선택해 송출",
+        "원고 대필·이미지 제작 옵션으로 자료가 없어도 진행",
+        "기사 링크로 브랜드 신뢰도와 검색 노출 강화",
+      ],
+      steps: [
+        { title: "1. 매체·업종 선택", desc: "원하는 업종 카테고리에서 송출할 매체를 직접 고릅니다." },
+        { title: "2. 원고 준비·검수", desc: "원고를 등록하거나 대필을 신청하면 업종 가능 여부를 사전 검수합니다." },
+        { title: "3. 송출·링크 전달", desc: "평균 2~3시간 내 선택 매체로 송출하고 기사 링크를 전달드립니다." },
+      ],
+      costRange: "1건 40,000원부터 (VAT 별도)",
+      costNote: "업종·매체별 단가가 다르며, 옵션(원고 대필·이미지 제작)은 별도입니다.",
+      conditions: [
+        "접수 이후 기사 수정·변경·삭제가 불가할 수 있습니다.",
+        "언론사 규정에 따라 제목·본문·이미지가 임의 편집될 수 있습니다.",
+        "허위 자료 제공 시 민·형사상 책임은 의뢰 고객에게 있습니다.",
+      ],
+    },
+  },
   refund: {
     slug: "refund",
     icon: "💸",
@@ -180,15 +215,16 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   },
 };
 
-/** Ordered list for rendering the 4 landing cards. */
+/** Ordered list for rendering the landing service cards. */
 export const PRODUCT_LIST: Product[] = [
   PRODUCTS.place,
   PRODUCTS.shopping,
   PRODUCTS.blog,
+  PRODUCTS.press,
   PRODUCTS.refund,
 ];
 
-export const PRODUCT_SLUGS: ProductSlug[] = ["place", "shopping", "blog", "refund"];
+export const PRODUCT_SLUGS: ProductSlug[] = ["place", "shopping", "blog", "press", "refund"];
 
 export function getProduct(slug: string): Product | undefined {
   return PRODUCTS[slug as ProductSlug];

@@ -1,4 +1,4 @@
-// Landing page composition: hero + 4 service cards + success stories.
+// Landing page composition: hero + service cards + success stories.
 // Header/footer are provided by the page layout.
 
 import Link from "next/link";
@@ -27,7 +27,7 @@ export function Landing() {
           </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
           {PRODUCT_LIST.map((product) => (
             <ServiceCard key={product.slug} product={product} />
           ))}

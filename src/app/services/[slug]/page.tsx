@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TrackedCta } from "@/components/TrackedCta";
 import { RefundLanding } from "@/components/RefundLanding";
+import { PressLanding } from "@/components/PressLanding";
 import { getProduct, PRODUCT_SLUGS } from "@/lib/products";
 
 // Per-product page titles/descriptions for search & social sharing.
@@ -42,6 +43,17 @@ export default async function ServiceDetailPage({
       <>
         <SiteHeader />
         <RefundLanding />
+        <SiteFooter />
+      </>
+    );
+  }
+
+  // The press product also has a dedicated landing (media list, options, caveats).
+  if (product.slug === "press") {
+    return (
+      <>
+        <SiteHeader />
+        <PressLanding />
         <SiteFooter />
       </>
     );

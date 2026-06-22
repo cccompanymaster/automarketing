@@ -98,4 +98,36 @@ export const PRICING: PricingGroup[] = [
       },
     ],
   },
+  {
+    key: "press",
+    icon: "📰",
+    title: "언론홍보",
+    description: "원하는 매체를 골라 보도자료를 송출합니다. 매체·단가는 상세 페이지 참고.",
+    items: [
+      {
+        name: "보도자료 언론 송출 (일반)",
+        price: "40,000원 ~",
+        inquiry: true,
+        note: "업종·매체별 단가 상이 (일반 40,000원 ~ / 메디컬·블록체인 등 상이) · VAT 별도",
+      },
+      {
+        name: "원고 대필",
+        price: "20,000원",
+        amountKrw: 20_000,
+        note: "보도자료 원고 대신 작성",
+      },
+      {
+        name: "이미지 제작",
+        price: "30,000원",
+        amountKrw: 30_000,
+        note: "기사 대표 이미지 제작",
+      },
+      {
+        name: "원고 대필 + 이미지 제작",
+        price: "50,000원",
+        amountKrw: 50_000,
+        note: "원고·이미지 묶음 옵션",
+      },
+    ],
+  },
 ];

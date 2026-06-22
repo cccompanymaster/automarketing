@@ -1,20 +1,34 @@
-// Payment / billing domain — STUB ONLY.
-// The product roadmap includes real payments (credit top-up, ad spend
-// settlement, refund payout) on both web and the upcoming mobile app, so this
-// module centralizes the shapes the UI consumes today. Keep all billing reads
-// going through here so swapping in the real API is a single-file change.
-// TODO(payment): replace with real billing API client (PG integration,
-// credit ledger, refund payouts). Mobile app will consume the same API.
+// Payment / billing entry point. Single place to swap in the real PG.
+// Roadmap: credit top-up, ad-spend settlement, refund payout (web + mobile).
+//
+// Charging uses a 1원 = 1캐시 conversion (see cash.ts). Today this is a STUB
+// "test" top-up that credits cash immediately. When a PG (e.g. PortOne) is
+// connected, replace requestCharge() with: open PG checkout -> on success,
+// verify server-side (webhook) -> credit cash. Never credit on the client for
+// real money.
+// TODO(payment): integrate PortOne checkout + server-side verification.
 
-export interface WalletSummary {
-  /** Prepaid credit balance used to fund campaigns. */
-  credits: number;
-  /** Expected refund payout for the current settlement cycle (KRW). */
-  expectedRefund: number;
+import { krwToCash } from "./cash";
+
+export interface ChargeResult {
+  ok: boolean;
+  /** Cash credited on success. */
+  cashCredited: number;
+  /** Payment method label for the ledger memo. */
+  method: string;
+  /** Present when ok === false. */
+  error?: string;
 }
 
-/** Dummy wallet shown on /mypage until the billing backend exists. */
-export const WALLET_STUB: WalletSummary = {
-  credits: 0,
-  expectedRefund: 0,
-};
+/**
+ * Request a cash top-up for the given KRW amount.
+ * STUB: resolves as a successful "test" charge. No real money moves.
+ */
+export async function requestCharge(krw: number): Promise<ChargeResult> {
+  // TODO(payment): launch PG checkout and confirm server-side before crediting.
+  return {
+    ok: true,
+    cashCredited: krwToCash(krw),
+    method: "테스트 충전",
+  };
+}

@@ -67,6 +67,8 @@ export function SignupForm({ onSwitchToLogin }: { onSwitchToLogin: () => void })
     try {
       await signupWithEmail(email, password, name || undefined);
       finish();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "가입에 실패했습니다.");
     } finally {
       setSubmitting(false);
     }

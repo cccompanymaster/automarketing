@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
+import { WalletProvider } from "@/components/WalletProvider";
 import { GtmScript, GtmNoScript } from "@/components/GtmScript";
 
 const SITE_TITLE = "마케팅방주 — 대행사 없이 시작하는 우리 매장 마케팅";
@@ -61,7 +62,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-white text-slate-900">
         <GtmNoScript />
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <WalletProvider>{children}</WalletProvider>
+        </AuthProvider>
         <Toaster position="top-center" richColors />
       </body>
     </html>

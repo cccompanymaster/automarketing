@@ -3,20 +3,23 @@
 // Minimal logged-in skeleton. Redirects to /start when not authenticated.
 // Waits for auth hydration to avoid bouncing a logged-in user on refresh.
 // TODO(backend): populate with real account data, campaigns, refunds, etc.
-// TODO(payment): wire credits/payment methods to the real billing backend.
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
+import { useWallet } from "@/components/WalletProvider";
+import { ChargeModal } from "@/components/ChargeModal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PRODUCT_LIST } from "@/lib/products";
-import { WALLET_STUB } from "@/lib/payments";
+import { formatCash, txnLabel } from "@/lib/cash";
 
 export default function MyPage() {
   const router = useRouter();
   const { user, isAuthenticated, hydrated } = useAuth();
+  const { balance, transactions } = useWallet();
+  const [chargeOpen, setChargeOpen] = useState(false);
 
   useEffect(() => {
     // Only redirect once the stored session has been restored — otherwise a
@@ -36,34 +39,57 @@ export default function MyPage() {
             {user?.name ? `${user.name}님, ` : ""}환영합니다. ({user?.email})
           </p>
 
-          {/* Wallet / billing summary — payment backend is upcoming. */}
+          {/* Cash wallet */}
           <section
-            aria-label="크레딧 및 결제"
+            aria-label="캐시 지갑"
             className="mt-8 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-base font-bold text-slate-900">내 크레딧</h2>
-                <p className="mt-1 text-2xl font-extrabold text-emerald-600">
-                  {WALLET_STUB.credits.toLocaleString("ko-KR")}
-                  <span className="ml-1 text-sm font-semibold text-slate-400">크레딧</span>
+                <h2 className="text-base font-bold text-slate-900">내 캐시</h2>
+                <p className="mt-1 text-3xl font-extrabold text-emerald-600">
+                  {balance.toLocaleString("ko-KR")}
+                  <span className="ml-1 text-sm font-semibold text-slate-400">캐시</span>
                 </p>
-                <p className="mt-1 text-xs text-slate-400">
-                  이번 달 예상 환급액 {WALLET_STUB.expectedRefund.toLocaleString("ko-KR")}원
-                </p>
+                <p className="mt-1 text-xs text-slate-400">1원 = 1캐시</p>
               </div>
               <button
                 type="button"
-                disabled
-                className="rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-400"
-                title="결제 기능 준비 중"
+                onClick={() => setChargeOpen(true)}
+                className="rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
               >
-                충전하기 (준비 중)
+                충전하기
               </button>
             </div>
-            <p className="mt-3 text-xs text-slate-400">
-              결제·충전 기능은 곧 제공될 예정입니다. 표시된 값은 예시입니다.
-            </p>
+
+            {transactions.length > 0 && (
+              <div className="mt-5 border-t border-slate-50 pt-4">
+                <h3 className="text-xs font-semibold text-slate-400">최근 내역</h3>
+                <ul className="mt-2 divide-y divide-slate-50">
+                  {transactions.slice(0, 5).map((t) => (
+                    <li key={t.id} className="flex items-center justify-between py-2.5 text-sm">
+                      <div>
+                        <span className="font-semibold text-slate-700">{txnLabel(t.type)}</span>
+                        <span className="ml-2 text-xs text-slate-400">
+                          {new Date(t.createdAt).toLocaleString("ko-KR", {
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                      <span
+                        className={`font-bold ${t.amount >= 0 ? "text-emerald-600" : "text-slate-700"}`}
+                      >
+                        {t.amount >= 0 ? "+" : ""}
+                        {formatCash(t.amount)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </section>
 
           {/* Quick link to the full product & price list. */}
@@ -111,6 +137,7 @@ export default function MyPage() {
         </div>
       </main>
       <SiteFooter />
+      <ChargeModal open={chargeOpen} onClose={() => setChargeOpen(false)} />
     </>
   );
 }

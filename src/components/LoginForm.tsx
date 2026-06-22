@@ -33,6 +33,8 @@ export function LoginForm({ onSwitchToSignup }: { onSwitchToSignup: () => void }
     try {
       await loginWithEmail(email, password);
       finish();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "로그인에 실패했습니다.");
     } finally {
       setSubmitting(false);
     }

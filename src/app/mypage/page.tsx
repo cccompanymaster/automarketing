@@ -92,10 +92,28 @@ export default function MyPage() {
             )}
           </section>
 
+          {/* AI 블로그 원고 작성 바로가기 */}
+          <Link
+            href="/tools/blog-writer"
+            className="mt-6 flex items-center justify-between rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-50 to-white p-5 shadow-sm transition hover:border-indigo-300 hover:shadow-md"
+          >
+            <div>
+              <h2 className="flex items-center gap-2 text-base font-bold text-slate-900">
+                <span aria-hidden="true">📝</span> AI 블로그 원고 작성
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">
+                주제만 입력하면 제목·목차·원고까지 AI가 자동 작성합니다.
+              </p>
+            </div>
+            <span className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white" aria-hidden="true">
+              작성하기
+            </span>
+          </Link>
+
           {/* Quick link to the full product & price list. */}
           <Link
             href="/pricing"
-            className="mt-6 flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md"
+            className="mt-4 flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md"
           >
             <div>
               <h2 className="text-base font-bold text-slate-900">상품 · 요금 보기</h2>

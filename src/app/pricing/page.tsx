@@ -95,7 +95,7 @@ export default function PricingPage() {
                         {item.name === "블로그용 원고 작성" ? (
                           <Link
                             href="/tools/blog-writer"
-                            className="rounded-lg bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
+                            className="rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700"
                           >
                             AI 작성
                           </Link>

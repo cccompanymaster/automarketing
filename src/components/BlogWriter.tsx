@@ -166,7 +166,7 @@ export function BlogWriter() {
                 <div className="flex items-center gap-2">
                   <span
                     className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
-                      step >= s.no ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-400"
+                      step >= s.no ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-400"
                     }`}
                   >
                     {s.no}
@@ -241,7 +241,7 @@ export function BlogWriter() {
                           setTitle(t);
                           setTitleIdeas([]);
                         }}
-                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-left text-sm text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50"
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-left text-sm text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50"
                       >
                         {t}
                       </button>
@@ -266,7 +266,7 @@ export function BlogWriter() {
                       <button
                         type="button"
                         onClick={() => setKeywords(keywords.filter((x) => x !== k))}
-                        className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100"
+                        className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100"
                       >
                         {k} ✕
                       </button>
@@ -285,7 +285,7 @@ export function BlogWriter() {
                     onClick={() => setTone(t)}
                     className={`rounded-xl border py-2.5 text-sm font-semibold transition ${
                       tone === t
-                        ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+                        ? "border-emerald-500 bg-emerald-50 text-emerald-700"
                         : "border-slate-200 text-slate-600 hover:bg-slate-50"
                     }`}
                   >
@@ -388,11 +388,11 @@ export function BlogWriter() {
 // --- small pieces ----------------------------------------------------------
 
 const inputCls =
-  "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100";
+  "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100";
 const subBtnCls =
-  "rounded-lg border border-indigo-200 px-3 py-1.5 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-50 disabled:opacity-60";
+  "rounded-lg border border-emerald-200 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50 disabled:opacity-60";
 const primaryBtnCls =
-  "w-full rounded-xl bg-indigo-600 py-3.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60";
+  "w-full rounded-xl bg-emerald-600 py-3.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60";
 
 function Field({
   label,
@@ -442,7 +442,7 @@ function Toggle({
         aria-checked={on}
         aria-label={label}
         onClick={onToggle}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition ${on ? "bg-indigo-600" : "bg-slate-200"}`}
+        className={`relative h-6 w-11 shrink-0 rounded-full transition ${on ? "bg-emerald-600" : "bg-slate-200"}`}
       >
         <span
           className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${on ? "left-[22px]" : "left-0.5"}`}
@@ -495,11 +495,11 @@ function OutlineEditor({
       <ul className="mt-4 space-y-2">
         {outline.map((h, i) => (
           <li key={i} className="flex items-center gap-2">
-            <span className="text-xs font-bold text-indigo-500">{i + 1}</span>
+            <span className="text-xs font-bold text-emerald-500">{i + 1}</span>
             <input
               value={h}
               onChange={(e) => setOutline(outline.map((x, j) => (j === i ? e.target.value : x)))}
-              className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400"
+              className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-400"
             />
             <button
               type="button"
@@ -550,7 +550,7 @@ function ArticleView({
       <textarea
         value={article}
         onChange={(e) => setArticle(e.target.value)}
-        className="mt-3 min-h-[24rem] flex-1 resize-y rounded-xl border border-slate-200 p-4 text-sm leading-relaxed text-slate-700 outline-none focus:border-indigo-400"
+        className="mt-3 min-h-[24rem] flex-1 resize-y rounded-xl border border-slate-200 p-4 text-sm leading-relaxed text-slate-700 outline-none focus:border-emerald-400"
       />
       <p className="mt-2 text-[11px] text-slate-400">
         마크다운 형식입니다. 직접 수정한 뒤 복사하거나 다운로드할 수 있어요.

@@ -95,7 +95,7 @@ export default function MyPage() {
           {/* AI 블로그 원고 작성 바로가기 */}
           <Link
             href="/tools/blog-writer"
-            className="mt-6 flex items-center justify-between rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-50 to-white p-5 shadow-sm transition hover:border-indigo-300 hover:shadow-md"
+            className="mt-6 flex items-center justify-between rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-white p-5 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
           >
             <div>
               <h2 className="flex items-center gap-2 text-base font-bold text-slate-900">
@@ -105,7 +105,7 @@ export default function MyPage() {
                 주제만 입력하면 제목·목차·원고까지 AI가 자동 작성합니다.
               </p>
             </div>
-            <span className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white" aria-hidden="true">
+            <span className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white" aria-hidden="true">
               작성하기
             </span>
           </Link>

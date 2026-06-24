@@ -13,7 +13,7 @@ import { ChargeModal } from "@/components/ChargeModal";
 import { OrderModal } from "@/components/OrderModal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { PRICING, type PricingItem } from "@/lib/pricing";
+import { PRICING, sortedItems, type PricingItem } from "@/lib/pricing";
 import { formatCash } from "@/lib/cash";
 
 export default function PricingPage() {
@@ -38,7 +38,8 @@ export default function PricingPage() {
             <div>
               <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">상품 · 요금</h1>
               <p className="mt-2 text-sm text-slate-500">
-                캐시로 바로 주문하세요. 표시 금액은 부가세 별도, 견적형은 키워드·조건에 따라 달라집니다.
+                가격이 낮은 순으로 정리했어요. <b className="text-slate-600">1원 = 1캐시</b>로 바로 주문할 수 있고,
+                표시 금액은 부가세 별도입니다.
               </p>
             </div>
             <button
@@ -49,6 +50,22 @@ export default function PricingPage() {
               보유 {formatCash(balance)} · 충전
             </button>
           </header>
+
+          {/* Legend — what each action means */}
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-500">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" aria-hidden="true" />
+              캐시로 바로 주문
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-amber-400" aria-hidden="true" />
+              견적·문의
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-slate-300" aria-hidden="true" />
+              준비 중
+            </span>
+          </div>
 
           <div className="mt-8 space-y-6">
             {PRICING.map((group) => (
@@ -67,57 +84,83 @@ export default function PricingPage() {
                 </div>
 
                 <ul className="divide-y divide-slate-50">
-                  {group.items.map((item) => (
-                    <li
-                      key={item.name}
-                      className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-5 py-4 sm:px-6"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-slate-800">{item.name}</span>
-                          {item.inquiry && (
-                            <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700">
-                              견적·문의
+                  {sortedItems(group).map((item) => {
+                    const comingSoon = item.price.includes("준비");
+                    const orderable = item.amountKrw != null && !item.inquiry && !comingSoon;
+                    const isBlogWrite = item.name === "블로그용 원고 작성";
+                    return (
+                      <li
+                        key={item.name}
+                        className="flex items-start justify-between gap-3 px-5 py-4 sm:gap-4 sm:px-6"
+                      >
+                        {/* Name + badges + note */}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                            <span className="text-sm font-semibold text-slate-800">{item.name}</span>
+                            {item.inquiry && (
+                              <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700">
+                                견적·문의
+                              </span>
+                            )}
+                            {comingSoon && (
+                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-500">
+                                준비 중
+                              </span>
+                            )}
+                          </div>
+                          {item.note && (
+                            <p className="mt-1 text-xs leading-relaxed text-slate-400">{item.note}</p>
+                          )}
+                        </div>
+
+                        {/* Price — fixed-width column so rows line up */}
+                        <div className="w-[86px] shrink-0 pt-0.5 text-right sm:w-[120px]">
+                          <span className="text-base font-extrabold tabular-nums text-emerald-600">
+                            {item.price}
+                          </span>
+                          {item.unit && (
+                            <span className="block text-[11px] font-semibold text-slate-400">
+                              / {item.unit}
                             </span>
                           )}
                         </div>
-                        {item.note && (
-                          <p className="mt-1 text-xs text-slate-400">{item.note}</p>
-                        )}
-                      </div>
-                      <div className="flex shrink-0 items-center gap-3">
-                        <div className="text-right">
-                          <span className="text-base font-extrabold text-emerald-600">{item.price}</span>
-                          {item.unit && (
-                            <span className="ml-1 text-xs font-semibold text-slate-400">/ {item.unit}</span>
+
+                        {/* Action — fixed-width column so buttons align */}
+                        <div className="w-[68px] shrink-0 sm:w-[76px]">
+                          {isBlogWrite ? (
+                            <Link
+                              href="/tools/blog-writer"
+                              className="block rounded-lg bg-emerald-600 px-2 py-2 text-center text-xs font-semibold text-white transition hover:bg-emerald-700"
+                            >
+                              AI 작성
+                            </Link>
+                          ) : orderable ? (
+                            <button
+                              type="button"
+                              onClick={() => setOrderItem(item)}
+                              className="block w-full rounded-lg bg-emerald-600 px-2 py-2 text-center text-xs font-semibold text-white transition hover:bg-emerald-700"
+                            >
+                              주문
+                            </button>
+                          ) : comingSoon ? (
+                            <span
+                              aria-disabled="true"
+                              className="block cursor-not-allowed rounded-lg border border-slate-200 px-2 py-2 text-center text-xs font-semibold text-slate-300"
+                            >
+                              준비 중
+                            </span>
+                          ) : (
+                            <Link
+                              href="/mypage"
+                              className="block rounded-lg border border-slate-200 px-2 py-2 text-center text-xs font-semibold text-slate-500 transition hover:bg-slate-50"
+                            >
+                              문의
+                            </Link>
                           )}
                         </div>
-                        {item.name === "블로그용 원고 작성" ? (
-                          <Link
-                            href="/tools/blog-writer"
-                            className="rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700"
-                          >
-                            AI 작성
-                          </Link>
-                        ) : item.amountKrw != null && !item.inquiry ? (
-                          <button
-                            type="button"
-                            onClick={() => setOrderItem(item)}
-                            className="rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700"
-                          >
-                            주문
-                          </button>
-                        ) : (
-                          <Link
-                            href="/mypage"
-                            className="rounded-lg border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-500 transition hover:bg-slate-50"
-                          >
-                            문의
-                          </Link>
-                        )}
-                      </div>
-                    </li>
-                  ))}
+                      </li>
+                    );
+                  })}
                 </ul>
               </section>
             ))}

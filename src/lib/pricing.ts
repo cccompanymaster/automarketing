@@ -28,6 +28,22 @@ export interface PricingGroup {
   items: PricingItem[];
 }
 
+/**
+ * Numeric value for ascending price sort. Orderable items use their KRW amount;
+ * ranges ("30,000원 ~") use the leading number; quote/준비중 items (no number)
+ * sort to the end.
+ */
+export function priceSortValue(item: PricingItem): number {
+  if (item.amountKrw != null) return item.amountKrw;
+  const m = item.price.replace(/,/g, "").match(/\d+/);
+  return m ? Number(m[0]) : Number.POSITIVE_INFINITY;
+}
+
+/** Items sorted by price ascending (non-priced items last, original order kept). */
+export function sortedItems(group: PricingGroup): PricingItem[] {
+  return [...group.items].sort((a, b) => priceSortValue(a) - priceSortValue(b));
+}
+
 export const PRICING: PricingGroup[] = [
   {
     key: "blog",

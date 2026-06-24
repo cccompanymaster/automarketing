@@ -7,6 +7,7 @@ export type ProductSlug =
   | "place"
   | "shopping"
   | "blog"
+  | "blogwrite"
   | "press"
   | "experience"
   | "refund"
@@ -53,7 +54,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   place: {
     slug: "place",
     icon: "📍",
-    name: "플레이스 광고",
+    name: "플레이스 1등 먹기",
     summary: ["지역 검색에서 우리 매장을 상위에 노출하고", "매장을 방문하는 고객 수를 늘립니다."],
     cta: "플레이스 진단 받기",
     accent: {
@@ -88,7 +89,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   shopping: {
     slug: "shopping",
     icon: "🛍️",
-    name: "네이버 쇼핑 광고",
+    name: "쇼핑 1등 먹기",
     summary: ["쇼핑 검색 상위에 상품을 노출해", "판매량을 빠르게 끌어올립니다."],
     cta: "쇼핑 광고 신청하기",
     accent: {
@@ -123,7 +124,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   blog: {
     slug: "blog",
     icon: "✍️",
-    name: "네이버 블로그 광고",
+    name: "블로그 1페이지 점령",
     summary: ["블로그 콘텐츠를 상위에 노출해", "브랜드 신뢰도를 높입니다."],
     cta: "블로그 광고 시작하기",
     accent: {
@@ -155,10 +156,45 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       ],
     },
   },
+  blogwrite: {
+    slug: "blogwrite",
+    icon: "🤖",
+    name: "AI 원고 뚝딱 쓰기",
+    summary: ["주제만 입력하면 제목·목차·원고까지", "AI가 자동으로 작성해 드립니다."],
+    cta: "지금 작성하기",
+    accent: {
+      chip: "bg-cyan-50 text-cyan-700",
+      iconBg: "bg-cyan-100",
+      cardRing: "hover:ring-cyan-200",
+      button: "bg-cyan-600 hover:bg-cyan-700 text-white",
+      gradient: "from-cyan-50 to-white",
+    },
+    detail: {
+      headline: "주제만 입력하면, AI가 블로그 원고를 완성해요",
+      subhead: "제목·목차·본문까지 3단계로 자동 생성. 말투와 키워드만 정하면 발행용 원고가 뚝딱 나옵니다.",
+      fromPrice: "1,000원",
+      benefits: [
+        "주제·키워드만 입력하면 제목·목차·본문 자동 생성",
+        "말투(해요/합니다 등) 선택으로 톤 맞춤",
+        "마크다운으로 바로 복사·수정·발행",
+      ],
+      steps: [
+        { title: "1. 주제 설정", desc: "작성자·주제·키워드·말투를 입력합니다." },
+        { title: "2. 아웃라인 구성", desc: "AI가 만든 목차를 확인하고 자유롭게 수정합니다." },
+        { title: "3. 글쓰기 완료", desc: "완성된 원고를 복사하거나 다운로드합니다." },
+      ],
+      costRange: "1건 1,000원 (캐시 차감)",
+      costNote: "원고 1건당 1,000캐시가 차감됩니다. 제목·목차 생성은 무료입니다.",
+      conditions: [
+        "생성 결과는 발행 전 검수·수정을 권장합니다.",
+        "현재는 데모 모드이며, 실제 AI 연결 시 더 풍부한 원고가 생성됩니다.",
+      ],
+    },
+  },
   press: {
     slug: "press",
     icon: "📰",
-    name: "언론홍보",
+    name: "뉴스에 우리 가게 띄우기",
     summary: ["원하는 매체를 골라 보도자료를 송출하고", "브랜드 신뢰도와 검색 노출을 높입니다."],
     cta: "언론보도 신청하기",
     accent: {
@@ -193,7 +229,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   experience: {
     slug: "experience",
     icon: "🎁",
-    name: "체험단 모집",
+    name: "후기 부자 만들기",
     summary: ["체험단·기자단을 모집해 진짜 후기를 쌓고", "검색·SNS에서 우리 매장의 신뢰도를 높입니다."],
     cta: "체험단 신청하기",
     accent: {
@@ -228,7 +264,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   refund: {
     slug: "refund",
     icon: "💸",
-    name: "광고비 환급",
+    name: "광고비 줍줍 환급",
     summary: ["네이버·카카오에 집행한 광고비의 일부를", "매월 환급받습니다."],
     cta: "광고비 환급 확인하기",
     accent: {
@@ -263,7 +299,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   consulting: {
     slug: "consulting",
     icon: "🆘",
-    name: "광고 컨설팅",
+    name: "막막할 때 도와줘요",
     summary: ["무엇부터 해야 할지 막막하신가요?", "전문가가 우리 매장에 맞는 전략을 짚어드립니다."],
     cta: "도와주세요!",
     accent: {
@@ -301,6 +337,7 @@ export const PRODUCT_LIST: Product[] = [
   PRODUCTS.place,
   PRODUCTS.shopping,
   PRODUCTS.blog,
+  PRODUCTS.blogwrite,
   PRODUCTS.press,
   PRODUCTS.experience,
   PRODUCTS.refund,
@@ -311,6 +348,7 @@ export const PRODUCT_SLUGS: ProductSlug[] = [
   "place",
   "shopping",
   "blog",
+  "blogwrite",
   "press",
   "experience",
   "refund",

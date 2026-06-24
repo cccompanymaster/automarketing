@@ -135,7 +135,7 @@ export default async function ServiceDetailPage({
           {/* CTA */}
           <section className="mt-12 text-center">
             <TrackedCta
-              href="/start"
+              href={product.slug === "blogwrite" ? "/tools/blog-writer" : "/start"}
               slug={product.slug}
               className={`inline-block w-full rounded-xl py-4 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:w-auto sm:px-12 ${accent.button}`}
             >

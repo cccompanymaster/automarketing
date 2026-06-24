@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { TrackedCta } from "@/components/TrackedCta";
 import { FaqAccordion } from "@/components/FaqAccordion";
+import { RefundMedia } from "@/components/RefundMedia";
 import { REFUND } from "@/lib/refund";
 
 export function RefundLanding() {
@@ -21,7 +22,7 @@ export function RefundLanding() {
               <div>
                 <h1 className="text-2xl font-extrabold text-white sm:text-4xl">광고비 환급</h1>
                 <p className="mt-3 max-w-xl text-sm leading-relaxed text-violet-50 sm:text-base">
-                  국내 매체 광고를 직접 운영해보세요. 사용한 광고비의 최대 {REFUND.rate}를 {REFUND.payoutDay} 환급해 드립니다.
+                  네이버·카카오·당근·구글·메타·틱톡·DV360 등 직접 운영 중인 광고비의 일부를 {REFUND.payoutDay} 환급해 드립니다. (환급율 확인 중)
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <TrackedCta
@@ -45,44 +46,18 @@ export function RefundLanding() {
       </section>
 
       <div className="mx-auto max-w-4xl px-5">
-        {/* Intro + refund examples */}
-        <section className="py-12 text-center">
+        {/* Intro */}
+        <section className="pt-12 text-center">
           <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">
             대행사 없이 직접 광고를 운영 중이신가요?
           </h2>
           <p className="mt-2 text-sm text-slate-600 sm:text-base">
-            사용한 광고비의 최대 {REFUND.rate}를 환급받으세요.
+            직접 운영 중인 광고비의 일부를 매월 환급받으세요.
           </p>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {REFUND.examples.map((ex, i) => (
-              <div
-                key={i}
-                className="rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm"
-              >
-                <span className="inline-block rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">
-                  {ex.media}
-                </span>
-                <dl className="mt-4 space-y-1.5 text-sm">
-                  <div className="flex justify-between">
-                    <dt className="text-slate-400">{ex.monthly.split(" ")[0]} 광고비</dt>
-                    <dd className="font-semibold text-slate-700">
-                      {ex.monthly.replace(/^월 광고비\s*/, "")}
-                    </dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt className="text-slate-400">환급율</dt>
-                    <dd className="font-semibold text-slate-700">{ex.rate.replace("환급율 ", "")}</dd>
-                  </div>
-                </dl>
-                <div className="mt-4 border-t border-slate-50 pt-3">
-                  <p className="text-xs text-slate-400">환급 예상액</p>
-                  <p className="text-xl font-extrabold text-violet-600">{ex.refund}</p>
-                </div>
-              </div>
-            ))}
-          </div>
         </section>
+
+        {/* 환급 가능 매체 (로고 줄) */}
+        <RefundMedia />
 
         {/* Pre-application checklist */}
         <section className="py-6">
@@ -111,7 +86,7 @@ export function RefundLanding() {
               ))}
             </div>
             <div className="mt-6 rounded-2xl bg-violet-500/40 px-5 py-4 text-center text-sm font-semibold text-white ring-1 ring-white/30">
-              직접 운영 중인 광고, 최대 {REFUND.rate} 환급 받으세요!
+              직접 운영 중인 광고, 지금 환급 받으세요!
             </div>
           </div>
         </section>

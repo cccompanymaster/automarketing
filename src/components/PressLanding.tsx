@@ -2,11 +2,10 @@
 // Rendered by /services/press. Uses the indigo press accent.
 
 import Link from "next/link";
-import { TrackedCta } from "@/components/TrackedCta";
 import { FaqAccordion } from "@/components/FaqAccordion";
+import { PressRates } from "@/components/PressRates";
 import {
   PRESS_BASE_FROM,
-  PRESS_CATEGORIES,
   PRESS_FAQS,
   PRESS_FEATURES,
   PRESS_OPTIONS,
@@ -45,13 +44,12 @@ export function PressLanding() {
                   ))}
                 </div>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <TrackedCta
-                    href="/pricing"
-                    slug="press"
+                  <a
+                    href="#press-rates"
                     className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50"
                   >
                     매체·단가 보기
-                  </TrackedCta>
+                  </a>
                   <Link
                     href="/start"
                     className="rounded-xl bg-indigo-500/40 px-6 py-3 text-sm font-semibold text-white ring-1 ring-white/40 transition hover:bg-indigo-500/60"
@@ -66,60 +64,8 @@ export function PressLanding() {
       </section>
 
       <div className="mx-auto max-w-4xl px-5">
-        {/* Category price table */}
-        <section className="py-12">
-          <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">업종별 송출 단가</h2>
-          <p className="mt-2 text-sm text-slate-600">
-            매체별로 단가와 포털(네이버·다음·네이트) 노출 여부가 다릅니다. 표시 금액은 VAT 별도입니다.
-          </p>
-          <div className="mt-6 overflow-hidden rounded-2xl border border-slate-100 shadow-sm">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="bg-slate-50 text-left text-xs text-slate-500">
-                  <th className="px-4 py-3 font-semibold sm:px-5">카테고리</th>
-                  <th className="px-4 py-3 text-right font-semibold sm:px-5">매체 수</th>
-                  <th className="px-4 py-3 text-right font-semibold sm:px-5">단가 범위</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50 bg-white">
-                {PRESS_CATEGORIES.map((c) => (
-                  <tr key={c.key}>
-                    <td className="px-4 py-3 font-semibold text-slate-800 sm:px-5">{c.name}</td>
-                    <td className="px-4 py-3 text-right text-slate-500 sm:px-5">{c.mediaCount}개</td>
-                    <td className="px-4 py-3 text-right font-semibold text-indigo-600 sm:px-5">
-                      {krw(c.priceMin)} ~ {krw(c.priceMax)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Representative media */}
-        <section className="pb-4">
-          <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">주요 매체</h2>
-          <div className="mt-6 space-y-4">
-            {PRESS_CATEGORIES.filter((c) => c.samples.length > 0).map((c) => (
-              <div key={c.key} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-                <h3 className="text-sm font-bold text-slate-900">{c.name}</h3>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {c.samples.map((m) => (
-                    <span
-                      key={m}
-                      className="rounded-lg bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600"
-                    >
-                      {m}
-                    </span>
-                  ))}
-                  <span className="rounded-lg bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">
-                    외 다수
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* Category rates + media accordion */}
+        <PressRates />
 
         {/* Options */}
         <section className="py-12">
@@ -186,13 +132,12 @@ export function PressLanding() {
             <p className="mx-auto mt-3 max-w-md text-sm text-indigo-50 sm:text-base">
               가입비 무료 · 1건부터 신청 · 평균 2~3시간 내 송출.
             </p>
-            <TrackedCta
-              href="/pricing"
-              slug="press"
+            <a
+              href="#press-rates"
               className="mt-7 inline-block rounded-xl bg-white px-8 py-3.5 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50"
             >
-              매체·단가 보고 신청하기
-            </TrackedCta>
+              전체 언론사·단가 보기
+            </a>
           </div>
         </section>
       </div>

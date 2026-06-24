@@ -21,14 +21,14 @@ export function Landing() {
       <section id="services" className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-            무엇을 해결하고 싶으신가요?
+            혼자 하는 마케팅, 어렵지 않습니다
           </h2>
           <p className="mt-3 text-sm text-slate-600 sm:text-base">
             우리 매장에 필요한 것부터 골라 바로 시작할 수 있습니다.
           </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {PRODUCT_LIST.map((product) => (
             <ServiceCard key={product.slug} product={product} />
           ))}

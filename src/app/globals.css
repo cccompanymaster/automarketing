@@ -518,6 +518,12 @@
   }
 }
 
+/* Repeat visits (splash already shown this session): no entrance delay,
+   content visible immediately — perpetual motion (float/glow) still runs. */
+.no-intro .hero-anim {
+  animation-delay: 0s !important;
+}
+
 /* Respect reduced-motion: drop the splash quickly, no perpetual motion. */
 @media (prefers-reduced-motion: reduce) {
   .hero-loader {

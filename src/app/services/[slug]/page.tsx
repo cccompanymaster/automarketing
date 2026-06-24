@@ -88,6 +88,13 @@ export default async function ServiceDetailPage({
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
                   {detail.subhead}
                 </p>
+                {detail.fromPrice && (
+                  <p className="mt-4 inline-flex items-baseline gap-1.5 rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-slate-600 ring-1 ring-slate-200">
+                    최소
+                    <span className="num text-lg font-extrabold text-emerald-600">{detail.fromPrice}</span>
+                    부터 ~
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -123,30 +130,6 @@ export default async function ServiceDetailPage({
                 </li>
               ))}
             </ol>
-          </section>
-
-          {/* Cost & conditions (exposed BEFORE signup) */}
-          <section className="mt-12 rounded-2xl bg-slate-50 p-6 sm:p-8">
-            <h2 className="text-xl font-bold text-slate-900">예상 비용 및 조건</h2>
-            <div className="mt-5 rounded-xl bg-white p-5 ring-1 ring-slate-100">
-              <p className="text-xs font-medium text-slate-400">예상 비용 범위</p>
-              <p className="mt-1 text-lg font-bold text-slate-900">{detail.costRange}</p>
-              <p className="mt-2 text-sm text-slate-500">{detail.costNote}</p>
-            </div>
-            <ul className="mt-5 space-y-2">
-              {detail.conditions.map((c) => (
-                <li key={c} className="flex items-start gap-2 text-sm text-slate-600">
-                  <span className="mt-0.5 text-slate-400" aria-hidden="true">
-                    •
-                  </span>
-                  {c}
-                </li>
-              ))}
-            </ul>
-            <p className="mt-4 text-xs text-slate-400">
-              {/* TODO(backend): replace with live pricing & refund terms. */}
-              실제 비용·환급 조건은 진단 및 상담 후 확정됩니다.
-            </p>
           </section>
 
           {/* CTA */}

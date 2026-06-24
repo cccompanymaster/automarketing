@@ -5,7 +5,7 @@
 // splash is visible, then the hero copy/scene rise in as the splash clears.
 // Keyframes live in globals.css.
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 // Tween a number into an element's textContent with an ease-out curve.
@@ -30,15 +30,39 @@ function tween(
 export function Hero() {
   const rankRef = useRef<HTMLSpanElement>(null);
   const expRef = useRef<HTMLSpanElement>(null);
+  // Intro splash plays only once per session (null = undecided during hydration).
+  const [intro, setIntro] = useState<boolean | null>(null);
 
   useEffect(() => {
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem("mb_intro_seen") === "1";
+    } catch {
+      /* ignore */
+    }
+    if (seen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time session check
+      setIntro(false);
+      return;
+    }
+    try {
+      sessionStorage.setItem("mb_intro_seen", "1");
+    } catch {
+      /* ignore */
+    }
+    setIntro(true);
+  }, []);
+
+  useEffect(() => {
+    if (intro !== true) return;
     tween(rankRef.current, 48, 1, 1500, 400);
     tween(expRef.current, 0, 320, 1700, 500);
-  }, []);
+  }, [intro]);
 
   return (
     <>
-      {/* ===== LOADER OVERLAY (full-screen, auto fades out) ===== */}
+      {/* ===== LOADER OVERLAY (full-screen, auto fades out) — first visit only ===== */}
+      {intro === true && (
       <div
         className="hero-loader"
         aria-hidden="true"
@@ -124,9 +148,11 @@ export function Hero() {
           매장 데이터를 분석하고 있어요…
         </div>
       </div>
+      )}
 
       {/* ===== HERO ===== */}
       <section
+        className={intro === true ? undefined : "no-intro"}
         style={{
           position: "relative",
           width: "100%",
@@ -136,6 +162,34 @@ export function Hero() {
             "radial-gradient(120% 95% at 78% 12%,#d9f6e4 0%,#eafaf0 38%,#f3fbf6 70%,#ffffff 100%)",
         }}
       >
+        {/* Scam / impersonation notice banner (after the splash) */}
+        <div
+          className="hero-anim"
+          role="note"
+          style={{
+            position: "relative",
+            zIndex: 30,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            flexWrap: "wrap",
+            textAlign: "center",
+            padding: "10px 16px",
+            background: "#FFF7ED",
+            borderBottom: "1px solid #FED7AA",
+            color: "#9A3412",
+            fontWeight: 600,
+            fontSize: 13,
+            animation: "rise .6s ease 2.5s both",
+          }}
+        >
+          <span aria-hidden="true">⚠️</span>
+          <span>
+            <b>사기·사칭 주의</b> — 마케팅방주는 공식 채널 외 개인 연락처·계좌로 선입금을 요구하지 않습니다.
+          </span>
+        </div>
+
         {/* soft color blobs */}
         <div className="hero-anim" style={{ position: "absolute", top: -120, right: -80, width: 520, height: 520, borderRadius: "50%", background: "radial-gradient(circle,rgba(24,192,106,.30),transparent 65%)", filter: "blur(8px)", animation: "glowPulse 7s ease-in-out infinite" }} />
         <div className="hero-anim" style={{ position: "absolute", bottom: -160, left: -100, width: 480, height: 480, borderRadius: "50%", background: "radial-gradient(circle,rgba(59,130,246,.20),transparent 65%)", filter: "blur(8px)", animation: "glowPulse 9s ease-in-out infinite" }} />

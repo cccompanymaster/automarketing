@@ -9,6 +9,7 @@ import { Stats } from "@/components/Stats";
 import { Channels } from "@/components/Channels";
 import { ServiceCard } from "@/components/ServiceCard";
 import { SuccessStory } from "@/components/SuccessStory";
+import { Marquee } from "@/components/Marquee";
 
 export function Landing() {
   return (
@@ -40,34 +41,33 @@ export function Landing() {
       {/* Supported channels */}
       <Channels />
 
-      {/* Success stories */}
-      <section className="bg-slate-50">
-        <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-              마케팅방주와 함께한 고객 후기
-            </h2>
-            <p className="mt-3 text-sm text-slate-600 sm:text-base">
-              업종과 기간, 그리고 수치로 확인하는 실제 변화입니다.
-            </p>
-          </div>
-
-          {/* 2x2 on md+ so the 4 stories never leave an orphan card. */}
-          <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2">
-            {SUCCESS_STORIES.map((story) => (
-              <SuccessStory key={story.industry} story={story} />
-            ))}
-          </div>
+      {/* Success stories — auto-scrolling banner */}
+      <section className="bg-slate-50 py-16 sm:py-20">
+        <div className="mx-auto max-w-2xl px-5 text-center">
+          <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+            마케팅방주와 함께한 고객 후기
+          </h2>
+          <p className="mt-3 text-sm text-slate-600 sm:text-base">
+            업종과 기간, 그리고 수치로 확인하는 실제 변화입니다.
+          </p>
         </div>
+
+        <Marquee durationSec={24} className="mt-10 [--marquee-gap:1.25rem]">
+          {SUCCESS_STORIES.map((story) => (
+            <div key={story.industry} className="flex w-[300px] sm:w-[340px]">
+              <SuccessStory story={story} />
+            </div>
+          ))}
+        </Marquee>
       </section>
 
       {/* Closing CTA */}
       <section className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
-        <div className="rounded-3xl bg-emerald-600 px-6 py-12 text-center sm:px-12">
+        <div className="impact rounded-hero px-6 py-12 text-center sm:px-12">
           <h2 className="text-2xl font-bold text-white sm:text-3xl">
             지금 바로 우리 매장 마케팅을 시작하세요
           </h2>
-          <p className="mx-auto mt-3 max-w-md text-sm text-emerald-50 sm:text-base">
+          <p className="mx-auto mt-3 max-w-md text-sm text-slate-300 sm:text-base">
             가입 전에 진행 방식과 예상 비용, 환급 조건을 먼저 확인할 수 있습니다.
           </p>
           <Link

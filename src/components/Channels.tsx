@@ -1,22 +1,13 @@
-// Supported advertising / exposure channels (reference: "프리미엄 매체에 광고
-// 송출"). Shown as labeled chips instead of third-party logos.
+// Supported advertising / exposure channels, shown as an auto-scrolling logo
+// banner (brand marks, no third-party logo assets).
 
-const CHANNELS: string[] = [
-  "네이버 플레이스",
-  "네이버 쇼핑",
-  "네이버 블로그",
-  "카카오",
-  "쿠팡",
-  "인스타그램",
-  "당근",
-  "구글",
-  "유튜브",
-];
+import { Marquee } from "@/components/Marquee";
+import { BrandMark, CHANNEL_MARKS } from "@/components/BrandMark";
 
 export function Channels() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
-      <div className="mx-auto max-w-2xl text-center">
+    <section className="py-16 sm:py-20">
+      <div className="mx-auto max-w-2xl px-5 text-center">
         <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
           주요 광고 · 노출 매체
         </h2>
@@ -25,16 +16,13 @@ export function Channels() {
         </p>
       </div>
 
-      <ul className="mx-auto mt-10 flex max-w-3xl flex-wrap justify-center gap-3">
-        {CHANNELS.map((c) => (
-          <li
-            key={c}
-            className="rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm"
-          >
-            {c}
-          </li>
+      <Marquee durationSec={16} className="mt-10 [--marquee-gap:3.5rem]">
+        {CHANNEL_MARKS.map((k) => (
+          <span key={k} className="flex items-center">
+            <BrandMark k={k} />
+          </span>
         ))}
-      </ul>
+      </Marquee>
     </section>
   );
 }

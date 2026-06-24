@@ -22,7 +22,7 @@ export function RefundLanding() {
               <div>
                 <h1 className="text-2xl font-extrabold text-white sm:text-4xl">광고비 환급</h1>
                 <p className="mt-3 max-w-xl text-sm leading-relaxed text-violet-50 sm:text-base">
-                  네이버·카카오·당근·구글·메타·틱톡·DV360 등 직접 운영 중인 광고비의 일부를 {REFUND.payoutDay} 환급해 드립니다. (환급율 확인 중)
+                  네이버·카카오·토스·당근·구글·메타·틱톡·DV360 등 직접 운영 중인 광고비의 일부를 {REFUND.payoutDay} 환급해 드립니다. (환급율 확인 중)
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <TrackedCta

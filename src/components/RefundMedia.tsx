@@ -1,9 +1,26 @@
 // 환급 가능 매체 로고 줄 (광고비 환급 상세). 정적 사이트라 외부 로고 이미지 대신
 // 브랜드 컬러로 렌더한 워드마크로 표현합니다. 환급률은 매체별 상이(확인 중).
 
-type MediaKey = "naver" | "kakao" | "daangn" | "google" | "facebook" | "tiktok" | "dv360";
+type MediaKey =
+  | "naver"
+  | "kakao"
+  | "toss"
+  | "daangn"
+  | "google"
+  | "facebook"
+  | "tiktok"
+  | "dv360";
 
-const MEDIA: MediaKey[] = ["naver", "kakao", "daangn", "google", "facebook", "tiktok", "dv360"];
+const MEDIA: MediaKey[] = [
+  "naver",
+  "kakao",
+  "toss",
+  "daangn",
+  "google",
+  "facebook",
+  "tiktok",
+  "dv360",
+];
 
 function BrandMark({ k }: { k: MediaKey }) {
   switch (k) {
@@ -20,6 +37,12 @@ function BrandMark({ k }: { k: MediaKey }) {
           style={{ background: "#FEE500", color: "#371D1E" }}
         >
           kakao
+        </span>
+      );
+    case "toss":
+      return (
+        <span className="text-lg font-extrabold lowercase" style={{ color: "#3182F6" }}>
+          toss
         </span>
       );
     case "daangn":

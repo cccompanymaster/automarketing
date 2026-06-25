@@ -45,6 +45,13 @@ jobs:
           # Project site is served under /<repo>; drive basePath + canonical URL.
           NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.origin }}${{ steps.pages.outputs.base_path }}
+          # Real auth + cash backend (Supabase). Set these as repo Variables to
+          # switch from local stub to real signup/login. Empty = stub mode.
+          # (anon key is a publishable client key — safe to expose.)
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          # AI blog writer proxy (optional). Empty = demo mode.
+          NEXT_PUBLIC_BLOG_API_URL: ${{ vars.NEXT_PUBLIC_BLOG_API_URL }}
         run: npm run build
 
       - name: Disable Jekyll (serve _next assets as-is)

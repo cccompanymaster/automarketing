@@ -10,10 +10,14 @@ import { Channels } from "@/components/Channels";
 import { ServiceCard } from "@/components/ServiceCard";
 import { SuccessStory } from "@/components/SuccessStory";
 import { Marquee } from "@/components/Marquee";
+import { ScamNoticePopup } from "@/components/ScamNoticePopup";
 
 export function Landing() {
   return (
     <main className="flex-1">
+      {/* One-time scam / impersonation notice popup */}
+      <ScamNoticePopup />
+
       {/* Intro loading splash -> animated hero */}
       <Hero />
 
@@ -61,20 +65,20 @@ export function Landing() {
         </Marquee>
       </section>
 
-      {/* Closing CTA */}
-      <section className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
-        <div className="impact rounded-hero px-6 py-12 text-center sm:px-12">
-          <h2 className="text-2xl font-bold text-white sm:text-3xl">
-            지금 바로 우리 매장 마케팅을 시작하세요
+      {/* Closing CTA — board the ship into the operating screen */}
+      <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
+        <div className="impact rounded-hero px-6 py-14 text-center sm:px-12 sm:py-20">
+          <h2 className="text-2xl font-bold text-white sm:text-4xl">
+            이제, 마케팅방주에 승선할 시간이에요
           </h2>
-          <p className="mx-auto mt-3 max-w-md text-sm text-slate-300 sm:text-base">
-            가입 전에 진행 방식과 예상 비용, 환급 조건을 먼저 확인할 수 있습니다.
+          <p className="mx-auto mt-4 max-w-md text-sm text-slate-300 sm:text-base">
+            가입하면 바로 내 운영 화면에서 진단·주문·원고 작성까지 시작할 수 있어요.
           </p>
           <Link
-            href="/start"
-            className="mt-7 inline-block rounded-xl bg-white px-8 py-3.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            href="/mypage"
+            className="mt-9 inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-10 py-5 text-lg font-extrabold text-emerald-700 shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-50 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white sm:px-14 sm:py-6 sm:text-xl"
           >
-            무료로 시작하기
+            🚢 마케팅방주 승선하기!
           </Link>
         </div>
       </section>

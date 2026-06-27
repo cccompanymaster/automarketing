@@ -10,6 +10,10 @@ export type ProductSlug =
   | "blogwrite"
   | "press"
   | "experience"
+  | "instagram"
+  | "youtube"
+  | "kakaomap"
+  | "place-traffic"
   | "refund"
   | "consulting";
 
@@ -261,6 +265,150 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       ],
     },
   },
+  instagram: {
+    slug: "instagram",
+    icon: "📸",
+    name: "인스타 인기몰이",
+    summary: ["국내 실사용자 기반 팔로워·좋아요·댓글로", "계정의 신뢰도와 첫인상을 끌어올립니다."],
+    cta: "인스타 마케팅 신청하기",
+    accent: {
+      chip: "bg-pink-50 text-pink-700",
+      iconBg: "bg-pink-100",
+      cardRing: "hover:ring-pink-200",
+      button: "bg-pink-600 hover:bg-pink-700 text-white",
+      gradient: "from-pink-50 to-white",
+    },
+    detail: {
+      headline: "국내 실사용자 반응으로 인스타 계정을 키우세요",
+      subhead: "팔로워·좋아요·댓글·저장 등 필요한 항목만 골라 진행합니다. 계정 비밀번호 없이 안전하게 시작할 수 있습니다.",
+      fromPrice: "5,000원",
+      benefits: [
+        "국내 실사용자 기반 팔로워·좋아요·댓글로 자연스러운 반응 형성",
+        "계정 로그인 정보 없이 아이디·게시물 링크만으로 진행",
+        "팔로워·게시물 반응·저장 등 항목별 수량 선택",
+      ],
+      steps: [
+        { title: "1. 항목·수량 선택", desc: "팔로워·좋아요·댓글 등 필요한 항목과 수량을 고릅니다." },
+        { title: "2. 계정·링크 전달", desc: "비밀번호 없이 아이디와 대상 게시물 링크만 전달합니다." },
+        { title: "3. 작업 진행·확인", desc: "자연스러운 속도로 작업을 진행하고 결과를 확인합니다." },
+      ],
+      costRange: "팔로워 100명 1.5만 원~ / 게시물 좋아요 50건 5천 원~ (항목·수량별 책정)",
+      costNote: "항목·수량·진행 속도에 따라 달라지며, 신청 후 정확한 견적을 안내합니다.",
+      conditions: [
+        "계정 비밀번호 등 로그인 정보는 요구하지 않습니다.",
+        "작업 시작 전에는 전액 환불이 가능합니다.",
+        "노출·반응 성과는 콘텐츠와 플랫폼 환경에 따라 달라질 수 있습니다.",
+      ],
+    },
+  },
+  youtube: {
+    slug: "youtube",
+    icon: "▶️",
+    name: "유튜브 채널 키우기",
+    summary: ["구독자·조회수·좋아요·재생시간을 채워", "채널 성장과 알고리즘 노출을 돕습니다."],
+    cta: "유튜브 마케팅 신청하기",
+    accent: {
+      chip: "bg-red-50 text-red-700",
+      iconBg: "bg-red-100",
+      cardRing: "hover:ring-red-200",
+      button: "bg-red-600 hover:bg-red-700 text-white",
+      gradient: "from-red-50 to-white",
+    },
+    detail: {
+      headline: "조회수·구독자·재생시간으로 채널 성장을 앞당기세요",
+      subhead: "조회수·구독자·좋아요·재생시간 등 필요한 항목만 골라 진행합니다. 채널 권한 없이 영상 링크만으로 시작합니다.",
+      fromPrice: "5,000원",
+      benefits: [
+        "국내 실사용자 기반 조회수·구독자·좋아요로 채널 활성화",
+        "채널 로그인 권한 없이 채널·영상 링크만으로 진행",
+        "조회수·구독자·재생시간 등 항목별 수량 선택",
+      ],
+      steps: [
+        { title: "1. 항목·수량 선택", desc: "조회수·구독자·좋아요 등 필요한 항목과 수량을 고릅니다." },
+        { title: "2. 채널·링크 전달", desc: "로그인 권한 없이 채널 주소와 대상 영상 링크만 전달합니다." },
+        { title: "3. 작업 진행·확인", desc: "자연스러운 속도로 작업을 진행하고 결과를 확인합니다." },
+      ],
+      costRange: "조회수 1,000회 1만 원~ / 구독자 200명 6만 원~ (항목·수량별 책정)",
+      costNote: "항목·수량·진행 속도에 따라 달라지며, 신청 후 정확한 견적을 안내합니다.",
+      conditions: [
+        "채널 로그인 권한 등 계정 정보는 요구하지 않습니다.",
+        "작업 시작 전에는 전액 환불이 가능합니다.",
+        "노출·반응 성과는 콘텐츠와 플랫폼 환경에 따라 달라질 수 있습니다.",
+      ],
+    },
+  },
+  kakaomap: {
+    slug: "kakaomap",
+    icon: "🗺️",
+    name: "카카오맵 평판 굳히기",
+    summary: ["카카오맵 리뷰·후기·트래픽을 채워", "검색 노출과 매장 신뢰도를 높입니다."],
+    cta: "카카오맵 마케팅 신청하기",
+    accent: {
+      chip: "bg-yellow-50 text-yellow-700",
+      iconBg: "bg-yellow-100",
+      cardRing: "hover:ring-yellow-200",
+      button: "bg-yellow-500 hover:bg-yellow-600 text-white",
+      gradient: "from-yellow-50 to-white",
+    },
+    detail: {
+      headline: "카카오맵 리뷰·트래픽으로 매장 신뢰도를 높이세요",
+      subhead: "별점 리뷰·내용 리뷰·리뷰 추천·트래픽·저장하기 등 필요한 항목만 골라 진행합니다. 국내 실사용자 기반으로 자연스럽게 쌓습니다.",
+      fromPrice: "10,000원",
+      benefits: [
+        "별점·내용 리뷰와 리뷰 추천으로 매장 평판 강화",
+        "트래픽·저장하기로 카카오맵 검색 노출 보조",
+        "리뷰·트래픽·저장 등 항목별 수량 선택",
+      ],
+      steps: [
+        { title: "1. 항목·수량 선택", desc: "리뷰·리뷰 추천·트래픽·저장하기 등 필요한 항목과 수량을 고릅니다." },
+        { title: "2. 매장·키워드 전달", desc: "매장 정보와 리뷰 내용·검색 키워드 가이드를 전달합니다." },
+        { title: "3. 작업 진행·확인", desc: "자연스러운 속도로 작업을 진행하고 결과를 확인합니다." },
+      ],
+      costRange: "별점 리뷰 10건 1.8만 원~ / 내용 리뷰 30건 9만 원~ / 트래픽 1,000건 1만 원~ (항목·수량별 책정)",
+      costNote: "리뷰 형태(별점·내용 지정), 트래픽 종류(일반·경유·검색), 수량에 따라 달라집니다. 신청 후 정확한 견적을 안내합니다.",
+      conditions: [
+        "리뷰 내용은 사전에 협의하며, 허위·과장 표현은 진행하지 않습니다.",
+        "작업 시작 전에는 전액 환불이 가능합니다.",
+        "노출·순위 성과는 카카오맵 정책과 검색 환경에 따라 달라질 수 있습니다.",
+      ],
+    },
+  },
+  "place-traffic": {
+    slug: "place-traffic",
+    icon: "🚦",
+    name: "플레이스 리워드 트래픽",
+    summary: ["리워드 기반 저장·트래픽으로", "플레이스·지도 상위 노출을 최적화합니다."],
+    cta: "리워드 트래픽 신청하기",
+    accent: {
+      chip: "bg-lime-50 text-lime-700",
+      iconBg: "bg-lime-100",
+      cardRing: "hover:ring-lime-200",
+      button: "bg-lime-600 hover:bg-lime-700 text-white",
+      gradient: "from-lime-50 to-white",
+    },
+    detail: {
+      headline: "리워드 트래픽으로 플레이스 상위 노출을 최적화하세요",
+      subhead: "실사용자에게 리워드를 제공해 저장하기·플레이스 트래픽을 자연스럽게 발생시킵니다. 네이버·카카오맵·구글맵까지 채널을 골라 진행합니다.",
+      fromPrice: "32,500원",
+      benefits: [
+        "리워드 기반 실사용자 저장하기·트래픽으로 노출 신호 강화",
+        "네이버 플레이스·카카오맵·구글맵 채널별 선택 진행",
+        "저장하기+트래픽 묶음 또는 단일 트래픽으로 수량 설계",
+      ],
+      steps: [
+        { title: "1. 채널·수량 선택", desc: "노출할 지도 채널과 저장하기·트래픽 수량을 고릅니다." },
+        { title: "2. 매장·키워드 전달", desc: "매장 정보와 검색 키워드를 전달해 작업 대상을 설정합니다." },
+        { title: "3. 분산 진행·확인", desc: "일별로 자연스럽게 분산 진행하고 노출 변화를 확인합니다." },
+      ],
+      costRange: "저장하기+트래픽 500건 3.25만 원~ / 플레이스 트래픽 1,000건 4만 원~ (채널·수량별 책정)",
+      costNote: "채널(네이버·카카오맵·구글맵)과 수량, 분산 기간에 따라 달라집니다. 신청 후 정확한 견적을 안내합니다.",
+      conditions: [
+        "작업은 일별 수량으로 분산해 자연스럽게 진행됩니다.",
+        "작업 시작 전에는 전액 환불이 가능합니다.",
+        "노출·순위 성과는 각 지도 플랫폼 정책과 검색 환경에 따라 달라질 수 있습니다.",
+      ],
+    },
+  },
   refund: {
     slug: "refund",
     icon: "💸",
@@ -340,6 +488,10 @@ export const PRODUCT_LIST: Product[] = [
   PRODUCTS.blogwrite,
   PRODUCTS.press,
   PRODUCTS.experience,
+  PRODUCTS.instagram,
+  PRODUCTS.youtube,
+  PRODUCTS.kakaomap,
+  PRODUCTS["place-traffic"],
   PRODUCTS.refund,
   PRODUCTS.consulting,
 ];
@@ -351,6 +503,10 @@ export const PRODUCT_SLUGS: ProductSlug[] = [
   "blogwrite",
   "press",
   "experience",
+  "instagram",
+  "youtube",
+  "kakaomap",
+  "place-traffic",
   "refund",
   "consulting",
 ];

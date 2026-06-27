@@ -22,10 +22,14 @@ export interface ProductDetailStep {
   desc: string;
 }
 
+import type { BrandKey } from "@/components/BrandLogo";
+
 export interface Product {
   slug: ProductSlug;
-  /** Emoji used as a lightweight icon (no asset pipeline needed yet). */
+  /** Emoji used as a lightweight icon (fallback when no brand logo is set). */
   icon: string;
+  /** Real channel logo to show instead of the emoji icon, when applicable. */
+  brand?: BrandKey;
   name: string;
   /** Two-line, result-oriented summary shown on the landing card. */
   summary: string[];
@@ -58,6 +62,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   place: {
     slug: "place",
     icon: "📍",
+    brand: "naver",
     name: "플레이스 1등 먹기",
     summary: ["지역 검색에서 우리 매장을 상위에 노출하고", "매장을 방문하는 고객 수를 늘립니다."],
     cta: "플레이스 진단 받기",
@@ -93,6 +98,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   shopping: {
     slug: "shopping",
     icon: "🛍️",
+    brand: "naver",
     name: "쇼핑 1등 먹기",
     summary: ["쇼핑 검색 상위에 상품을 노출해", "판매량을 빠르게 끌어올립니다."],
     cta: "쇼핑 광고 신청하기",
@@ -128,6 +134,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   blog: {
     slug: "blog",
     icon: "✍️",
+    brand: "naver",
     name: "블로그 1페이지 점령",
     summary: ["블로그 콘텐츠를 상위에 노출해", "브랜드 신뢰도를 높입니다."],
     cta: "블로그 광고 시작하기",
@@ -268,6 +275,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   instagram: {
     slug: "instagram",
     icon: "📸",
+    brand: "instagram",
     name: "인스타 인기몰이",
     summary: ["국내 실사용자 기반 팔로워·좋아요·댓글로", "계정의 신뢰도와 첫인상을 끌어올립니다."],
     cta: "인스타 마케팅 신청하기",
@@ -304,6 +312,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   youtube: {
     slug: "youtube",
     icon: "▶️",
+    brand: "youtube",
     name: "유튜브 채널 키우기",
     summary: ["구독자·조회수·좋아요·재생시간을 채워", "채널 성장과 알고리즘 노출을 돕습니다."],
     cta: "유튜브 마케팅 신청하기",
@@ -340,6 +349,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   kakaomap: {
     slug: "kakaomap",
     icon: "🗺️",
+    brand: "kakao",
     name: "카카오맵 평판 굳히기",
     summary: ["카카오맵 리뷰·후기·트래픽을 채워", "검색 노출과 매장 신뢰도를 높입니다."],
     cta: "카카오맵 마케팅 신청하기",

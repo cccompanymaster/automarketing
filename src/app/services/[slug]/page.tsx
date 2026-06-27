@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { TrackedCta } from "@/components/TrackedCta";
 import { RefundLanding } from "@/components/RefundLanding";
 import { PressLanding } from "@/components/PressLanding";
+import { BrandLogo } from "@/components/BrandLogo";
 import { getProduct, PRODUCT_SLUGS } from "@/lib/products";
 
 // Per-product page titles/descriptions for search & social sharing.
@@ -72,12 +73,19 @@ export default async function ServiceDetailPage({
               ← 전체 서비스
             </Link>
             <div className="mt-6 flex items-start gap-4">
-              <div
-                className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-3xl ${accent.iconBg}`}
-                aria-hidden="true"
-              >
-                {product.icon}
-              </div>
+              {product.brand ? (
+                <BrandLogo
+                  brand={product.brand}
+                  className="h-14 w-14 shrink-0 rounded-2xl shadow-sm"
+                />
+              ) : (
+                <div
+                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-3xl ${accent.iconBg}`}
+                  aria-hidden="true"
+                >
+                  {product.icon}
+                </div>
+              )}
               <div>
                 <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${accent.chip}`}>
                   {product.name}

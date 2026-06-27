@@ -7,18 +7,23 @@
 import Link from "next/link";
 import type { Product } from "@/lib/products";
 import { track } from "@/lib/analytics";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export function ServiceCard({ product }: { product: Product }) {
   return (
     <div
       className={`group flex h-full flex-col rounded-2xl bg-gradient-to-b ${product.accent.gradient} p-6 shadow-sm ring-1 ring-slate-100 transition duration-200 hover:-translate-y-1 hover:shadow-lg ${product.accent.cardRing}`}
     >
-      <div
-        className={`flex h-12 w-12 items-center justify-center rounded-xl text-2xl ${product.accent.iconBg}`}
-        aria-hidden="true"
-      >
-        {product.icon}
-      </div>
+      {product.brand ? (
+        <BrandLogo brand={product.brand} className="mx-auto h-12 w-12 rounded-xl shadow-sm" />
+      ) : (
+        <div
+          className={`mx-auto flex h-12 w-12 items-center justify-center rounded-xl text-2xl ${product.accent.iconBg}`}
+          aria-hidden="true"
+        >
+          {product.icon}
+        </div>
+      )}
 
       <h3 className="mt-4 text-lg font-bold text-slate-900">{product.name}</h3>
 

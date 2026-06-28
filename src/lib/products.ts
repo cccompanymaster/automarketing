@@ -8,6 +8,7 @@ export type ProductSlug =
   | "shopping"
   | "blog"
   | "blogwrite"
+  | "blog-neighbor"
   | "press"
   | "experience"
   | "instagram"
@@ -199,6 +200,43 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       conditions: [
         "생성 결과는 발행 전 검수·수정을 권장합니다.",
         "현재는 데모 모드이며, 실제 AI 연결 시 더 풍부한 원고가 생성됩니다.",
+      ],
+    },
+  },
+  "blog-neighbor": {
+    slug: "blog-neighbor",
+    icon: "👥",
+    brand: "naver",
+    name: "블로그 이웃 늘리기",
+    summary: ["국내 실사용자 서로이웃·이웃을 늘려", "블로그 방문자와 콘텐츠 도달을 키웁니다."],
+    cta: "이웃 관리 신청하기",
+    accent: {
+      chip: "bg-green-50 text-green-700",
+      iconBg: "bg-green-100",
+      cardRing: "hover:ring-green-200",
+      button: "bg-green-600 hover:bg-green-700 text-white",
+      gradient: "from-green-50 to-white",
+    },
+    detail: {
+      headline: "서로이웃·이웃을 늘려 블로그 방문자를 키우세요",
+      subhead: "국내 실사용자 기반으로 서로이웃 신청·이웃 추가를 진행해 블로그 노출과 방문자 수를 끌어올립니다. 계정 비밀번호 없이 블로그 주소만으로 시작합니다.",
+      fromPrice: "20,000원",
+      benefits: [
+        "국내 실사용자 기반 서로이웃·이웃으로 자연스러운 방문자 유입",
+        "계정 로그인 정보 없이 블로그 주소만으로 진행",
+        "서로이웃 신청·이웃 추가 등 항목별 수량 선택",
+      ],
+      steps: [
+        { title: "1. 항목·수량 선택", desc: "서로이웃 신청·이웃 추가 등 필요한 항목과 수량을 고릅니다." },
+        { title: "2. 블로그 주소 전달", desc: "비밀번호 없이 블로그 주소와 주제·키워드 가이드를 전달합니다." },
+        { title: "3. 분산 진행·확인", desc: "일별로 자연스럽게 분산 진행하고 이웃·방문자 변화를 확인합니다." },
+      ],
+      costRange: "서로이웃 추가 100명 2만 원~ / 이웃 추가 200명 3만 원~ (항목·수량별 책정)",
+      costNote: "항목·수량·진행 속도에 따라 달라지며, 신청 후 정확한 견적을 안내합니다.",
+      conditions: [
+        "계정 비밀번호 등 로그인 정보는 요구하지 않습니다.",
+        "작업 시작 전에는 전액 환불이 가능합니다.",
+        "이웃 수락·방문 성과는 콘텐츠와 네이버 블로그 정책에 따라 달라질 수 있습니다.",
       ],
     },
   },
@@ -496,6 +534,7 @@ export const PRODUCT_LIST: Product[] = [
   PRODUCTS.shopping,
   PRODUCTS.blog,
   PRODUCTS.blogwrite,
+  PRODUCTS["blog-neighbor"],
   PRODUCTS.press,
   PRODUCTS.experience,
   PRODUCTS.instagram,
@@ -511,6 +550,7 @@ export const PRODUCT_SLUGS: ProductSlug[] = [
   "shopping",
   "blog",
   "blogwrite",
+  "blog-neighbor",
   "press",
   "experience",
   "instagram",

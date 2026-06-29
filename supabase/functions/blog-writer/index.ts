@@ -1,5 +1,7 @@
 // Supabase Edge Function: AI 블로그 원고 생성 프록시 (Claude).
 // 정적 사이트(클라이언트)에 API 키를 둘 수 없으므로 생성은 이 서버에서 처리합니다.
+// 보안: 모든 요청은 Supabase 세션(JWT)으로 인증되어야 하며, 원고(article)
+// 생성은 서버에서 use_cash RPC 로 캐시를 차감합니다(클라이언트 차감 신뢰 금지).
 //
 // 배포:
 //   supabase functions deploy blog-writer --no-verify-jwt
@@ -11,8 +13,12 @@
 // 요청: { mode: "titles"|"outline"|"article", input: { topic, title?, keywords[], tone, writer?, outline?[] } }
 
 import Anthropic from "npm:@anthropic-ai/sdk@^0.69.0";
+import { createClient } from "npm:@supabase/supabase-js@^2.108.2";
 
 const MODEL = Deno.env.get("BLOG_MODEL") ?? "claude-opus-4-8";
+
+// Cost (cash) to generate one article — must match BLOG_WRITE_COST on the client.
+const ARTICLE_COST = 1000;
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -119,8 +125,20 @@ Deno.serve(async (req: Request) => {
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) return json({ error: "ANTHROPIC_API_KEY is not set" }, 500);
 
-  // TODO(auth): verify the Supabase JWT in the Authorization header and apply
-  // per-user rate limits / credit checks before generating.
+  // --- Auth: require a valid Supabase session ------------------------------
+  // The function is public, so without this anyone could burn the API key.
+  const authHeader = req.headers.get("Authorization") ?? "";
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const supabaseAnon = Deno.env.get("SUPABASE_ANON_KEY");
+  if (!supabaseUrl || !supabaseAnon) {
+    return json({ error: "Supabase env is not configured" }, 500);
+  }
+  // User-scoped client: RLS + auth.uid() apply to its queries/RPCs.
+  const supabase = createClient(supabaseUrl, supabaseAnon, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) return json({ error: "로그인이 필요합니다." }, 401);
 
   try {
     const { mode, input } = (await req.json()) as { mode: string; input: BlogInput };
@@ -128,9 +146,32 @@ Deno.serve(async (req: Request) => {
 
     const client = new Anthropic({ apiKey });
 
+    // titles / outline are free; only a full article costs cash.
     if (mode === "titles") return json({ titles: await genTitles(client, input) });
     if (mode === "outline") return json({ outline: await genOutline(client, input) });
-    if (mode === "article") return json({ article: await genArticle(client, input) });
+    if (mode === "article") {
+      // Cost enforced server-side (client cannot be trusted to charge itself):
+      // pre-check the balance to avoid spending API budget on a user who can't
+      // pay, generate, then deduct atomically via the use_cash RPC.
+      const { data: balance } = await supabase
+        .from("cash_transactions")
+        .select("balance_after")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const current = (balance?.balance_after as number | undefined) ?? 0;
+      if (current < ARTICLE_COST) return json({ error: "캐시가 부족합니다." }, 402);
+
+      const article = await genArticle(client, input);
+
+      const { error: spendError } = await supabase.rpc("use_cash", {
+        p_amount: ARTICLE_COST,
+        p_memo: `블로그 원고 - ${input.title ?? input.topic}`,
+      });
+      if (spendError) return json({ error: spendError.message }, 402);
+
+      return json({ article });
+    }
     return json({ error: `unknown mode: ${mode}` }, 400);
   } catch (e) {
     return json({ error: e instanceof Error ? e.message : String(e) }, 500);

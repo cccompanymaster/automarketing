@@ -28,7 +28,7 @@ const STEPS = [
 ];
 
 export function BlogWriter() {
-  const { balance, spend } = useWallet();
+  const { balance, spend, refresh } = useWallet();
 
   const [step, setStep] = useState(1);
   const [writer, setWriter] = useState("");
@@ -122,7 +122,15 @@ export function BlogWriter() {
     setBusy("article");
     try {
       const text = await generateArticle(input(), outline);
-      await spend(BLOG_WRITE_COST, `블로그 원고 - ${title.trim() || topic.trim()}`);
+      if (isBlogApiConfigured) {
+        // Real backend deducts the cost server-side (auth + balance enforced in
+        // the Edge Function); just re-sync the balance here. Avoids the client
+        // being trusted to charge — and prevents a double charge.
+        await refresh();
+      } else {
+        // Demo mode: no server, so the local stub wallet performs the deduction.
+        await spend(BLOG_WRITE_COST, `블로그 원고 - ${title.trim() || topic.trim()}`);
+      }
       setArticle(text);
       setStep(3);
       toast.success(`원고가 생성되었어요. ${formatCash(BLOG_WRITE_COST)} 차감.`);

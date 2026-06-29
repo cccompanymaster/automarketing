@@ -25,24 +25,29 @@ create policy "own rows readable"
   using (auth.uid() = user_id);
 
 -- 충전 RPC ------------------------------------------------------------------
--- 주의: 실제 현금 결제는 반드시 PG 웹훅으로 서버에서 검증한 뒤 호출해야 합니다.
--- 아래 함수는 검증된 충전을 원장에 원자적으로 기록합니다. (개발/연동용)
-create or replace function public.charge_cash(p_amount bigint, p_memo text)
+-- 보안: 이 함수는 "돈을 만드는" 함수이므로 클라이언트가 직접 호출하면 결제 없이
+-- 무한 충전이 가능합니다. 따라서 PostgREST 노출을 막고 service_role 에서만 호출
+-- 가능하게 합니다(아래 GRANT/REVOKE). 실제 충전은 PG 웹훅이 결제를 서버에서
+-- 검증한 뒤, service_role 로 p_uid 를 지정해 호출해야 합니다.
+create or replace function public.charge_cash(p_amount bigint, p_memo text, p_uid uuid default auth.uid())
 returns bigint
 language plpgsql
 security definer
 set search_path = public
 as $$
 declare
-  v_uid uuid := auth.uid();
+  v_uid uuid := coalesce(p_uid, auth.uid());
   v_balance bigint;
 begin
   if v_uid is null then
-    raise exception 'not authenticated';
+    raise exception 'user is required';
   end if;
   if p_amount <= 0 then
     raise exception 'amount must be positive';
   end if;
+
+  -- Serialize concurrent ledger writes for this user.
+  perform pg_advisory_xact_lock(hashtextextended(v_uid::text, 0));
 
   select coalesce((
     select balance_after from public.cash_transactions
@@ -76,6 +81,9 @@ begin
     raise exception 'amount must be positive';
   end if;
 
+  -- Serialize concurrent spends for this user to prevent double-spend races.
+  perform pg_advisory_xact_lock(hashtextextended(v_uid::text, 0));
+
   select coalesce((
     select balance_after from public.cash_transactions
     where user_id = v_uid order by created_at desc limit 1
@@ -93,3 +101,13 @@ begin
   return v_balance;
 end;
 $$;
+
+-- 함수 권한 (보안 경계) -----------------------------------------------------
+-- charge_cash 는 결제 검증을 거친 서버(service_role)에서만 호출 가능해야 합니다.
+-- PostgREST 를 통한 클라이언트(anon/authenticated) 직접 호출을 차단합니다.
+revoke all on function public.charge_cash(bigint, text, uuid) from public, anon, authenticated;
+grant execute on function public.charge_cash(bigint, text, uuid) to service_role;
+
+-- use_cash 는 본인 잔액에서 차감하므로 로그인 사용자가 호출 가능합니다.
+revoke all on function public.use_cash(bigint, text) from public, anon;
+grant execute on function public.use_cash(bigint, text) to authenticated, service_role;

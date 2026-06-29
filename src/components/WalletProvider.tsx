@@ -27,6 +27,8 @@ interface WalletContextValue {
   charge: (krw: number) => Promise<void>;
   /** Spend cash on a product. Throws when the balance is insufficient. */
   spend: (amountCash: number, memo: string) => Promise<void>;
+  /** Re-read the balance/ledger (e.g. after a server-side deduction). */
+  refresh: () => Promise<void>;
 }
 
 const WalletContext = createContext<WalletContextValue | null>(null);
@@ -113,22 +115,20 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       if (!user) throw new Error("로그인이 필요합니다.");
       setLoading(true);
       try {
+        if (supabase) {
+          // Real backend: crediting is intentionally NOT possible from the
+          // client. charge_cash is locked to service_role and must be invoked
+          // by the server only after a PG webhook verifies the payment (see
+          // supabase/schema.sql + payments.ts). Until the PG is integrated,
+          // top-ups are unavailable in real mode.
+          // TODO(payment): launch PG checkout here; server verifies + credits.
+          throw new Error("결제(PG) 연동 준비 중입니다. 잠시만 기다려 주세요.");
+        }
+
         const result = await requestCharge(krw);
         if (!result.ok) throw new Error(result.error ?? "충전에 실패했습니다.");
 
-        if (supabase) {
-          // TODO(payment): in production, credit happens server-side after the
-          // PG webhook verifies payment — not from the client.
-          const { error } = await supabase.rpc("charge_cash", {
-            p_amount: result.cashCredited,
-            p_memo: result.method,
-          });
-          if (error) throw new Error(error.message);
-          await refresh();
-          return;
-        }
-
-        // Stub credit
+        // Stub credit (local only — no real money, no server authority)
         const w = loadStub(user.id);
         const nextBalance = w.balance + result.cashCredited;
         const txn: CashTxn = {
@@ -150,7 +150,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       }
     },
-    [supabase, user, refresh],
+    [supabase, user],
   );
 
   const spend = useCallback(
@@ -195,8 +195,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo<WalletContextValue>(
-    () => ({ balance, transactions, loading, charge, spend }),
-    [balance, transactions, loading, charge, spend],
+    () => ({ balance, transactions, loading, charge, spend, refresh }),
+    [balance, transactions, loading, charge, spend, refresh],
   );
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;

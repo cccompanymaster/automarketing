@@ -31,13 +31,30 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 > build 단계 env에 두 값을 추가하세요.
 
 ## 5. 충전(결제) — 다음 단계
-- 현재 `src/lib/payments.ts`의 `requestCharge()`는 **테스트 충전**(실제 결제 없음)입니다.
-- 실제 결제는 PG(PortOne 등) 연동 + **서버측 결제 검증(웹훅)** 후 `charge_cash`를 호출하도록 교체해야 합니다.
-  클라이언트에서 직접 캐시를 적립하면 안 됩니다.
+- 현재 `src/lib/payments.ts`의 `requestCharge()`는 **테스트 충전**(실제 결제 없음)이며,
+  실제(Supabase) 모드에서는 클라이언트 충전이 **의도적으로 차단**됩니다.
+- `charge_cash` RPC는 `service_role` 에서만 호출 가능하도록 권한이 제한됩니다
+  (`schema.sql`의 GRANT/REVOKE). 즉 **클라이언트는 캐시를 적립할 수 없습니다.**
+- 실제 결제 흐름: PG(PortOne 등) 체크아웃 → **서버(웹훅)에서 결제 검증** →
+  `service_role` 로 `charge_cash(p_amount, p_memo, p_uid)` 호출해 적립.
 - 선불 캐시 충전은 규모에 따라 전자금융거래법(선불전자지급수단) 검토가 필요할 수 있습니다.
 
+## 6. 보안 경계 요약 (반드시 확인)
+- **클라이언트가 보낸 금액·성공 여부·잔액을 신뢰하지 않습니다.**
+  - 충전(`charge_cash`): `service_role` 전용 — PG 웹훅 검증 후 서버에서만 적립.
+  - 사용(`use_cash`): 로그인 사용자 호출 가능. 서버에서 잔액 확인·차감(원자적, 사용자별 advisory lock으로 동시성 보호).
+  - 조회: RLS로 **본인 행만** 조회 가능. 직접 INSERT/UPDATE/DELETE는 RLS로 차단.
+- **AI 원고(blog-writer Edge Function)**: JWT 인증 필수, 원고 생성 시 서버에서 `use_cash`로 차감.
+  클라이언트는 실제 모드에서 차감하지 않고 잔액만 새로고침합니다.
+- **관리자(/admin)**: 이메일 허용목록(`NEXT_PUBLIC_ADMIN_EMAILS`)은 **UI 노출 제어용**입니다.
+  실제 관리자 데이터 조회는 RLS상 본인 행만 보이므로, 서버(`service_role`/관리자 역할 + 정책)로 구현해야 합니다.
+- **보안 헤더/CSP**: 정적 export(GitHub Pages)는 응답 헤더를 설정할 수 없습니다.
+  운영 시 CDN(Cloudflare 등)이나 헤더 설정이 가능한 호스팅을 앞단에 두고
+  `Content-Security-Policy`(GTM용 nonce/hash 포함), `X-Frame-Options`/`frame-ancestors`,
+  `Referrer-Policy`, `X-Content-Type-Options: nosniff`를 적용하세요.
+
 ## 동작 요약
-| 상태 | 회원가입/로그인 | 캐시 지갑 |
-|---|---|---|
-| 키 없음 (현재) | 로컬 stub | localStorage |
-| 키 있음 | 실제 Supabase Auth | Supabase DB (RLS) |
+| 상태 | 회원가입/로그인 | 캐시 지갑 | 충전 |
+|---|---|---|---|
+| 키 없음 (현재) | 로컬 stub | localStorage | 테스트 충전(로컬) |
+| 키 있음 | 실제 Supabase Auth | Supabase DB (RLS) | PG 웹훅+서버 적립 (연동 필요) |

@@ -14,12 +14,14 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PRODUCT_LIST } from "@/lib/products";
 import { formatCash, txnLabel } from "@/lib/cash";
+import { isAdminUser } from "@/lib/admin";
 
 export default function MyPage() {
   const router = useRouter();
   const { user, isAuthenticated, hydrated } = useAuth();
   const { balance, transactions } = useWallet();
   const [chargeOpen, setChargeOpen] = useState(false);
+  const isAdmin = isAdminUser(user);
 
   useEffect(() => {
     // Only redirect once the stored session has been restored — otherwise a
@@ -125,6 +127,23 @@ export default function MyPage() {
               →
             </span>
           </Link>
+
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="mt-4 flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-sm transition hover:bg-slate-800"
+            >
+              <div>
+                <h2 className="flex items-center gap-2 text-base font-bold text-white">
+                  <span aria-hidden="true">🛠️</span> 관리자 대시보드
+                </h2>
+                <p className="mt-1 text-sm text-slate-300">회원·주문·충전 현황을 관리합니다.</p>
+              </div>
+              <span className="text-slate-300" aria-hidden="true">
+                →
+              </span>
+            </Link>
+          )}
 
           <h2 className="mt-10 text-lg font-bold text-slate-900">서비스 현황</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">

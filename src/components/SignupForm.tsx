@@ -7,7 +7,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuth, EmailConfirmationRequiredError } from "@/components/AuthProvider";
 import { KakaoButton } from "@/components/KakaoButton";
 import { LegalModal } from "@/components/LegalModal";
 import { track } from "@/lib/analytics";
@@ -25,6 +25,7 @@ export function SignupForm({ onSwitchToLogin }: { onSwitchToLogin: () => void })
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [modalDoc, setModalDoc] = useState<"terms" | "privacy" | null>(null);
+  const [confirmSent, setConfirmSent] = useState(false);
 
   // The signup view has been reached — mark the start of the signup funnel.
   useEffect(() => {
@@ -68,11 +69,45 @@ export function SignupForm({ onSwitchToLogin }: { onSwitchToLogin: () => void })
       await signupWithEmail(email, password, name || undefined);
       finish();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "가입에 실패했습니다.");
+      if (err instanceof EmailConfirmationRequiredError) {
+        // Not a failure — the account was created and needs email verification.
+        setConfirmSent(true);
+      } else {
+        toast.error(err instanceof Error ? err.message : "가입에 실패했습니다.");
+      }
     } finally {
       setSubmitting(false);
     }
   };
+
+  if (confirmSent) {
+    return (
+      <div className="text-center">
+        <div
+          className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-3xl"
+          aria-hidden="true"
+        >
+          📩
+        </div>
+        <h1 className="mt-4 text-2xl font-bold text-slate-900">메일함을 확인해 주세요</h1>
+        <p className="mt-3 text-sm leading-relaxed text-slate-600">
+          <b className="text-slate-800">{email}</b> 으로 인증 메일을 보냈어요.
+          <br />
+          메일의 링크를 눌러 인증을 완료하면 로그인할 수 있습니다.
+        </p>
+        <p className="mt-3 text-xs text-slate-400">
+          메일이 보이지 않으면 스팸함을 확인하거나 잠시 후 다시 시도해 주세요.
+        </p>
+        <button
+          type="button"
+          onClick={onSwitchToLogin}
+          className="mt-6 w-full rounded-xl bg-emerald-600 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+        >
+          로그인 화면으로
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div>

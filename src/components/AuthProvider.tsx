@@ -37,6 +37,18 @@ interface AuthContextValue {
 
 const STORAGE_KEY = "selfmarketing.auth.user";
 
+/**
+ * Thrown by signupWithEmail when Supabase accepts the signup but requires the
+ * user to confirm their email before a session exists. This is a SUCCESS path,
+ * not a failure — callers should show a "check your inbox" notice, not an error.
+ */
+export class EmailConfirmationRequiredError extends Error {
+  constructor(message = "확인 메일을 보냈어요. 메일의 링크로 인증을 완료해 주세요.") {
+    super(message);
+    this.name = "EmailConfirmationRequiredError";
+  }
+}
+
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 function mapSupabaseUser(u: SupabaseUser): User {
@@ -124,8 +136,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
         if (error) throw new Error(error.message);
         if (!data.session || !data.user) {
-          // Email confirmation required (configurable in Supabase).
-          throw new Error("확인 메일을 보냈어요. 메일의 링크로 인증을 완료해 주세요.");
+          // Email confirmation required (configurable in Supabase). Surfaced as
+          // a dedicated success notice by the signup form, not an error toast.
+          throw new EmailConfirmationRequiredError();
         }
         return mapSupabaseUser(data.user);
       }

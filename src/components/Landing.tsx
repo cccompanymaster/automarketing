@@ -1,9 +1,9 @@
 // Landing page composition: hero + service cards + success stories.
 // Header/footer are provided by the page layout.
 
-import Link from "next/link";
 import { PRODUCT_LIST } from "@/lib/products";
 import { SUCCESS_STORIES } from "@/lib/successStories";
+import { TrackedCta } from "@/components/TrackedCta";
 import { Hero } from "@/components/Hero";
 import { Stats } from "@/components/Stats";
 import { Channels } from "@/components/Channels";
@@ -74,12 +74,13 @@ export function Landing() {
           <p className="mx-auto mt-4 max-w-md text-sm text-slate-300 sm:text-base">
             가입하면 바로 내 운영 화면에서 진단·주문·원고 작성까지 시작할 수 있어요.
           </p>
-          <Link
-            href="/mypage"
+          <TrackedCta
+            href="/start"
+            authedHref="/mypage"
             className="mt-9 inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-10 py-5 text-lg font-extrabold text-emerald-700 shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-50 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white sm:px-14 sm:py-6 sm:text-xl"
           >
             🚢 마케팅방주 승선하기!
-          </Link>
+          </TrackedCta>
         </div>
       </section>
     </main>

@@ -71,7 +71,8 @@ export default function PricingPage() {
             {PRICING.map((group) => (
               <section
                 key={group.key}
-                className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm"
+                id={group.key}
+                className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm scroll-mt-24"
               >
                 <div className="flex items-start gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
                   <span className="text-2xl" aria-hidden="true">

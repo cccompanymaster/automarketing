@@ -144,3 +144,64 @@ create policy "own orders insertable"
 -- 상태 변경(UPDATE)/삭제는 클라이언트에 허용하지 않습니다. 관리자 상태 변경은
 -- 서버(service_role) 또는 is_admin() 정책을 둔 update_order_status RPC로 처리하세요.
 -- (정의된 UPDATE/DELETE 정책이 없으므로 anon/authenticated 의 변경은 거부됩니다.)
+
+-- 결제 멱등 처리 + 적립 RPC --------------------------------------------------
+-- 결제 웹훅이 재전송돼도 중복 적립되지 않도록, payment_id 를 유일 키로 기록합니다.
+create table if not exists public.payment_events (
+  payment_id text primary key,
+  user_id    uuid not null references auth.users (id) on delete cascade,
+  amount     bigint not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.payment_events enable row level security;
+-- 클라이언트 정책 없음 → service_role(웹훅)에서만 접근.
+
+-- credit_payment: 검증된 결제 1건을 멱등하게 적립. service_role 전용.
+create or replace function public.credit_payment(
+  p_payment_id text,
+  p_amount bigint,
+  p_uid uuid,
+  p_memo text default '충전'
+)
+returns bigint
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_balance bigint;
+begin
+  if p_uid is null then
+    raise exception 'user is required';
+  end if;
+  if p_amount <= 0 then
+    raise exception 'amount must be positive';
+  end if;
+
+  -- 사용자별 직렬화 후 멱등 확인.
+  perform pg_advisory_xact_lock(hashtextextended(p_uid::text, 0));
+
+  select coalesce((
+    select balance_after from public.cash_transactions
+    where user_id = p_uid order by created_at desc limit 1
+  ), 0) into v_balance;
+
+  -- 이미 처리된 결제면 적립하지 않고 현재 잔액 반환.
+  if exists (select 1 from public.payment_events where payment_id = p_payment_id) then
+    return v_balance;
+  end if;
+
+  insert into public.payment_events (payment_id, user_id, amount)
+  values (p_payment_id, p_uid, p_amount);
+
+  v_balance := v_balance + p_amount;
+  insert into public.cash_transactions (user_id, type, amount, balance_after, memo)
+  values (p_uid, 'charge', p_amount, v_balance, coalesce(p_memo, '충전'));
+
+  return v_balance;
+end;
+$$;
+
+revoke all on function public.credit_payment(text, bigint, uuid, text) from public, anon, authenticated;
+grant execute on function public.credit_payment(text, bigint, uuid, text) to service_role;

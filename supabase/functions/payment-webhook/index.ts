@@ -67,15 +67,16 @@ Deno.serve(async (req: Request) => {
   const amountKrw = detail.amount?.total as number | undefined;
   if (!userId || !amountKrw) return json({ error: "missing user or amount" }, 400);
 
-  // 3) service_role 로 적립 (charge_cash 는 service_role 전용).
+  // 3) service_role 로 적립. credit_payment 는 payment_id 기준 멱등 처리되므로
+  //    동일 웹훅이 재전송돼도 중복 적립되지 않습니다.
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
-  const { error } = await admin.rpc("charge_cash", {
+  const { error } = await admin.rpc("credit_payment", {
+    p_payment_id: payment.paymentId,
     p_amount: cashFor(amountKrw),
-    p_memo: `충전 (${payment.paymentId})`,
     p_uid: userId,
+    p_memo: `충전 (${payment.paymentId})`,
   });
   if (error) return json({ error: error.message }, 500);
 
-  // TODO(payment): 멱등 처리 — paymentId 를 저장해 동일 웹훅 재수신 시 중복 적립 방지.
   return json({ ok: true });
 });

@@ -9,17 +9,20 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
 import { useWallet } from "@/components/WalletProvider";
+import { useOrders } from "@/components/OrdersProvider";
 import { ChargeModal } from "@/components/ChargeModal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PRODUCT_LIST } from "@/lib/products";
 import { formatCash, txnLabel } from "@/lib/cash";
+import { ORDER_STATUS_LABEL, ORDER_STATUS_STYLE } from "@/lib/orders";
 import { isAdminUser } from "@/lib/admin";
 
 export default function MyPage() {
   const router = useRouter();
   const { user, isAuthenticated, hydrated } = useAuth();
   const { balance, transactions } = useWallet();
+  const { orders } = useOrders();
   const [chargeOpen, setChargeOpen] = useState(false);
   const isAdmin = isAdminUser(user);
 
@@ -144,6 +147,58 @@ export default function MyPage() {
               </span>
             </Link>
           )}
+
+          {/* My orders */}
+          <section className="mt-10">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-slate-900">내 주문</h2>
+              <Link href="/pricing" className="text-sm font-semibold text-emerald-600 hover:underline">
+                상품 주문하기 →
+              </Link>
+            </div>
+            {orders.length === 0 ? (
+              <div className="mt-4 rounded-2xl border border-dashed border-slate-200 bg-white p-8 text-center">
+                <p className="text-sm text-slate-500">아직 주문한 내역이 없습니다.</p>
+                <Link
+                  href="/pricing"
+                  className="mt-3 inline-block rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                >
+                  상품 둘러보기
+                </Link>
+              </div>
+            ) : (
+              <ul className="mt-4 space-y-2.5">
+                {orders.map((o) => (
+                  <li
+                    key={o.id}
+                    className="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-slate-800">
+                        {o.productName}
+                        {o.qty > 1 && <span className="ml-1 text-slate-400">×{o.qty}</span>}
+                      </p>
+                      <p className="mt-0.5 text-xs text-slate-400">
+                        {new Date(o.createdAt).toLocaleString("ko-KR", {
+                          month: "2-digit",
+                          day: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                        {" · "}
+                        {formatCash(o.amountCash)}
+                      </p>
+                    </div>
+                    <span
+                      className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${ORDER_STATUS_STYLE[o.status]}`}
+                    >
+                      {ORDER_STATUS_LABEL[o.status]}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
 
           <h2 className="mt-10 text-lg font-bold text-slate-900">서비스 현황</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">

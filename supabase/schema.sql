@@ -111,3 +111,36 @@ grant execute on function public.charge_cash(bigint, text, uuid) to service_role
 -- use_cash 는 본인 잔액에서 차감하므로 로그인 사용자가 호출 가능합니다.
 revoke all on function public.use_cash(bigint, text) from public, anon;
 grant execute on function public.use_cash(bigint, text) to authenticated, service_role;
+
+-- 주문 테이블 --------------------------------------------------------------
+create table if not exists public.orders (
+  id           uuid primary key default gen_random_uuid(),
+  user_id      uuid not null references auth.users (id) on delete cascade,
+  product_name text not null,
+  amount_cash  bigint not null,
+  qty          integer not null default 1,
+  status       text not null default 'received'
+                 check (status in ('received','in_progress','done','canceled')),
+  created_at   timestamptz not null default now()
+);
+
+create index if not exists orders_user_created_idx
+  on public.orders (user_id, created_at desc);
+
+alter table public.orders enable row level security;
+
+-- 본인 주문만 조회 가능.
+drop policy if exists "own orders readable" on public.orders;
+create policy "own orders readable"
+  on public.orders for select
+  using (auth.uid() = user_id);
+
+-- 본인 주문만 생성 가능 (결제 차감 성공 후 기록).
+drop policy if exists "own orders insertable" on public.orders;
+create policy "own orders insertable"
+  on public.orders for insert
+  with check (auth.uid() = user_id);
+
+-- 상태 변경(UPDATE)/삭제는 클라이언트에 허용하지 않습니다. 관리자 상태 변경은
+-- 서버(service_role) 또는 is_admin() 정책을 둔 update_order_status RPC로 처리하세요.
+-- (정의된 UPDATE/DELETE 정책이 없으므로 anon/authenticated 의 변경은 거부됩니다.)

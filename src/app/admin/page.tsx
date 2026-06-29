@@ -15,17 +15,10 @@ import {
   getAdminOverview,
   isAdminUser,
   isAdminBackendConfigured,
-  ORDER_STATUS_LABEL,
+  updateOrderStatus,
   type AdminOverview,
-  type OrderStatus,
 } from "@/lib/admin";
-
-const STATUS_STYLE: Record<OrderStatus, string> = {
-  received: "bg-sky-50 text-sky-700",
-  in_progress: "bg-amber-50 text-amber-700",
-  done: "bg-emerald-50 text-emerald-700",
-  canceled: "bg-slate-100 text-slate-500",
-};
+import { ORDER_STATUS_LABEL, ORDER_STATUSES, type OrderStatus } from "@/lib/orders";
 
 function fmtDate(iso: string): string {
   return new Date(iso).toLocaleString("ko-KR", {
@@ -58,6 +51,24 @@ export default function AdminPage() {
       void getAdminOverview().then(setData);
     }
   }, [hydrated, isAuthenticated, isAdmin]);
+
+  const changeStatus = async (orderId: string, status: OrderStatus) => {
+    // Optimistic local update; persistence is a backend TODO (see lib/admin.ts).
+    setData(
+      (prev) =>
+        prev && {
+          ...prev,
+          recentOrders: prev.recentOrders.map((o) =>
+            o.id === orderId ? { ...o, status } : o,
+          ),
+        },
+    );
+    try {
+      await updateOrderStatus(orderId, status);
+    } catch {
+      /* demo no-op */
+    }
+  };
 
   if (!hydrated || !isAuthenticated || !isAdmin) return null;
 
@@ -112,11 +123,18 @@ export default function AdminPage() {
                         {formatCash(o.amountCash)}
                       </td>
                       <td className="px-3 py-3">
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${STATUS_STYLE[o.status]}`}
+                        <select
+                          value={o.status}
+                          onChange={(e) => changeStatus(o.id, e.target.value as OrderStatus)}
+                          aria-label="주문 상태 변경"
+                          className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-emerald-400"
                         >
-                          {ORDER_STATUS_LABEL[o.status]}
-                        </span>
+                          {ORDER_STATUSES.map((s) => (
+                            <option key={s} value={s}>
+                              {ORDER_STATUS_LABEL[s]}
+                            </option>
+                          ))}
+                        </select>
                       </td>
                       <td className="px-3 py-3 text-xs text-slate-400">{fmtDate(o.createdAt)}</td>
                     </tr>

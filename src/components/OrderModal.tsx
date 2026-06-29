@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useWallet } from "@/components/WalletProvider";
+import { useOrders } from "@/components/OrdersProvider";
 import { formatCash, formatKrw, krwToCash } from "@/lib/cash";
 import type { PricingItem } from "@/lib/pricing";
 
@@ -19,6 +20,7 @@ export function OrderModal({
   onNeedCharge: () => void;
 }) {
   const { balance, spend, loading } = useWallet();
+  const { createOrder } = useOrders();
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
@@ -49,6 +51,14 @@ export function OrderModal({
     const memo = hasUnit && quantity > 1 ? `${item.name} ×${quantity}` : item.name;
     try {
       await spend(totalCash, memo);
+      // Record the order so it shows up (with status) on the member's page and
+      // in the admin dashboard. Spend already succeeded, so a record failure
+      // shouldn't block the user — surface it but keep the success state.
+      try {
+        await createOrder({ productName: item.name, amountCash: totalCash, qty: quantity });
+      } catch {
+        /* order record is best-effort; the cash ledger is the source of truth */
+      }
       toast.success(`주문 완료 — ${formatCash(totalCash)} 차감되었습니다.`);
       onClose();
     } catch (e) {

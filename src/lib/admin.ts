@@ -9,6 +9,7 @@
 import { isSupabaseConfigured } from "@/lib/supabase";
 import type { User } from "@/components/AuthProvider";
 import type { CashTxnType } from "@/lib/cash";
+import type { OrderStatus } from "@/lib/orders";
 
 /** Parsed admin email allowlist (lowercased). */
 export function adminEmails(): string[] {
@@ -29,8 +30,6 @@ export function isAdminUser(user: User | null): boolean {
 
 /** True when admin numbers come from a real backend (vs. demo placeholders). */
 export const isAdminBackendConfigured = isSupabaseConfigured;
-
-export type OrderStatus = "received" | "in_progress" | "done" | "canceled";
 
 export interface AdminOrder {
   id: string;
@@ -71,13 +70,6 @@ export interface AdminOverview {
   members: AdminMember[];
 }
 
-export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
-  received: "접수",
-  in_progress: "진행중",
-  done: "완료",
-  canceled: "취소",
-};
-
 export const TXN_TYPE_LABEL: Record<CashTxnType, string> = {
   charge: "충전",
   use: "사용",
@@ -94,6 +86,17 @@ export const TXN_TYPE_LABEL: Record<CashTxnType, string> = {
 export async function getAdminOverview(): Promise<AdminOverview> {
   // TODO(backend): replace with real queries when isAdminBackendConfigured.
   return DEMO_OVERVIEW;
+}
+
+/**
+ * Update an order's status.
+ * TODO(backend): persist via an admin-only path — an `update_order_status` RPC
+ * guarded by an is_admin() policy, or a service-role server action. In demo
+ * mode this is a no-op and the dashboard updates its local state optimistically.
+ */
+export async function updateOrderStatus(orderId: string, status: OrderStatus): Promise<void> {
+  void orderId;
+  void status;
 }
 
 // --- Demo (placeholder) data — clearly flagged in the UI --------------------

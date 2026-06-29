@@ -16,7 +16,7 @@ import {
 } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { useAuth } from "@/components/AuthProvider";
-import { requestCharge } from "@/lib/payments";
+import { requestCharge, isPgConfigured } from "@/lib/payments";
 import type { CashTxn } from "@/lib/cash";
 
 interface WalletContextValue {
@@ -116,13 +116,18 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       try {
         if (supabase) {
-          // Real backend: crediting is intentionally NOT possible from the
-          // client. charge_cash is locked to service_role and must be invoked
-          // by the server only after a PG webhook verifies the payment (see
-          // supabase/schema.sql + payments.ts). Until the PG is integrated,
-          // top-ups are unavailable in real mode.
-          // TODO(payment): launch PG checkout here; server verifies + credits.
-          throw new Error("결제(PG) 연동 준비 중입니다. 잠시만 기다려 주세요.");
+          if (!isPgConfigured) {
+            // Real backend but no PG yet: crediting is intentionally impossible
+            // from the client (charge_cash is service_role only).
+            throw new Error("결제(PG) 연동 준비 중입니다. 잠시만 기다려 주세요.");
+          }
+          // PG mode: launch PortOne checkout. The cash is credited SERVER-SIDE
+          // by the payment-webhook after PortOne verifies the payment; we just
+          // re-sync the balance here (the webhook is the source of truth).
+          const result = await requestCharge(krw, { userId: user.id });
+          if (!result.ok) throw new Error(result.error ?? "충전에 실패했습니다.");
+          await refresh();
+          return;
         }
 
         const result = await requestCharge(krw);
@@ -150,7 +155,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       }
     },
-    [supabase, user],
+    [supabase, user, refresh],
   );
 
   const spend = useCallback(

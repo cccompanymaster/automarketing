@@ -52,6 +52,13 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           # AI blog writer proxy (optional). Empty = demo mode.
           NEXT_PUBLIC_BLOG_API_URL: ${{ vars.NEXT_PUBLIC_BLOG_API_URL }}
+          # Conversion tracking (GTM container). Empty = console fallback.
+          NEXT_PUBLIC_GTM_ID: ${{ vars.NEXT_PUBLIC_GTM_ID }}
+          # Admin dashboard allowlist (comma-separated emails). Empty = no admin.
+          NEXT_PUBLIC_ADMIN_EMAILS: ${{ vars.NEXT_PUBLIC_ADMIN_EMAILS }}
+          # Payment (PortOne) client keys. Empty = test-charge stub.
+          NEXT_PUBLIC_PORTONE_STORE_ID: ${{ vars.NEXT_PUBLIC_PORTONE_STORE_ID }}
+          NEXT_PUBLIC_PORTONE_CHANNEL_KEY: ${{ vars.NEXT_PUBLIC_PORTONE_CHANNEL_KEY }}
         run: npm run build
 
       - name: Disable Jekyll (serve _next assets as-is)

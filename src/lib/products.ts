@@ -564,3 +564,105 @@ export const PRODUCT_SLUGS: ProductSlug[] = [
 export function getProduct(slug: string): Product | undefined {
   return PRODUCTS[slug as ProductSlug];
 }
+
+// --- Product groups (category cards) ---------------------------------------
+// Similar products are grouped under one landing card. Clicking the card opens
+// a category page where the members are split into tabs. Individual product
+// pages still exist for deep links / SEO.
+
+export interface ProductGroup {
+  /** URL key for the category page (must not collide with a ProductSlug). */
+  key: string;
+  icon: string;
+  name: string;
+  summary: string[];
+  cta: string;
+  accent: Product["accent"];
+  /** Member products shown as tabs, in order. */
+  memberSlugs: ProductSlug[];
+}
+
+const GROUP_PLACE: ProductGroup = {
+  key: "place-map",
+  icon: "📍",
+  name: "플레이스·지도 상위노출",
+  summary: ["네이버 플레이스·카카오맵에서 우리 매장을", "상위에 노출하고 방문 고객을 늘립니다."],
+  cta: "플레이스 진단 받기",
+  accent: PRODUCTS.place.accent,
+  memberSlugs: ["place", "place-traffic", "kakaomap"],
+};
+
+const GROUP_BLOG: ProductGroup = {
+  key: "blog-pack",
+  icon: "✍️",
+  name: "블로그 마케팅",
+  summary: ["블로그 상위 노출부터 이웃 관리까지", "검색 신뢰도를 한 번에 키웁니다."],
+  cta: "블로그 마케팅 보기",
+  accent: PRODUCTS.blog.accent,
+  memberSlugs: ["blog", "blog-neighbor"],
+};
+
+export const PRODUCT_GROUPS: ProductGroup[] = [GROUP_PLACE, GROUP_BLOG];
+
+export const GROUP_KEYS: string[] = PRODUCT_GROUPS.map((g) => g.key);
+
+export function getGroup(key: string): ProductGroup | undefined {
+  return PRODUCT_GROUPS.find((g) => g.key === key);
+}
+
+export function groupMembers(group: ProductGroup): Product[] {
+  return group.memberSlugs.map((s) => PRODUCTS[s]);
+}
+
+// --- Landing cards (groups + standalone products, in display order) ---------
+
+export interface ServiceCardData {
+  href: string;
+  icon: string;
+  brand?: BrandKey;
+  name: string;
+  summary: string[];
+  cta: string;
+  accent: Product["accent"];
+  /** Value sent as product_slug with the cta_click event. */
+  trackId: string;
+}
+
+function productCard(p: Product): ServiceCardData {
+  return {
+    href: `/services/${p.slug}`,
+    icon: p.icon,
+    brand: p.brand,
+    name: p.name,
+    summary: p.summary,
+    cta: p.cta,
+    accent: p.accent,
+    trackId: p.slug,
+  };
+}
+
+function groupCard(g: ProductGroup): ServiceCardData {
+  return {
+    href: `/services/${g.key}`,
+    icon: g.icon,
+    name: g.name,
+    summary: g.summary,
+    cta: g.cta,
+    accent: g.accent,
+    trackId: g.key,
+  };
+}
+
+/** Ordered cards for the landing grid: 2 category groups + standalone products. */
+export const LANDING_CARDS: ServiceCardData[] = [
+  groupCard(GROUP_PLACE),
+  groupCard(GROUP_BLOG),
+  productCard(PRODUCTS.shopping),
+  productCard(PRODUCTS.instagram),
+  productCard(PRODUCTS.youtube),
+  productCard(PRODUCTS.blogwrite),
+  productCard(PRODUCTS.experience),
+  productCard(PRODUCTS.press),
+  productCard(PRODUCTS.refund),
+  productCard(PRODUCTS.consulting),
+];

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { PRODUCT_SLUGS } from "@/lib/products";
+import { PRODUCT_SLUGS, GROUP_KEYS } from "@/lib/products";
 
 // Emit a static sitemap.xml at build time (required by output: "export").
 export const dynamic = "force-static";
@@ -11,6 +11,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: SITE_URL, priority: 1 },
     { url: `${SITE_URL}/start`, priority: 0.9 },
+    ...GROUP_KEYS.map((key) => ({
+      url: `${SITE_URL}/services/${key}`,
+      priority: 0.85,
+    })),
     ...PRODUCT_SLUGS.map((slug) => ({
       url: `${SITE_URL}/services/${slug}`,
       priority: 0.8,

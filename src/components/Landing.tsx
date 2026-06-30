@@ -1,7 +1,7 @@
 // Landing page composition: hero + service cards + success stories.
 // Header/footer are provided by the page layout.
 
-import { PRODUCT_LIST } from "@/lib/products";
+import { LANDING_CARDS } from "@/lib/products";
 import { SUCCESS_STORIES } from "@/lib/successStories";
 import { TrackedCta } from "@/components/TrackedCta";
 import { Hero } from "@/components/Hero";
@@ -33,8 +33,8 @@ export function Landing() {
         </div>
 
         <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {PRODUCT_LIST.map((product) => (
-            <ServiceCard key={product.slug} product={product} />
+          {LANDING_CARDS.map((card) => (
+            <ServiceCard key={card.href} card={card} />
           ))}
         </div>
       </section>

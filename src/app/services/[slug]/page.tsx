@@ -7,7 +7,8 @@ import { RefundLanding } from "@/components/RefundLanding";
 import { PressLanding } from "@/components/PressLanding";
 import { BrandLogo } from "@/components/BrandLogo";
 import { GroupTabs } from "@/components/GroupTabs";
-import { ProductDetailBody } from "@/components/ProductDetailBody";
+import { TrackedCta } from "@/components/TrackedCta";
+import { ProductDetailBody, pricingHref } from "@/components/ProductDetailBody";
 import {
   getProduct,
   getGroup,
@@ -25,11 +26,21 @@ export async function generateMetadata({
   const { slug } = await params;
   const group = getGroup(slug);
   if (group) {
-    return { title: group.name, description: group.summary.join(" ") };
+    return {
+      title: group.name,
+      description: group.summary.join(" "),
+      alternates: { canonical: `/services/${slug}/` },
+      openGraph: { title: group.name, description: group.summary.join(" "), url: `/services/${slug}/` },
+    };
   }
   const product = getProduct(slug);
   if (!product) return {};
-  return { title: product.name, description: product.detail.subhead };
+  return {
+    title: product.name,
+    description: product.detail.subhead,
+    alternates: { canonical: `/services/${slug}/` },
+    openGraph: { title: product.name, description: product.detail.subhead, url: `/services/${slug}/` },
+  };
 }
 
 // Pre-render every product detail page and every group category page.
@@ -142,13 +153,30 @@ export default async function ServiceDetailPage({
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
                   {detail.subhead}
                 </p>
-                {detail.fromPrice && (
-                  <p className="mt-4 inline-flex items-baseline gap-1.5 rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-slate-600 ring-1 ring-slate-200">
-                    최소
-                    <span className="num text-lg font-extrabold text-emerald-600">{detail.fromPrice}</span>
-                    부터 ~
-                  </p>
-                )}
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  {detail.fromPrice && (
+                    <p className="inline-flex items-baseline gap-1.5 rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-slate-600 ring-1 ring-slate-200">
+                      최소
+                      <span className="num text-lg font-extrabold text-emerald-700">{detail.fromPrice}</span>
+                      부터 ~
+                    </p>
+                  )}
+                  {/* Above-the-fold CTA — the main CTA at the page bottom stays */}
+                  <TrackedCta
+                    href={
+                      product.slug === "blogwrite"
+                        ? "/tools/blog-writer"
+                        : `/start?service=${product.slug}`
+                    }
+                    authedHref={
+                      product.slug === "blogwrite" ? "/tools/blog-writer" : pricingHref(product.slug)
+                    }
+                    slug={product.slug}
+                    className={`inline-flex min-h-11 items-center rounded-xl px-6 py-3 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${accent.button}`}
+                  >
+                    {product.cta}
+                  </TrackedCta>
+                </div>
               </div>
             </div>
           </div>

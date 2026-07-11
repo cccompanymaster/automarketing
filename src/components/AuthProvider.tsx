@@ -152,9 +152,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginWithKakao = useCallback(async (): Promise<User> => {
     if (supabase) {
       // Requires Kakao provider enabled in Supabase Auth.
+      // Return to the deployed site root (includes the GitHub Pages base path).
+      // window.location.origin alone would drop /automarketing and 404.
+      const returnTo =
+        process.env.NEXT_PUBLIC_SITE_URL ??
+        (typeof window !== "undefined"
+          ? `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}`
+          : undefined);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "kakao",
-        options: { redirectTo: typeof window !== "undefined" ? window.location.origin : undefined },
+        options: { redirectTo: returnTo },
       });
       if (error) throw new Error(error.message);
       // OAuth redirects away; the returned value is unused.

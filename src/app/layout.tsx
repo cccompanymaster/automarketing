@@ -6,6 +6,8 @@ import { WalletProvider } from "@/components/WalletProvider";
 import { OrdersProvider } from "@/components/OrdersProvider";
 import { GtmScript, GtmNoScript } from "@/components/GtmScript";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const SITE_TITLE = "마케팅방주 — 대행사 없이 시작하는 우리 매장 마케팅";
 const SITE_DESCRIPTION =
   "소상공인·온라인 셀러·매장 운영자를 위한 셀프 마케팅 플랫폼. 플레이스 상위 노출, 쇼핑·블로그 광고, 광고비 환급을 직접 손쉽게 시작하세요.";
@@ -26,9 +28,14 @@ export const metadata: Metadata = {
     title: "마케팅방주",
     statusBarStyle: "default",
   },
+  // Static export does not basePath-prefix metadata assets — do it explicitly,
+  // otherwise the tag points at /icon.svg on the domain root and 404s.
   icons: {
-    icon: "/icon.svg",
-    apple: "/icon.svg",
+    icon: `${BASE_PATH}/icon.svg`,
+    apple: `${BASE_PATH}/icon.svg`,
+  },
+  alternates: {
+    canonical: "/",
   },
   openGraph: {
     title: SITE_TITLE,
@@ -36,6 +43,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     siteName: "마케팅방주",
+    url: "/",
   },
 };
 

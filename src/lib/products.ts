@@ -71,7 +71,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-emerald-50 text-emerald-700",
       iconBg: "bg-emerald-100",
       cardRing: "hover:ring-emerald-200",
-      button: "bg-emerald-600 hover:bg-emerald-700 text-white",
+      button: "bg-emerald-700 hover:bg-emerald-800 text-white",
       gradient: "from-emerald-50 to-white",
     },
     detail: {
@@ -107,7 +107,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-orange-50 text-orange-700",
       iconBg: "bg-orange-100",
       cardRing: "hover:ring-orange-200",
-      button: "bg-orange-500 hover:bg-orange-600 text-white",
+      button: "bg-orange-700 hover:bg-orange-800 text-white",
       gradient: "from-orange-50 to-white",
     },
     detail: {
@@ -143,7 +143,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-sky-50 text-sky-700",
       iconBg: "bg-sky-100",
       cardRing: "hover:ring-sky-200",
-      button: "bg-sky-600 hover:bg-sky-700 text-white",
+      button: "bg-sky-700 hover:bg-sky-800 text-white",
       gradient: "from-sky-50 to-white",
     },
     detail: {
@@ -178,7 +178,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-cyan-50 text-cyan-700",
       iconBg: "bg-cyan-100",
       cardRing: "hover:ring-cyan-200",
-      button: "bg-cyan-600 hover:bg-cyan-700 text-white",
+      button: "bg-cyan-700 hover:bg-cyan-800 text-white",
       gradient: "from-cyan-50 to-white",
     },
     detail: {
@@ -214,7 +214,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-green-50 text-green-700",
       iconBg: "bg-green-100",
       cardRing: "hover:ring-green-200",
-      button: "bg-green-600 hover:bg-green-700 text-white",
+      button: "bg-green-700 hover:bg-green-800 text-white",
       gradient: "from-green-50 to-white",
     },
     detail: {
@@ -250,7 +250,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-indigo-50 text-indigo-700",
       iconBg: "bg-indigo-100",
       cardRing: "hover:ring-indigo-200",
-      button: "bg-indigo-600 hover:bg-indigo-700 text-white",
+      button: "bg-indigo-700 hover:bg-indigo-800 text-white",
       gradient: "from-indigo-50 to-white",
     },
     detail: {
@@ -285,7 +285,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-rose-50 text-rose-700",
       iconBg: "bg-rose-100",
       cardRing: "hover:ring-rose-200",
-      button: "bg-rose-500 hover:bg-rose-600 text-white",
+      button: "bg-rose-700 hover:bg-rose-800 text-white",
       gradient: "from-rose-50 to-white",
     },
     detail: {
@@ -321,7 +321,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-pink-50 text-pink-700",
       iconBg: "bg-pink-100",
       cardRing: "hover:ring-pink-200",
-      button: "bg-pink-600 hover:bg-pink-700 text-white",
+      button: "bg-pink-700 hover:bg-pink-800 text-white",
       gradient: "from-pink-50 to-white",
     },
     detail: {
@@ -358,7 +358,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-red-50 text-red-700",
       iconBg: "bg-red-100",
       cardRing: "hover:ring-red-200",
-      button: "bg-red-600 hover:bg-red-700 text-white",
+      button: "bg-red-700 hover:bg-red-800 text-white",
       gradient: "from-red-50 to-white",
     },
     detail: {
@@ -395,7 +395,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-yellow-50 text-yellow-700",
       iconBg: "bg-yellow-100",
       cardRing: "hover:ring-yellow-200",
-      button: "bg-yellow-500 hover:bg-yellow-600 text-white",
+      button: "bg-yellow-400 hover:bg-yellow-300 text-slate-900",
       gradient: "from-yellow-50 to-white",
     },
     detail: {
@@ -431,7 +431,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-lime-50 text-lime-700",
       iconBg: "bg-lime-100",
       cardRing: "hover:ring-lime-200",
-      button: "bg-lime-600 hover:bg-lime-700 text-white",
+      button: "bg-lime-700 hover:bg-lime-800 text-white",
       gradient: "from-lime-50 to-white",
     },
     detail: {
@@ -467,7 +467,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-violet-50 text-violet-700",
       iconBg: "bg-violet-100",
       cardRing: "hover:ring-violet-200",
-      button: "bg-violet-600 hover:bg-violet-700 text-white",
+      button: "bg-violet-700 hover:bg-violet-800 text-white",
       gradient: "from-violet-50 to-white",
     },
     detail: {
@@ -502,7 +502,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       chip: "bg-teal-50 text-teal-700",
       iconBg: "bg-teal-100",
       cardRing: "hover:ring-teal-200",
-      button: "bg-teal-600 hover:bg-teal-700 text-white",
+      button: "bg-teal-700 hover:bg-teal-800 text-white",
       gradient: "from-teal-50 to-white",
     },
     detail: {

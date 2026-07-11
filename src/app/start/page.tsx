@@ -2,24 +2,37 @@
 
 // /start — new/returning branch → onboarding → signup/login.
 // All transitions happen within this single screen (no URL navigation between
-// steps), driven by local state.
+// steps), driven by local state. A `?service=<slug>` param (set by product
+// CTAs) keeps the chosen product visible through the funnel and routes the
+// new member to that product's order rows after signup.
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { AuthEntry } from "@/components/AuthEntry";
 import { Onboarding } from "@/components/Onboarding";
 import { SignupForm } from "@/components/SignupForm";
 import { LoginForm } from "@/components/LoginForm";
+import { pricingHref } from "@/components/ProductDetailBody";
 import { COMPANY } from "@/lib/company";
+import { getProduct } from "@/lib/products";
 
 type Stage = "entry" | "onboarding" | "signup" | "login";
 
-export default function StartPage() {
+function StartFunnel() {
   const [stage, setStage] = useState<Stage>("entry");
+  const cardRef = useRef<HTMLDivElement>(null);
 
-  // Long forms on mobile: snap back to the top whenever the stage changes.
+  // Product carried over from a service-detail CTA (may be absent).
+  const searchParams = useSearchParams();
+  const service = getProduct(searchParams.get("service") ?? "");
+  const afterHref = service ? pricingHref(service.slug) : undefined;
+
+  // Long forms on mobile: snap back to the top whenever the stage changes,
+  // and move keyboard focus onto the new step so it isn't dropped on BODY.
   useEffect(() => {
     window.scrollTo({ top: 0 });
+    cardRef.current?.focus({ preventScroll: true });
   }, [stage]);
 
   return (
@@ -33,7 +46,20 @@ export default function StartPage() {
           <span>{COMPANY.serviceName}</span>
         </Link>
 
-        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100 sm:p-8">
+        {service && (
+          <div className="mb-4 flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3 text-sm ring-1 ring-emerald-100">
+            <span aria-hidden="true">{service.icon}</span>
+            <span className="text-emerald-900">
+              선택한 서비스: <b>{service.name}</b>
+            </span>
+          </div>
+        )}
+
+        <div
+          ref={cardRef}
+          tabIndex={-1}
+          className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100 outline-none sm:p-8"
+        >
           {stage === "entry" && (
             <AuthEntry
               onNew={() => setStage("onboarding")}
@@ -46,7 +72,7 @@ export default function StartPage() {
           )}
 
           {stage === "signup" && (
-            <SignupForm onSwitchToLogin={() => setStage("login")} />
+            <SignupForm onSwitchToLogin={() => setStage("login")} afterHref={afterHref} />
           )}
 
           {stage === "login" && (
@@ -65,5 +91,14 @@ export default function StartPage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function StartPage() {
+  // useSearchParams requires a Suspense boundary for static export.
+  return (
+    <Suspense fallback={null}>
+      <StartFunnel />
+    </Suspense>
   );
 }

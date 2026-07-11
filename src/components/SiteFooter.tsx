@@ -29,11 +29,11 @@ export function SiteFooter() {
             </p>
           </div>
 
-          <nav className="flex gap-4 text-sm font-medium text-slate-600">
-            <Link href="/terms" className="transition hover:text-slate-900">
+          <nav className="flex gap-2 text-sm font-medium text-slate-600">
+            <Link href="/terms" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
               이용약관
             </Link>
-            <Link href="/privacy" className="transition hover:text-slate-900">
+            <Link href="/privacy" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
               개인정보처리방침
             </Link>
           </nav>

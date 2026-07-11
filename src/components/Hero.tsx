@@ -55,8 +55,8 @@ export function Hero() {
 
   useEffect(() => {
     if (intro !== true) return;
-    tween(rankRef.current, 48, 1, 1500, 400);
-    tween(expRef.current, 0, 320, 1700, 500);
+    tween(rankRef.current, 48, 1, 800, 150);
+    tween(expRef.current, 0, 320, 900, 200);
   }, [intro]);
 
   return (
@@ -77,7 +77,7 @@ export function Hero() {
           gap: 30,
           background:
             "radial-gradient(120% 95% at 50% 35%,#e6faee 0%,#f2fbf6 55%,#ffffff 100%)",
-          animation: "loaderOut 3s ease forwards",
+          animation: "loaderOut 1.6s ease forwards",
         }}
       >
         <div
@@ -182,14 +182,14 @@ export function Hero() {
           }}
         >
           {/* left copy */}
-          <div style={{ flex: "1 1 420px", minWidth: 300 }}>
-            <div className="hero-anim" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px", borderRadius: 999, background: "rgba(24,192,106,.13)", border: "1px solid rgba(24,192,106,.28)", animation: "rise .7s ease 2.55s both" }}>
+          <div style={{ flex: "1 1 420px", minWidth: 0 }}>
+            <div className="hero-anim" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px", borderRadius: 999, background: "rgba(24,192,106,.13)", border: "1px solid rgba(24,192,106,.28)", animation: "rise .7s ease 1.15s both" }}>
               <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#10b35f", animation: "blink 1.4s infinite" }} />
               <span style={{ fontWeight: 700, fontSize: 13, color: "#0e7a44", letterSpacing: "-.01em" }}>
                 소상공인 · 온라인 셀러 · 브랜드사를 위한 셀프 마케팅
               </span>
             </div>
-            <h1 className="hero-anim" style={{ margin: "22px 0 0", fontWeight: 800, fontSize: "clamp(34px,5.2vw,62px)", lineHeight: 1.08, letterSpacing: "-.035em", color: "#13251a", textWrap: "balance", animation: "rise .8s ease 2.65s both" }}>
+            <h1 className="hero-anim" style={{ margin: "22px 0 0", fontWeight: 800, fontSize: "clamp(34px,5.2vw,62px)", lineHeight: 1.08, letterSpacing: "-.035em", color: "#13251a", textWrap: "balance", animation: "rise .8s ease 1.25s both" }}>
               대행사 없이도
               <br />
               손쉽게{" "}
@@ -200,19 +200,19 @@ export function Hero() {
               <br />
               시작하세요
             </h1>
-            <p className="hero-anim" style={{ margin: "22px 0 0", fontSize: "clamp(15px,1.5vw,19px)", lineHeight: 1.6, color: "#4d6657", maxWidth: 440, animation: "rise .8s ease 2.78s both" }}>
+            <p className="hero-anim" style={{ margin: "22px 0 0", fontSize: "clamp(15px,1.5vw,19px)", lineHeight: 1.6, color: "#4d6657", maxWidth: 440, animation: "rise .8s ease 1.35s both" }}>
               상위 노출부터 방문 고객 증가, 판매량 극대화, 광고비 환급까지 — 우리 매장에 필요한 것만 골라 바로 시작하세요.
             </p>
-            <div className="hero-anim" style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 34, animation: "rise .8s ease 2.9s both" }}>
-              <Link href="/start" style={{ position: "relative", overflow: "hidden", textDecoration: "none", fontWeight: 800, fontSize: 16, color: "#fff", padding: "16px 30px", borderRadius: 14, background: "linear-gradient(135deg,#18C06A,#0C8A4A)", boxShadow: "0 14px 30px rgba(16,150,80,.38)" }}>
+            <div className="hero-anim" style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 34, animation: "rise .8s ease 1.45s both" }}>
+              <Link href="/start" style={{ position: "relative", overflow: "hidden", textDecoration: "none", fontWeight: 800, fontSize: 16, color: "#fff", padding: "16px 30px", borderRadius: 14, background: "linear-gradient(135deg,#0b8f52,#065f46)", boxShadow: "0 14px 30px rgba(6,95,70,.38)" }}>
                 무료로 시작하기
-                <span style={{ position: "absolute", top: 0, left: 0, width: "55%", height: "100%", background: "linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent)", animation: "sheen 3.4s ease-in-out 3.4s infinite" }} />
+                <span style={{ position: "absolute", top: 0, left: 0, width: "55%", height: "100%", background: "linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent)", animation: "sheen 3.4s ease-in-out 2s infinite" }} />
               </Link>
               <a href="#services" style={{ border: "1.5px solid #cfe4d8", textDecoration: "none", fontWeight: 700, fontSize: 16, color: "#1f5a3c", padding: "16px 28px", borderRadius: 14, background: "rgba(255,255,255,.7)" }}>
                 서비스 둘러보기 →
               </a>
             </div>
-            <div className="hero-anim" style={{ display: "flex", gap: 26, marginTop: 38, animation: "rise .8s ease 3s both" }}>
+            <div className="hero-anim" style={{ display: "flex", gap: 26, marginTop: 38, animation: "rise .8s ease 1.55s both" }}>
               <div>
                 <div style={{ fontWeight: 800, fontSize: 24, color: "#0e7a44", letterSpacing: "-.02em" }}>12,800+</div>
                 <div style={{ fontSize: 13, color: "#6b8275", fontWeight: 600 }}>함께하는 사장님</div>
@@ -223,10 +223,13 @@ export function Hero() {
                 <div style={{ fontSize: 13, color: "#6b8275", fontWeight: 600 }}>매출 성장률</div>
               </div>
             </div>
+            <p className="hero-anim" style={{ margin: "10px 0 0", fontSize: 11, color: "#8ba295", animation: "rise .8s ease 1.55s both" }}>
+              * 정식 오픈 준비 중의 예시 수치이며, 실측 지표로 순차 교체됩니다.
+            </p>
           </div>
 
           {/* right 3D scene */}
-          <div className="hero-anim" aria-hidden="true" style={{ flex: "1 1 420px", minWidth: 300, position: "relative", height: "clamp(380px,46vw,520px)", perspective: 1100, animation: "rise .9s ease 2.7s both" }}>
+          <div className="hero-anim" aria-hidden="true" style={{ flex: "1 1 420px", minWidth: 0, width: "100%", position: "relative", height: "clamp(380px,46vw,520px)", perspective: 1100, animation: "rise .9s ease 1.3s both" }}>
             {/* glossy 3D bars */}
             <div style={{ position: "absolute", bottom: 34, right: "6%", display: "flex", alignItems: "flex-end", gap: 14, height: 300, transform: "rotateX(6deg) rotateY(-12deg)", transformStyle: "preserve-3d" }}>
               <div style={{ width: 46, height: 120, borderRadius: "13px 13px 6px 6px", background: "linear-gradient(160deg,#7fe0ab,#1aa55e)", boxShadow: "0 18px 30px rgba(16,140,75,.28),inset 0 2px 0 rgba(255,255,255,.5)", transformOrigin: "bottom", animation: "barGrow 1s cubic-bezier(.2,.8,.2,1) both,barBob 3.6s ease-in-out 1.2s infinite" }} />

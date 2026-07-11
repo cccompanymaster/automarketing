@@ -17,25 +17,38 @@ export function SiteHeader() {
           <span className="text-lg">{COMPANY.serviceName}</span>
         </Link>
 
-        <nav className="flex items-center gap-2 text-sm font-medium">
+        <nav className="flex items-center gap-1 text-sm font-medium sm:gap-2">
+          {/* Discovery links — always visible so visitors can explore before signup */}
+          <Link
+            href="/#services"
+            className="hidden rounded-lg px-3 py-2.5 text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 sm:block"
+          >
+            서비스
+          </Link>
+          <Link
+            href="/pricing"
+            className="rounded-lg px-3 py-2.5 text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+          >
+            상품·요금
+          </Link>
+          <Link
+            href="/#reviews"
+            className="hidden rounded-lg px-3 py-2.5 text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 sm:block"
+          >
+            고객후기
+          </Link>
           {isAuthenticated ? (
             <>
               <Link
-                href="/pricing"
-                className="rounded-lg px-3 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
-              >
-                상품·요금
-              </Link>
-              <Link
                 href="/mypage"
-                className="rounded-lg px-3 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+                className="rounded-lg px-3 py-2.5 text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
               >
                 마이페이지
               </Link>
               <button
                 type="button"
                 onClick={logout}
-                className="rounded-lg px-3 py-2 text-slate-500 transition hover:text-slate-700"
+                className="rounded-lg px-3 py-2.5 text-slate-500 transition hover:text-slate-700"
                 title={user?.email}
               >
                 로그아웃
@@ -44,7 +57,7 @@ export function SiteHeader() {
           ) : (
             <Link
               href="/start"
-              className="rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+              className="rounded-lg bg-emerald-700 px-4 py-2.5 font-semibold text-white transition hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             >
               시작하기
             </Link>

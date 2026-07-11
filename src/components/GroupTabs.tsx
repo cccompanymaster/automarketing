@@ -37,14 +37,17 @@ export function GroupTabs({ members }: { members: Product[] }) {
   return (
     <>
       <div className="border-b border-slate-100 bg-white">
-        <div className="mx-auto flex max-w-4xl gap-2 overflow-x-auto px-5 py-3">
+        {/* Right-edge fade hints that more tabs are scrollable on narrow screens */}
+        <div
+          className="mx-auto flex max-w-4xl snap-x snap-mandatory gap-2 overflow-x-auto px-5 py-3 [mask-image:linear-gradient(90deg,#000_88%,transparent)] sm:[mask-image:none]"
+        >
           {members.map((m, i) => (
             <button
               key={m.slug}
               type="button"
               onClick={() => select(i)}
               aria-pressed={i === index}
-              className={`flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+              className={`flex min-h-11 shrink-0 snap-start items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
                 i === index
                   ? "bg-slate-900 text-white"
                   : "bg-slate-50 text-slate-600 hover:bg-slate-100"

@@ -10,6 +10,5 @@ export const COMPANY = {
   businessType: "전문, 과학 및 기술서비스업, 소매업", // 업태
   businessItem: "광고 대행업, 통신판매업", // 종목
   address: "인천광역시 연수구 인천타워대로 301, A동 16층 33호(송도동, 송도센텀하이브)", // 사업장 소재지
-  // TODO(backend): 실제 대표 이메일로 교체 (사업자등록증에는 미포함).
-  email: "help@selfmarketing.example",
+  email: "cccompanymaster@gmail.com", // 대표 문의 이메일
 } as const;

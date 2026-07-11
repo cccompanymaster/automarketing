@@ -21,7 +21,7 @@ export function AuthEntry({
         <button
           type="button"
           onClick={onNew}
-          className="w-full rounded-xl bg-emerald-600 px-5 py-4 text-left transition hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+          className="w-full rounded-xl bg-emerald-700 px-5 py-4 text-left transition hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
         >
           <span className="block text-sm font-bold text-white">처음이에요</span>
           <span className="mt-0.5 block text-xs text-emerald-50">

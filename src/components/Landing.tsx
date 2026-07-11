@@ -7,7 +7,7 @@ import { TrackedCta } from "@/components/TrackedCta";
 import { Hero } from "@/components/Hero";
 import { Stats } from "@/components/Stats";
 import { Channels } from "@/components/Channels";
-import { ServiceCard } from "@/components/ServiceCard";
+import { ServicesGrid } from "@/components/ServicesGrid";
 import { SuccessStory } from "@/components/SuccessStory";
 import { Marquee } from "@/components/Marquee";
 import { ScamNoticePopup } from "@/components/ScamNoticePopup";
@@ -32,11 +32,7 @@ export function Landing() {
           </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {LANDING_CARDS.map((card) => (
-            <ServiceCard key={card.href} card={card} />
-          ))}
-        </div>
+        <ServicesGrid cards={LANDING_CARDS} />
       </section>
 
       {/* Trust stats band */}
@@ -46,13 +42,16 @@ export function Landing() {
       <Channels />
 
       {/* Success stories — auto-scrolling banner */}
-      <section className="bg-slate-50 py-16 sm:py-20">
+      <section id="reviews" className="bg-slate-50 py-16 sm:py-20">
         <div className="mx-auto max-w-2xl px-5 text-center">
           <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
             마케팅방주와 함께한 고객 후기
           </h2>
           <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            업종과 기간, 그리고 수치로 확인하는 실제 변화입니다.
+            업종·기간·수치로 살펴보는 기대 효과 예시입니다.
+          </p>
+          <p className="mt-2 text-xs text-slate-400">
+            * 정식 오픈 준비 중의 예시 사례이며, 검증된 실제 사례로 순차 교체됩니다.
           </p>
         </div>
 

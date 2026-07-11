@@ -81,7 +81,11 @@ export function ProductDetailBody({
           to the orderable price list (deep-linked to the matching group). */}
       <section className="mt-12 text-center">
         <TrackedCta
-          href={product.slug === "blogwrite" ? "/tools/blog-writer" : "/start"}
+          href={
+            product.slug === "blogwrite"
+              ? "/tools/blog-writer"
+              : `/start?service=${product.slug}`
+          }
           authedHref={
             product.slug === "blogwrite" ? "/tools/blog-writer" : pricingHref(product.slug)
           }

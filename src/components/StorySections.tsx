@@ -43,7 +43,7 @@ function PainSection() {
           마케팅까지 직접 하라고요?
         </h2>
         <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
-          맞아요. 그래서 다들 대행사부터 찾습니다. 그런데 이런 이야기, 낯설지 않으실 거예요.
+          그래서 다들 대행사부터 찾아가죠. 그런데 막상 맡겨 보면… 이런 얘기, 한 번쯤 들어보셨을 거예요.
         </p>
       </Reveal>
 
@@ -78,28 +78,28 @@ function BridgeSection() {
     <section className="impact">
       <div className="mx-auto max-w-4xl px-5 py-24 text-center sm:py-32">
         <Reveal>
-          <p className="text-sm font-bold tracking-widest text-emerald-400">그래서 만들었습니다</p>
+          <p className="text-sm font-bold tracking-widest text-emerald-400">그래서 저희가 만들었어요</p>
           <h2 className="mt-5 text-3xl font-extrabold leading-tight text-white sm:text-5xl">
-            대행사 없이,
+            대행사 없이도,
             <br />
-            사장님이 직접.
+            사장님 손으로 직접.
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-slate-300 sm:text-lg">
-            마케팅방주는 필요한 것만 골라 쓰는 셀프 마케팅 플랫폼입니다.
+            마케팅방주는 필요한 것만 골라 쓰는 셀프 마케팅 플랫폼이에요.
             <br className="hidden sm:block" />
-            모든 상품의 가격을 먼저 공개하고, 주문부터 결과까지 내 화면에서 직접 확인합니다.
+            가격은 가입 전에 전부 보여드리고, 주문이 어떻게 되고 있는지도 내 화면에서 바로 확인할 수 있어요.
           </p>
         </Reveal>
         <Reveal delayMs={150}>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-semibold text-slate-200">
             <span className="flex items-center gap-2">
-              <span className="text-emerald-400" aria-hidden="true">✓</span> 가격 선공개
+              <span className="text-emerald-400" aria-hidden="true">✓</span> 가격, 먼저 보여드려요
             </span>
             <span className="flex items-center gap-2">
-              <span className="text-emerald-400" aria-hidden="true">✓</span> 최소 단위 주문
+              <span className="text-emerald-400" aria-hidden="true">✓</span> 필요한 만큼만 주문해요
             </span>
             <span className="flex items-center gap-2">
-              <span className="text-emerald-400" aria-hidden="true">✓</span> 진행 내역 실시간 확인
+              <span className="text-emerald-400" aria-hidden="true">✓</span> 진행 상황은 실시간으로 보여요
             </span>
           </div>
         </Reveal>
@@ -126,9 +126,9 @@ interface Chapter {
 const CHAPTERS: Chapter[] = [
   {
     no: "01",
-    eyebrow: "먼저, 발견되게",
-    title: "근처에서 검색한 손님이\n우리 가게부터 보게 하세요",
-    desc: "손님의 십중팔구는 지도를 먼저 켭니다. 네이버 플레이스와 카카오맵에서 우리 매장이 상위에 보이도록 진단부터 트래픽까지 한 번에 준비하세요.",
+    eyebrow: "첫 번째, 일단 눈에 띄어야죠",
+    title: "‘근처 맛집’ 검색한 손님한테\n우리 가게부터 보이게 해요",
+    desc: "요즘 손님들, 열에 아홉은 지도부터 켜요. 네이버 플레이스랑 카카오맵에서 우리 매장이 위쪽에 보이게 — 무료 진단부터 트래픽까지 한 번에 챙겨드릴게요.",
     links: [
       { label: "플레이스·지도 상위노출", href: "/services/place-map" },
       { label: "리워드 트래픽", href: "/services/place-map#place-traffic" },
@@ -139,9 +139,9 @@ const CHAPTERS: Chapter[] = [
   },
   {
     no: "02",
-    eyebrow: "다음, 팔리게",
-    title: "검색 결과 첫 페이지에서\n구매가 결정됩니다",
-    desc: "쇼핑 검색 상위 노출, 블로그 리뷰, SNS 반응까지 — 손님이 구매를 망설이는 순간마다 우리 상품이 보이게 만드세요.",
+    eyebrow: "두 번째, 보이면 팔려야죠",
+    title: "손님은 검색 첫 페이지에서\n살지 말지 정해요",
+    desc: "쇼핑 검색 상위 노출에 블로그 후기, SNS 반응까지. 손님이 ‘살까 말까’ 망설이는 그 순간마다 우리 상품이 눈에 들어오게 해드려요.",
     links: [
       { label: "쇼핑 상위노출", href: "/services/shopping" },
       { label: "블로그 마케팅", href: "/services/blog-pack" },
@@ -154,9 +154,9 @@ const CHAPTERS: Chapter[] = [
   },
   {
     no: "03",
-    eyebrow: "그리고, 믿게 — 아끼면서",
-    title: "후기와 기사로 신뢰를 쌓고,\n새는 광고비는 돌려받으세요",
-    desc: "체험단 후기와 언론 보도로 처음 온 손님의 의심을 지우고, AI로 원고를 만들고, 이미 쓰고 있는 광고비는 환급으로 아끼세요.",
+    eyebrow: "세 번째, 믿음은 쌓고 낭비는 줄이고",
+    title: "후기랑 기사로 믿음을 쌓고,\n새는 광고비는 돌려받아요",
+    desc: "처음 온 손님 마음속 ‘여기 괜찮은 데 맞나?’ 하는 의심, 체험단 후기랑 언론 기사가 지워줘요. 원고는 AI가 대신 써주고요. 이미 쓰고 있는 광고비는 환급으로 돌려받으세요.",
     links: [
       { label: "체험단·후기", href: "/services/experience" },
       { label: "언론보도", href: "/services/press" },
@@ -231,9 +231,9 @@ function ChapterSection({ chapter, flip }: { chapter: Chapter; flip: boolean }) 
 // --- 4) Process: 3 minutes to start -----------------------------------------
 
 const STEPS = [
-  { no: "1", title: "3분이면 가입 끝", desc: "카카오 또는 이메일로 가입하면 바로 내 운영 화면이 열립니다." },
-  { no: "2", title: "필요한 것만 담기", desc: "가격이 공개된 상품에서 필요한 항목·수량만 골라 주문합니다." },
-  { no: "3", title: "결과를 눈으로 확인", desc: "진행 상태와 잔액, 결과까지 마이페이지에서 직접 확인합니다." },
+  { no: "1", title: "3분이면 가입 끝", desc: "카카오 버튼 하나면 끝나요. 이메일로 해도 3분이면 충분해요." },
+  { no: "2", title: "필요한 것만 담기", desc: "가격이 다 공개돼 있으니까, 필요한 항목이랑 수량만 고르면 돼요." },
+  { no: "3", title: "결과를 눈으로 확인", desc: "어디까지 진행됐는지, 잔액이 얼마인지 마이페이지에서 바로 보여요." },
 ];
 
 function ProcessSection() {
@@ -241,7 +241,7 @@ function ProcessSection() {
     <section className="bg-slate-50">
       <div className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-bold tracking-widest text-emerald-700">시작은 간단합니다</p>
+          <p className="text-sm font-bold tracking-widest text-emerald-700">시작은 진짜 간단해요</p>
           <h2 className="mt-3 text-2xl font-extrabold text-slate-900 sm:text-4xl">
             오늘 저녁, 마감하고 3분이면 충분해요
           </h2>

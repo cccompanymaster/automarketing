@@ -201,7 +201,7 @@ export function Hero() {
               시작하세요
             </h1>
             <p className="hero-anim" style={{ margin: "22px 0 0", fontSize: "clamp(15px,1.5vw,19px)", lineHeight: 1.6, color: "#4d6657", maxWidth: 440, animation: "rise .8s ease 1.35s both" }}>
-              상위 노출부터 방문 고객 증가, 판매량 극대화, 광고비 환급까지 — 우리 매장에 필요한 것만 골라 바로 시작하세요.
+              상위 노출, 손님 늘리기, 판매 올리기, 광고비 환급까지 — 우리 가게에 필요한 것만 골라서 바로 시작하면 돼요.
             </p>
             <div className="hero-anim" style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 34, animation: "rise .8s ease 1.45s both" }}>
               <Link href="/start" style={{ position: "relative", overflow: "hidden", textDecoration: "none", fontWeight: 800, fontSize: 16, color: "#fff", padding: "16px 30px", borderRadius: 14, background: "linear-gradient(135deg,#0b8f52,#065f46)", boxShadow: "0 14px 30px rgba(6,95,70,.38)" }}>

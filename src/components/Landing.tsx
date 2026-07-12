@@ -40,7 +40,7 @@ export function Landing() {
             필요한 것만 골라 담으세요
           </h2>
           <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            모든 상품은 가입 전에 절차와 예상 비용을 먼저 공개합니다.
+            절차랑 예상 비용, 가입하기 전에 전부 보여드려요.
           </p>
         </Reveal>
 
@@ -57,7 +57,7 @@ export function Landing() {
             마케팅방주와 함께한 고객 후기
           </h2>
           <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            업종·기간·수치로 살펴보는 기대 효과 예시입니다.
+            업종별로 어떤 변화를 기대할 수 있는지, 예시로 보여드릴게요.
           </p>
           <p className="mt-2 text-xs text-slate-400">
             * 정식 오픈 준비 중의 예시 사례이며, 검증된 실제 사례로 순차 교체됩니다.

@@ -1,4 +1,7 @@
-// Landing page composition: hero + service cards + success stories.
+// Landing page — storytelling composition (noahgroup-style narrative):
+// hero → empathy (owner's pains) → bridge (why we exist) → journey chapters
+// (get found → get sales → build trust & save) → proof numbers → full service
+// grid → channels → reviews → 3-step process → closing CTA.
 // Header/footer are provided by the page layout.
 
 import { LANDING_CARDS } from "@/lib/products";
@@ -10,6 +13,8 @@ import { Channels } from "@/components/Channels";
 import { ServicesGrid } from "@/components/ServicesGrid";
 import { SuccessStory } from "@/components/SuccessStory";
 import { Marquee } from "@/components/Marquee";
+import { Reveal } from "@/components/Reveal";
+import { StoryIntro, ProcessSection } from "@/components/StorySections";
 import { ScamNoticePopup } from "@/components/ScamNoticePopup";
 
 export function Landing() {
@@ -18,25 +23,29 @@ export function Landing() {
       {/* One-time scam / impersonation notice popup */}
       <ScamNoticePopup />
 
-      {/* Intro loading splash -> animated hero */}
+      {/* Chapter 0 — intro loading splash -> animated hero */}
       <Hero />
 
-      {/* Service cards */}
+      {/* Story: empathy → bridge → journey chapters (01 발견 → 02 판매 → 03 신뢰·절감) */}
+      <StoryIntro />
+
+      {/* Proof — numbers count up on scroll */}
+      <Stats />
+
+      {/* Full catalog for visitors who want to browse everything */}
       <section id="services" className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-            혼자 하는 마케팅, 어렵지 않습니다
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <p className="text-sm font-bold tracking-widest text-emerald-700">전체 서비스</p>
+          <h2 className="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">
+            필요한 것만 골라 담으세요
           </h2>
           <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            우리 매장에 필요한 것부터 골라 바로 시작할 수 있습니다.
+            모든 상품은 가입 전에 절차와 예상 비용을 먼저 공개합니다.
           </p>
-        </div>
+        </Reveal>
 
         <ServicesGrid cards={LANDING_CARDS} />
       </section>
-
-      {/* Trust stats band */}
-      <Stats />
 
       {/* Supported channels */}
       <Channels />
@@ -63,6 +72,9 @@ export function Landing() {
           ))}
         </Marquee>
       </section>
+
+      {/* How it starts — 3 steps, 3 minutes */}
+      <ProcessSection />
 
       {/* Closing CTA — board the ship into the operating screen */}
       <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">

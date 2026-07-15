@@ -10,12 +10,19 @@ import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
 import { useWallet } from "@/components/WalletProvider";
 import { useOrders } from "@/components/OrdersProvider";
+import { useDeliverables } from "@/components/DeliverablesProvider";
+import { DeliverableModal } from "@/components/DeliverableModal";
 import { ChargeModal } from "@/components/ChargeModal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PRODUCT_LIST } from "@/lib/products";
 import { formatCash, txnLabel } from "@/lib/cash";
 import { ORDER_STATUS_LABEL, ORDER_STATUS_STYLE } from "@/lib/orders";
+import {
+  DELIVERABLE_STATUS_LABEL,
+  DELIVERABLE_STATUS_STYLE,
+  type Deliverable,
+} from "@/lib/deliverables";
 import { isAdminUser } from "@/lib/admin";
 
 export default function MyPage() {
@@ -23,7 +30,9 @@ export default function MyPage() {
   const { user, isAuthenticated, hydrated } = useAuth();
   const { balance, transactions } = useWallet();
   const { orders } = useOrders();
+  const { deliverables, pendingCount } = useDeliverables();
   const [chargeOpen, setChargeOpen] = useState(false);
+  const [reviewTarget, setReviewTarget] = useState<Deliverable | null>(null);
   const isAdmin = isAdminUser(user);
 
   useEffect(() => {
@@ -148,6 +157,57 @@ export default function MyPage() {
             </Link>
           )}
 
+          {/* Deliverables waiting for my confirmation */}
+          {deliverables.length > 0 && (
+            <section className="mt-10">
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-bold text-slate-900">컨펌 요청</h2>
+                {pendingCount > 0 && (
+                  <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-700">
+                    {pendingCount}건 대기
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-xs text-slate-400">
+                작업한 원고·자료를 확인하고 승인하거나 수정을 요청하세요. 승인 후 진행됩니다.
+              </p>
+              <ul className="mt-4 space-y-2.5">
+                {deliverables.map((d) => (
+                  <li key={d.id}>
+                    <button
+                      type="button"
+                      onClick={() => setReviewTarget(d)}
+                      className={`flex w-full items-center justify-between gap-3 rounded-2xl border bg-white p-4 text-left shadow-sm transition hover:shadow-md ${
+                        d.status === "pending_review"
+                          ? "border-amber-200 ring-1 ring-amber-100"
+                          : "border-slate-100"
+                      }`}
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-slate-800">{d.title}</p>
+                        <p className="mt-0.5 truncate text-xs text-slate-400">
+                          {new Date(d.createdAt).toLocaleString("ko-KR", {
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                          {" · "}
+                          {d.content.slice(0, 40)}…
+                        </p>
+                      </div>
+                      <span
+                        className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${DELIVERABLE_STATUS_STYLE[d.status]}`}
+                      >
+                        {DELIVERABLE_STATUS_LABEL[d.status]}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           {/* My orders */}
           <section className="mt-10">
             <div className="flex items-center justify-between">
@@ -230,6 +290,7 @@ export default function MyPage() {
       </main>
       <SiteFooter />
       <ChargeModal open={chargeOpen} onClose={() => setChargeOpen(false)} />
+      <DeliverableModal deliverable={reviewTarget} onClose={() => setReviewTarget(null)} />
     </>
   );
 }

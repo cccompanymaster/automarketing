@@ -3,14 +3,26 @@
 // 업종별 송출 단가 + 언론사 아코디언. 카테고리 행을 클릭하면 해당 언론사 목록이
 // 펼쳐지고, "전체 언론사 보기"로 한 번에 펼칠 수 있습니다. 히어로의 "매체·단가
 // 보기"(#press-rates)로 진입하면 전체가 자동으로 펼쳐집니다.
+// 각 행의 "송출하기"로 즉시 주문: 게스트는 가입 퍼널로, 회원은 캐시 주문 모달로.
+// 결제는 카테고리 최저 단가 기준 1건이며, 매체 확정 후 차액은 별도 안내합니다.
+// TODO(backend): 매체 선택 → 정확한 단가 결제 플로우로 교체.
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { PRESS_CATEGORIES } from "@/lib/press";
+import { useAuth } from "@/components/AuthProvider";
+import { OrderModal } from "@/components/OrderModal";
+import { ChargeModal } from "@/components/ChargeModal";
+import type { PricingItem } from "@/lib/pricing";
 
 const krw = (n: number) => `${n.toLocaleString("ko-KR")}원`;
 
 export function PressRates() {
+  const router = useRouter();
+  const { isAuthenticated, hydrated } = useAuth();
   const [open, setOpen] = useState<Record<string, boolean>>({});
+  const [orderItem, setOrderItem] = useState<PricingItem | null>(null);
+  const [chargeOpen, setChargeOpen] = useState(false);
   const allOpen = PRESS_CATEGORIES.every((c) => open[c.key]);
 
   const setAll = (v: boolean) =>
@@ -24,6 +36,19 @@ export function PressRates() {
       setAll(true);
     }
   }, []);
+
+  const startOrder = (name: string, priceMin: number) => {
+    if (hydrated && !isAuthenticated) {
+      router.push("/start?service=press");
+      return;
+    }
+    setOrderItem({
+      name: `보도자료 송출 (${name})`,
+      price: `${krw(priceMin)} ~`,
+      unit: "1건",
+      amountKrw: priceMin,
+    });
+  };
 
   return (
     <section id="press-rates" className="scroll-mt-20 py-12">
@@ -49,24 +74,37 @@ export function PressRates() {
           const more = c.mediaCount - c.samples.length;
           return (
             <li key={c.key} className="border-b border-slate-50 last:border-b-0">
-              <button
-                type="button"
-                onClick={() => toggle(c.key)}
-                aria-expanded={isOpen}
-                className="flex w-full items-center gap-3 bg-white px-4 py-3.5 text-left transition hover:bg-slate-50 sm:px-5"
-              >
-                <span
-                  className={`shrink-0 text-slate-400 transition-transform ${isOpen ? "rotate-90" : ""}`}
-                  aria-hidden="true"
+              <div className="flex w-full items-center gap-2 bg-white px-4 py-2.5 sm:px-5">
+                <button
+                  type="button"
+                  onClick={() => toggle(c.key)}
+                  aria-expanded={isOpen}
+                  className="flex min-h-11 min-w-0 flex-1 items-center gap-3 text-left transition hover:opacity-80"
                 >
-                  ▸
-                </span>
-                <span className="flex-1 text-sm font-bold text-slate-800">{c.name}</span>
-                <span className="shrink-0 text-xs text-slate-500">{c.mediaCount}개</span>
-                <span className="w-32 shrink-0 text-right text-sm font-semibold text-indigo-600 sm:w-40">
-                  {krw(c.priceMin)} ~ {krw(c.priceMax)}
-                </span>
-              </button>
+                  <span
+                    className={`shrink-0 text-slate-400 transition-transform ${isOpen ? "rotate-90" : ""}`}
+                    aria-hidden="true"
+                  >
+                    ▸
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm font-bold text-slate-800">
+                    {c.name}
+                  </span>
+                  <span className="hidden shrink-0 text-xs text-slate-500 sm:inline">
+                    {c.mediaCount}개
+                  </span>
+                  <span className="num w-28 shrink-0 text-right text-sm font-semibold text-indigo-600 sm:w-40">
+                    {krw(c.priceMin)} ~ {krw(c.priceMax)}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => startOrder(c.name, c.priceMin)}
+                  className="min-h-9 shrink-0 rounded-lg bg-indigo-700 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-indigo-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                >
+                  송출하기
+                </button>
+              </div>
 
               {isOpen && (
                 <div className="bg-slate-50/60 px-4 pb-4 pt-1 sm:px-5">
@@ -99,7 +137,16 @@ export function PressRates() {
       </ul>
       <p className="mt-3 text-xs text-slate-400">
         ※ 표시 매체는 대표 예시이며, 실제 가능 매체·단가는 업종·시점에 따라 달라질 수 있습니다.
+        <br />※ 송출하기 결제는 카테고리 <b>최저 단가 기준 1건</b>이며, 매체 확정 후 차액이 있으면
+        결제 전 별도 안내드립니다.
       </p>
+
+      <OrderModal
+        item={orderItem}
+        onClose={() => setOrderItem(null)}
+        onNeedCharge={() => setChargeOpen(true)}
+      />
+      <ChargeModal open={chargeOpen} onClose={() => setChargeOpen(false)} />
     </section>
   );
 }

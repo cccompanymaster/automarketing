@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import { WalletProvider } from "@/components/WalletProvider";
 import { OrdersProvider } from "@/components/OrdersProvider";
+import { DeliverablesProvider } from "@/components/DeliverablesProvider";
 import { GtmScript, GtmNoScript } from "@/components/GtmScript";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -73,7 +74,9 @@ export default function RootLayout({
         <GtmNoScript />
         <AuthProvider>
           <WalletProvider>
-            <OrdersProvider>{children}</OrdersProvider>
+            <OrdersProvider>
+              <DeliverablesProvider>{children}</DeliverablesProvider>
+            </OrdersProvider>
           </WalletProvider>
         </AuthProvider>
         <Toaster position="top-center" richColors />

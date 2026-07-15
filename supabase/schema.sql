@@ -205,3 +205,117 @@ $$;
 
 revoke all on function public.credit_payment(text, bigint, uuid, text) from public, anon, authenticated;
 grant execute on function public.credit_payment(text, bigint, uuid, text) to service_role;
+
+-- 관리자 판별 -----------------------------------------------------------------
+-- NEXT_PUBLIC_ADMIN_EMAILS 는 UI 노출용일 뿐이므로, 서버 측 판별용으로 관리자
+-- 이메일을 이 테이블에 등록하세요. 예:
+--   insert into public.admin_users (email) values ('cccompanymaster@gmail.com')
+--   on conflict do nothing;
+create table if not exists public.admin_users (
+  email text primary key
+);
+
+alter table public.admin_users enable row level security;
+-- 클라이언트 정책 없음 → 목록은 service_role/SQL 에서만 관리.
+
+create or replace function public.is_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.admin_users
+    where email = lower(coalesce(auth.jwt() ->> 'email', ''))
+  );
+$$;
+
+-- 산출물(고객 컨펌) -------------------------------------------------------------
+-- 관리자가 작업 결과(원고 등)를 업로드하면 고객이 마이페이지에서 승인하거나
+-- 수정을 요청합니다. 업로드는 관리자 RPC, 리뷰는 소유자 RPC로만 변경됩니다.
+create table if not exists public.deliverables (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null references auth.users (id) on delete cascade,
+  user_email  text not null,
+  order_id    uuid references public.orders (id) on delete set null,
+  title       text not null,
+  content     text not null,
+  status      text not null default 'pending_review'
+                check (status in ('pending_review','approved','revision_requested')),
+  feedback    text,
+  created_at  timestamptz not null default now(),
+  reviewed_at timestamptz
+);
+
+create index if not exists deliverables_user_created_idx
+  on public.deliverables (user_id, created_at desc);
+
+alter table public.deliverables enable row level security;
+
+-- 본인 것 + 관리자는 전체 조회.
+drop policy if exists "deliverables readable" on public.deliverables;
+create policy "deliverables readable"
+  on public.deliverables for select
+  using (auth.uid() = user_id or public.is_admin());
+-- INSERT/UPDATE 정책 없음 → 아래 RPC 로만 변경 가능.
+
+-- 관리자: 이메일로 회원을 찾아 산출물 업로드.
+create or replace function public.admin_upload_deliverable(
+  p_email text,
+  p_title text,
+  p_content text
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_uid uuid;
+  v_id uuid;
+begin
+  if not public.is_admin() then
+    raise exception '관리자만 사용할 수 있습니다.';
+  end if;
+  select id into v_uid from auth.users where lower(email) = lower(p_email) limit 1;
+  if v_uid is null then
+    raise exception '해당 이메일의 회원을 찾을 수 없습니다: %', p_email;
+  end if;
+  insert into public.deliverables (user_id, user_email, title, content)
+  values (v_uid, lower(p_email), p_title, p_content)
+  returning id into v_id;
+  return v_id;
+end;
+$$;
+
+revoke all on function public.admin_upload_deliverable(text, text, text) from public, anon;
+grant execute on function public.admin_upload_deliverable(text, text, text) to authenticated;
+
+-- 소유자: 대기 중 산출물을 승인하거나 수정 요청(피드백 필수 아님) 처리.
+create or replace function public.review_deliverable(
+  p_id uuid,
+  p_approve boolean,
+  p_feedback text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update public.deliverables
+     set status      = case when p_approve then 'approved' else 'revision_requested' end,
+         feedback    = case when p_approve then feedback else coalesce(p_feedback, feedback) end,
+         reviewed_at = now()
+   where id = p_id
+     and user_id = auth.uid()
+     and status = 'pending_review';
+  if not found then
+    raise exception '처리할 수 없는 요청입니다 (이미 처리되었거나 권한이 없습니다).';
+  end if;
+end;
+$$;
+
+revoke all on function public.review_deliverable(uuid, boolean, text) from public, anon;
+grant execute on function public.review_deliverable(uuid, boolean, text) to authenticated;

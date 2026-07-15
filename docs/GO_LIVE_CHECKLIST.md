@@ -11,6 +11,9 @@
       복구 후 가입→로그인→주문 E2E 재확인.
 - [ ] 카카오 로그인 사용 시 Supabase **Redirect URLs**에 배포 주소(`…/automarketing/**`) 등록
       (코드는 base path 포함 주소로 복귀하도록 수정됨)
+- [ ] **schema.sql 재실행** — 산출물 컨펌(`deliverables`)·관리자 판별(`admin_users`)
+      테이블/RPC가 추가됨. 실행 후 관리자 이메일 등록:
+      `insert into public.admin_users (email) values ('cccompanymaster@gmail.com') on conflict do nothing;`
 
 ## ★ 최종 URL 적용 시 (도메인 확정 시점)
 - [ ] **Supabase Auth → URL Configuration → Site URL** 을 최종 도메인으로 변경

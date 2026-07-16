@@ -4,6 +4,9 @@
 
 import { TrackedCta } from "@/components/TrackedCta";
 import type { Product, ProductSlug } from "@/lib/products";
+import { PRODUCT_STORIES } from "@/lib/productStories";
+
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 // Map a product to the matching /pricing group anchor so a logged-in member's
 // CTA lands on the rows they can order. Products without a dedicated price
@@ -50,6 +53,83 @@ export function ProductDetailBody({
           )}
         </section>
       )}
+
+      {/* Story arc: pains → our fix → "이럴 땐 이렇게" */}
+      {(() => {
+        const story = PRODUCT_STORIES[product.slug];
+        if (!story) return null;
+        return (
+          <>
+            {/* ① 기존에 불편했던 부분 */}
+            <section className="mb-12">
+              <h2 className="text-xl font-bold text-slate-900">이런 것 때문에 힘드셨죠</h2>
+              {story.image && (
+                // eslint-disable-next-line @next/next/no-img-element -- static export, local asset
+                <img
+                  src={`${BASE}${story.image}`}
+                  alt=""
+                  className="mt-4 h-44 w-full rounded-2xl object-cover shadow-sm sm:h-56"
+                />
+              )}
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                {story.pains.map((p) => (
+                  <figure
+                    key={p.quote}
+                    className="flex h-full flex-col justify-between rounded-2xl border border-slate-100 bg-slate-50/70 p-5"
+                  >
+                    <blockquote className="text-sm font-semibold leading-relaxed text-slate-800">
+                      “{p.quote}”
+                    </blockquote>
+                    <figcaption className="mt-3 text-xs text-slate-400">{p.who}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            </section>
+
+            {/* ② 마케팅방주의 차별점·해결책 */}
+            <section className="mb-12 rounded-3xl bg-slate-900 p-7 sm:p-9">
+              <p className="text-xs font-bold tracking-widest text-emerald-400">
+                마케팅방주는 다르게 해요
+              </p>
+              <h2 className="mt-2 text-xl font-bold text-white sm:text-2xl">
+                {story.solution.title}
+              </h2>
+              <ul className="mt-5 space-y-3">
+                {story.solution.points.map((pt) => (
+                  <li key={pt} className="flex items-start gap-3 text-sm leading-relaxed text-slate-200">
+                    <span className="mt-0.5 shrink-0 text-emerald-400" aria-hidden="true">
+                      ✓
+                    </span>
+                    {pt}
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {/* ③ 이럴 땐 이렇게 하세요 */}
+            <section className="mb-12">
+              <h2 className="text-xl font-bold text-slate-900">이럴 땐 이렇게 하세요</h2>
+              <div className="mt-5 space-y-3">
+                {story.scenarios.map((sc) => (
+                  <div
+                    key={sc.when}
+                    className="flex flex-col gap-2 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:gap-5"
+                  >
+                    <p className="text-sm font-bold text-slate-800 sm:w-2/5">
+                      <span className="mr-1.5" aria-hidden="true">🙋</span>
+                      {sc.when}
+                    </p>
+                    <p className="text-sm leading-relaxed text-emerald-900 sm:flex-1">
+                      <span className="mr-1.5" aria-hidden="true">👉</span>
+                      {sc.then}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </>
+        );
+      })()}
 
       {/* Benefits */}
       <section>

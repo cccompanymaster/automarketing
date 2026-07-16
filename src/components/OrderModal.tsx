@@ -22,11 +22,13 @@ export function OrderModal({
   const { balance, spend, loading } = useWallet();
   const { createOrder } = useOrders();
   const [qty, setQty] = useState(1);
+  const [request, setRequest] = useState("");
 
   useEffect(() => {
-    // Reset quantity whenever a different item is opened.
+    // Reset per-item state whenever a different item is opened.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setQty(1);
+    setRequest("");
   }, [item]);
 
   useEffect(() => {
@@ -48,7 +50,10 @@ export function OrderModal({
   const enough = balance >= totalCash;
 
   const handleOrder = async () => {
-    const memo = hasUnit && quantity > 1 ? `${item.name} ×${quantity}` : item.name;
+    const base = hasUnit && quantity > 1 ? `${item.name} ×${quantity}` : item.name;
+    // Materials/requests ride along in the ledger memo so the admin sees them
+    // with the order. TODO(backend): store as a structured order field.
+    const memo = request.trim() ? `${base} — ${request.trim().slice(0, 300)}` : base;
     try {
       await spend(totalCash, memo);
       // Record the order so it shows up (with status) on the member's page and
@@ -128,6 +133,21 @@ export function OrderModal({
             </div>
           </div>
         )}
+
+        <div className="mt-4">
+          <label htmlFor="order-request" className="block text-xs font-medium text-slate-500">
+            요청사항·전달 자료 <span className="text-slate-400">(선택)</span>
+          </label>
+          <textarea
+            id="order-request"
+            value={request}
+            onChange={(e) => setRequest(e.target.value)}
+            rows={3}
+            maxLength={300}
+            placeholder="블로그 주소, 매장 소개, 키워드, 참고 링크 등 작업에 필요한 자료를 적어 주세요."
+            className="mt-1.5 w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-base outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+          />
+        </div>
 
         <div className="mt-4 space-y-2 rounded-xl bg-slate-50 px-4 py-3 text-sm">
           <div className="flex items-center justify-between">

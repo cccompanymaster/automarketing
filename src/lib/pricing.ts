@@ -137,6 +137,40 @@ export const PRICING: PricingGroup[] = [
     ],
   },
   {
+    key: "ai",
+    icon: "✨",
+    title: "AI 인용·인플루언서",
+    description: "생성형 AI 답변에 인용되도록 최적화하고, 사장님을 전문가로 포지셔닝합니다.",
+    items: [
+      {
+        name: "AI 검색 최적화(AEO) 기본 세팅",
+        price: "150,000원",
+        unit: "1회",
+        amountKrw: 150_000,
+        note: "프로필·FAQ·콘텐츠 구조 정비 (1회 세팅)",
+      },
+      {
+        name: "AI 인용 모니터링 리포트",
+        price: "30,000원",
+        unit: "월 1회",
+        amountKrw: 30_000,
+        note: "주요 질문별 인용 현황·변화 리포트",
+      },
+      {
+        name: "전문가 칼럼·인터뷰 콘텐츠",
+        price: "50,000원",
+        unit: "1건",
+        amountKrw: 50_000,
+      },
+      {
+        name: "인플루언서 성장 패키지",
+        price: "채널·목표별 견적",
+        inquiry: true,
+        note: "SNS 브랜딩 + 콘텐츠 + AI 인용 최적화 통합",
+      },
+    ],
+  },
+  {
     key: "press",
     icon: "📰",
     title: "언론홍보",

@@ -162,6 +162,7 @@ const CHAPTERS: Chapter[] = [
       { label: "체험단·후기", href: "/services/experience" },
       { label: "언론보도", href: "/services/press" },
       { label: "AI 원고", href: "/services/blogwrite" },
+      { label: "AI 인용·인플루언서", href: "/services/blog-pack#ai-influencer" },
       { label: "광고비 환급", href: "/services/refund" },
     ],
     emoji: "🤝",

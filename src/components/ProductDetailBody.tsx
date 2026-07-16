@@ -14,6 +14,7 @@ const PRICING_ANCHOR: Partial<Record<ProductSlug, string>> = {
   "blog-neighbor": "blog",
   "place-traffic": "reward",
   cafe: "cafe",
+  "ai-influencer": "ai",
 };
 
 export function pricingHref(slug: ProductSlug): string {
@@ -77,6 +78,26 @@ export function ProductDetailBody({
           ))}
         </ol>
       </section>
+
+      {/* Materials to prepare (자료 요청) */}
+      {detail.materials && detail.materials.length > 0 && (
+        <section className="mt-12">
+          <h2 className="text-xl font-bold text-slate-900">📎 신청 시 준비해 주세요</h2>
+          <p className="mt-2 text-sm text-slate-500">
+            아래 자료를 주문 시 요청사항에 적어 주시면 작업이 빨라져요. 준비가 안 된 항목은 신청 후 함께 채워도 됩니다.
+          </p>
+          <ul className="mt-4 space-y-2.5 rounded-2xl border border-slate-100 bg-slate-50/60 p-5">
+            {detail.materials.map((m) => (
+              <li key={m} className="flex items-start gap-3 text-sm text-slate-700">
+                <span className="mt-0.5 text-slate-400" aria-hidden="true">
+                  •
+                </span>
+                {m}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* CTA — guests enter the funnel (/start); logged-in members go straight
           to the orderable price list (deep-linked to the matching group). */}

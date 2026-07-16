@@ -15,6 +15,7 @@ export type ProductSlug =
   | "youtube"
   | "kakaomap"
   | "cafe"
+  | "ai-influencer"
   | "place-traffic"
   | "refund"
   | "consulting";
@@ -57,6 +58,8 @@ export interface Product {
     costNote: string;
     /** Refund / settlement conditions (used by the refund product). */
     conditions: string[];
+    /** Materials the customer should prepare when ordering (자료 요청). */
+    materials?: string[];
   };
 }
 
@@ -459,6 +462,49 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       ],
     },
   },
+  "ai-influencer": {
+    slug: "ai-influencer",
+    icon: "✨",
+    name: "AI 인용 늘리고 인플루언서 되기",
+    summary: ["ChatGPT·네이버 AI가 답할 때 우리 가게가", "인용되게 만들고, 사장님을 전문가로 키웁니다."],
+    cta: "AI 인용 진단 받기",
+    accent: {
+      chip: "bg-fuchsia-50 text-fuchsia-700",
+      iconBg: "bg-fuchsia-100",
+      cardRing: "hover:ring-fuchsia-200",
+      button: "bg-fuchsia-700 hover:bg-fuchsia-800 text-white",
+      gradient: "from-fuchsia-50 to-white",
+    },
+    detail: {
+      headline: "이제 손님은 AI한테 물어봐요 — 그 답에 우리 가게가 나오게 하세요",
+      subhead: "‘동네 맛집 추천해줘’, ‘이 동네 네일샵 어디가 좋아?’ — ChatGPT·클로드·네이버 AI의 답변에 인용되도록 콘텐츠와 프로필을 최적화하고, 사장님을 그 분야의 인플루언서로 키워드립니다.",
+      fromPrice: "30,000원",
+      benefits: [
+        "AI 검색(생성형 답변)에 인용되기 좋은 콘텐츠·프로필·FAQ 구조 세팅",
+        "전문가 칼럼·인터뷰 콘텐츠로 ‘이 분야 = 우리 가게’ 포지셔닝",
+        "주요 질문별 AI 인용 현황을 월 리포트로 확인",
+      ],
+      steps: [
+        { title: "1. AI 인용 진단", desc: "우리 업종의 주요 질문에 지금 AI가 누구를 인용하는지 확인합니다." },
+        { title: "2. 콘텐츠·프로필 세팅", desc: "인용되기 좋은 구조로 FAQ·칼럼·프로필을 정비하고 발행합니다." },
+        { title: "3. 모니터링·확장", desc: "월 리포트로 인용 변화를 확인하고 인플루언서 콘텐츠로 확장합니다." },
+      ],
+      costRange: "AEO 기본 세팅 15만 원 / 월 인용 리포트 3만 원 / 전문가 칼럼 1건 5만 원",
+      costNote: "업종·경쟁 강도·콘텐츠 수량에 따라 달라지며, 진단 후 정확한 견적을 안내합니다.",
+      conditions: [
+        "AI 모델의 답변 채택은 각 서비스의 알고리즘에 따라 달라 특정 노출을 보장하지 않습니다.",
+        "인용 가능성을 높이는 구조·콘텐츠 정비와 측정 리포트를 제공하는 상품입니다.",
+        "허위 정보·과장 표현 콘텐츠는 제작하지 않습니다.",
+      ],
+      materials: [
+        "운영 중인 네이버 블로그 주소 (있는 경우)",
+        "매장/브랜드 소개와 대표 강점 3줄",
+        "사장님 프로필 사진·경력·전문 분야",
+        "손님들이 자주 묻는 질문 목록 (아는 만큼)",
+        "홈페이지·SNS 등 기존 채널 링크",
+      ],
+    },
+  },
   "place-traffic": {
     slug: "place-traffic",
     icon: "🚦",
@@ -579,6 +625,7 @@ export const PRODUCT_LIST: Product[] = [
   PRODUCTS.youtube,
   PRODUCTS.kakaomap,
   PRODUCTS.cafe,
+  PRODUCTS["ai-influencer"],
   PRODUCTS["place-traffic"],
   PRODUCTS.refund,
   PRODUCTS.consulting,
@@ -596,6 +643,7 @@ export const PRODUCT_SLUGS: ProductSlug[] = [
   "youtube",
   "kakaomap",
   "cafe",
+  "ai-influencer",
   "place-traffic",
   "refund",
   "consulting",
@@ -636,10 +684,10 @@ const GROUP_BLOG: ProductGroup = {
   key: "blog-pack",
   icon: "✍️",
   name: "블로그 마케팅",
-  summary: ["블로그 상위 노출부터 이웃 관리까지", "검색 신뢰도를 한 번에 키웁니다."],
+  summary: ["상위 노출부터 이웃 관리, AI 인용까지", "블로그 신뢰도를 한 번에 키웁니다."],
   cta: "블로그 마케팅 보기",
   accent: PRODUCTS.blog.accent,
-  memberSlugs: ["blog", "blog-neighbor"],
+  memberSlugs: ["blog", "blog-neighbor", "ai-influencer"],
 };
 
 export const PRODUCT_GROUPS: ProductGroup[] = [GROUP_PLACE, GROUP_BLOG];

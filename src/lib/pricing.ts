@@ -115,6 +115,28 @@ export const PRICING: PricingGroup[] = [
     ],
   },
   {
+    key: "cafe",
+    icon: "💬",
+    title: "카페 홍보",
+    description: "지역 맘카페·커뮤니티 카페 침투 홍보. 실사용 계정으로 자연스럽게 게시합니다.",
+    items: [
+      {
+        name: "카페 침투 게시글 (후기형)",
+        price: "30,000원 ~",
+        unit: "1건",
+        amountKrw: 30_000,
+        note: "기본 등급 카페 기준 · 대형·상위 등급 카페는 견적 후 차액 안내",
+      },
+      { name: "카페 댓글 작성", price: "2,000원", unit: "1건", amountKrw: 2_000 },
+      {
+        name: "지역 맘카페 집중 홍보 패키지",
+        price: "카페별 견적",
+        inquiry: true,
+        note: "지역·카페 회원수·게시 난이도에 따라 산정",
+      },
+    ],
+  },
+  {
     key: "press",
     icon: "📰",
     title: "언론홍보",

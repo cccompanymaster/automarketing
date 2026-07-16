@@ -13,14 +13,17 @@ export function ServicesGrid({ cards }: { cards: ServiceCardData[] }) {
     <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card, i) => {
         const featured = i < FEATURED_COUNT;
+        // The catch-all consulting card closes the grid as a full-width banner
+        // so the remaining products always fill clean rows.
+        const wide = card.trackId === "consulting";
         return (
           <Reveal
             key={card.href}
             delayMs={(i % 4) * 70}
-            className={featured ? "sm:col-span-2" : ""}
+            className={featured ? "sm:col-span-2" : wide ? "sm:col-span-2 lg:col-span-4" : ""}
           >
             <div className="h-full">
-              <ServiceCard card={card} featured={featured} />
+              <ServiceCard card={card} featured={featured} wide={wide} />
             </div>
           </Reveal>
         );

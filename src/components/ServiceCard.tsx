@@ -14,10 +14,42 @@ import { BrandLogo } from "@/components/BrandLogo";
 export function ServiceCard({
   card,
   featured = false,
+  wide = false,
 }: {
   card: ServiceCardData;
   featured?: boolean;
+  /** Full-row banner layout (horizontal on sm+), used by the closing card. */
+  wide?: boolean;
 }) {
+  if (wide) {
+    return (
+      <div
+        className={`group relative flex h-full flex-col gap-5 overflow-hidden rounded-3xl bg-gradient-to-r ${card.accent.gradient} p-6 ring-1 ring-slate-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-2 ${card.accent.cardRing} sm:flex-row sm:items-center sm:p-7`}
+      >
+        <div
+          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-3xl shadow-md ${card.accent.iconBg} transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110`}
+          aria-hidden="true"
+        >
+          {card.icon}
+        </div>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-lg font-extrabold text-slate-900">{card.name}</h3>
+          <p className="mt-1 text-sm leading-relaxed text-slate-600">{card.summary.join(" ")}</p>
+        </div>
+        <Link
+          href={card.href}
+          onClick={() => track("cta_click", { product_slug: card.trackId as ProductSlug })}
+          className={`flex shrink-0 items-center justify-center gap-2 rounded-xl px-8 py-3.5 text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${card.accent.button}`}
+        >
+          {card.cta}
+          <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+            →
+          </span>
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`group relative flex h-full flex-col overflow-hidden rounded-3xl bg-gradient-to-b ${card.accent.gradient} ring-1 ring-slate-100 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:ring-2 ${card.accent.cardRing} ${

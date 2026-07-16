@@ -13,6 +13,7 @@ const PRICING_ANCHOR: Partial<Record<ProductSlug, string>> = {
   blog: "blog",
   "blog-neighbor": "blog",
   "place-traffic": "reward",
+  cafe: "cafe",
 };
 
 export function pricingHref(slug: ProductSlug): string {

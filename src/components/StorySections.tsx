@@ -147,6 +147,7 @@ const CHAPTERS: Chapter[] = [
       { label: "블로그 마케팅", href: "/services/blog-pack" },
       { label: "인스타그램", href: "/services/instagram" },
       { label: "유튜브", href: "/services/youtube" },
+      { label: "카페 입소문", href: "/services/cafe" },
     ],
     emoji: "🛒",
     metric: { label: "첫 페이지에서 멈추는 검색", value: "대부분*" },

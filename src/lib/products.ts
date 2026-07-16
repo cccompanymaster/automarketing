@@ -14,6 +14,7 @@ export type ProductSlug =
   | "instagram"
   | "youtube"
   | "kakaomap"
+  | "cafe"
   | "place-traffic"
   | "refund"
   | "consulting";
@@ -421,6 +422,43 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       ],
     },
   },
+  cafe: {
+    slug: "cafe",
+    icon: "💬",
+    brand: "naver",
+    name: "카페 입소문 내기",
+    summary: ["지역 맘카페·커뮤니티 카페에", "자연스러운 후기 글로 입소문을 만듭니다."],
+    cta: "카페 홍보 신청하기",
+    accent: {
+      chip: "bg-amber-50 text-amber-700",
+      iconBg: "bg-amber-100",
+      cardRing: "hover:ring-amber-200",
+      button: "bg-amber-700 hover:bg-amber-800 text-white",
+      gradient: "from-amber-50 to-white",
+    },
+    detail: {
+      headline: "지역 카페·맘카페에서 입소문을 만들어 드려요",
+      subhead: "실제 활동 중인 계정으로 지역 맘카페·커뮤니티 카페에 후기·질문형 게시글을 자연스럽게 올려 우리 매장을 알립니다. 계정 정보 없이 매장 정보만으로 시작해요.",
+      fromPrice: "2,000원",
+      benefits: [
+        "지역 맘카페·대형 커뮤니티 카페 침투 홍보로 동네 입소문 형성",
+        "실사용 계정 기반 후기·질문형 게시글이라 광고 티가 나지 않음",
+        "게시글·댓글·조회수 등 항목별 수량 선택, 게시 URL 보고",
+      ],
+      steps: [
+        { title: "1. 카페·항목 선택", desc: "홍보할 지역·카페 성격과 게시글·댓글 수량을 고릅니다." },
+        { title: "2. 매장 정보 전달", desc: "매장 소개와 강조 포인트, 금지 표현 가이드를 전달합니다." },
+        { title: "3. 게시·보고 확인", desc: "자연스러운 말투로 게시하고 게시글 URL로 결과를 보고합니다." },
+      ],
+      costRange: "게시글 1건 3만 원~ / 댓글 1건 2천 원 (카페 등급·항목별 책정)",
+      costNote: "카페 회원수·등급 조건과 게시 난이도에 따라 달라지며, 신청 후 정확한 견적을 안내합니다.",
+      conditions: [
+        "계정 로그인 정보는 요구하지 않으며, 매장 정보만으로 진행합니다.",
+        "카페 운영 규정에 따라 게시글이 이동·삭제될 수 있으며, 조기 삭제 시 재게시 또는 환불 처리합니다.",
+        "의료·법률 등 일부 업종은 표현 제한이 있어 사전 협의가 필요합니다.",
+      ],
+    },
+  },
   "place-traffic": {
     slug: "place-traffic",
     icon: "🚦",
@@ -540,6 +578,7 @@ export const PRODUCT_LIST: Product[] = [
   PRODUCTS.instagram,
   PRODUCTS.youtube,
   PRODUCTS.kakaomap,
+  PRODUCTS.cafe,
   PRODUCTS["place-traffic"],
   PRODUCTS.refund,
   PRODUCTS.consulting,
@@ -556,6 +595,7 @@ export const PRODUCT_SLUGS: ProductSlug[] = [
   "instagram",
   "youtube",
   "kakaomap",
+  "cafe",
   "place-traffic",
   "refund",
   "consulting",
@@ -660,6 +700,7 @@ export const LANDING_CARDS: ServiceCardData[] = [
   productCard(PRODUCTS.shopping),
   productCard(PRODUCTS.instagram),
   productCard(PRODUCTS.youtube),
+  productCard(PRODUCTS.cafe),
   productCard(PRODUCTS.blogwrite),
   productCard(PRODUCTS.experience),
   productCard(PRODUCTS.press),

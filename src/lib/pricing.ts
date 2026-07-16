@@ -71,6 +71,20 @@ export const PRICING: PricingGroup[] = [
         amountKrw: 1_000,
         note: "발행용 원고 제작",
       },
+      {
+        name: "블로그 서로이웃 추가",
+        price: "20,000원",
+        unit: "100명",
+        amountKrw: 20_000,
+        note: "국내 실사용자 기반 · 블로그 주소만으로 진행 (비밀번호 불필요)",
+      },
+      {
+        name: "블로그 이웃 추가",
+        price: "30,000원",
+        unit: "200명",
+        amountKrw: 30_000,
+        note: "국내 실사용자 기반 · 일별 분산 진행",
+      },
     ],
   },
   {

@@ -2,6 +2,7 @@
 // Rendered by /services/press. Uses the indigo press accent.
 
 import Link from "next/link";
+import { TrackedCta } from "@/components/TrackedCta";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { PressRates } from "@/components/PressRates";
 import {
@@ -50,12 +51,14 @@ export function PressLanding() {
                   >
                     매체·단가 보기
                   </a>
-                  <Link
-                    href="/start"
+                  <TrackedCta
+                    href="/start?service=press"
+                    authedHref="/pricing#press"
+                    slug="press"
                     className="rounded-xl bg-indigo-500/40 px-6 py-3 text-sm font-semibold text-white ring-1 ring-white/40 transition hover:bg-indigo-500/60"
-                  >
+                    >
                     신청하기
-                  </Link>
+                  </TrackedCta>
                 </div>
               </div>
             </div>

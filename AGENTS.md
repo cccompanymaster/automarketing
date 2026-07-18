@@ -29,20 +29,26 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 | 경로 | 설명 |
 |---|---|
-| `/` | 랜딩 (히어로 + 서비스 카드 4종 + 성공 사례 + CTA) |
-| `/start` | 신규/기존 분기 → 3단계 온보딩 → 가입/로그인 (한 화면 내 상태 전환, URL 이동 없음) |
-| `/services/[slug]` | 상품 상세 (절차·예상 비용·환급 조건 가입 전 노출). slug: `place`, `shopping`, `blog`, `refund` |
-| `/mypage` | 로그인 후 골격 (미인증 시 `/start` 리다이렉트) |
+| `/` | 스토리텔링 랜딩 (히어로 → 공감 → 다크 브릿지 → 고객여정 챕터 3 → 수치 → 서비스 그리드(그룹 2+단독) → 후기 → 프로세스 → CTA) |
+| `/start` | 신규/기존 분기 → 4단계 스토리 온보딩 → 가입/로그인. `?service=<slug>`로 상품 컨텍스트 유지(가입/로그인 후 해당 단가 앵커로 이동) |
+| `/services/[slug]` | 상품 상세 (스토리: 불편→해결→이럴땐이렇게 + 절차·비용·조건·준비자료). 15개 상품 slug + 그룹 `place-map`, `blog-pack`(탭, URL 해시 딥링크) |
+| `/pricing` | 공개 단가표(그룹 앵커 `#blog #reward #place #cafe #ai #sns #kakaomap #press`). 주문·충전은 로그인 시, 게스트는 /start로 유도 |
+| `/mypage` | 지갑·주문·컨펌요청(산출물 승인/수정요청). 미인증 시 `/start` 리다이렉트 |
+| `/admin` | 관리자 대시보드(이메일 allowlist) — 주문/충전/회원 + 산출물 업로드·컨펌 현황 |
+| `/tools/blog-writer` | AI 원고 작성 도구 (1건 1,000캐시) |
 | `/terms`, `/privacy` | 약관/방침 (단독 페이지 + `LegalModal` 모달 공용) |
 
 ## 주요 파일
 
 - `src/lib/analytics.ts` — `track(event, params)`. `dataLayer.push` 일원화, GTM 미설정 시 콘솔 폴백
-- `src/lib/products.ts` — 4개 상품 카탈로그 (카드 + 상세 데이터)
+- `src/lib/products.ts` — 15개 상품 + 그룹 2종(place-map, blog-pack) 카탈로그, `LANDING_CARDS`
+- `src/lib/pricing.ts` — 주문 가능 단가표(그룹·행·amountKrw). 상세/스토리 가격과 반드시 동기화
+- `src/lib/productStories.ts` — 상품별 스토리(불편 3·해결 3·시나리오 3)
+- `src/lib/deliverables.ts` — 산출물 컨펌 도메인(관리자 업로드→고객 승인/수정요청)
 - `src/lib/successStories.ts` — 성공 사례 더미 (수치+업종+기간)
 - `src/lib/company.ts` — 푸터 사업자 정보 (더미값)
 - `src/lib/legal.ts` — 약관/방침 본문 (모달·페이지 공용)
-- `src/lib/payments.ts` — 결제/크레딧 stub (마이페이지 지갑 영역)
+- `src/lib/payments.ts` — 결제 단일 진입점 (PortOne 키 없으면 stub, 적립은 서버 웹훅 전용)
 - `src/components/AuthProvider.tsx` — 클라이언트 인증 컨텍스트 (stub). `hydrated` 플래그로
   세션 복원 완료를 알림 — 인증 기반 리다이렉트는 반드시 `hydrated`를 기다릴 것
 - `src/app/robots.ts`, `src/app/sitemap.ts`, `src/app/not-found.tsx` — SEO/404
@@ -56,7 +62,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## 환경 변수 / Stub
 
 `.env.example` 참고 (GTM/GA4/Pixel/카카오/API URL placeholder). `.env.local`에 실제 값 주입.
-Stub 지점은 `// TODO(backend):` 주석 표시: 이메일/카카오 인증, 상품 비용·환급 조건, 마이페이지 현황.
+Stub 지점은 `// TODO(backend):` 주석 표시. Supabase 키(NEXT_PUBLIC_SUPABASE_URL/ANON_KEY) 주입 시
+실제 인증·캐시·주문·산출물로 자동 전환 (`supabase/schema.sql` + Edge Functions).
 
 ## 명령어
 

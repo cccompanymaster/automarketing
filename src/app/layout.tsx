@@ -35,16 +35,12 @@ export const metadata: Metadata = {
     icon: `${BASE_PATH}/icon.svg`,
     apple: `${BASE_PATH}/icon.svg`,
   },
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     type: "website",
     locale: "ko_KR",
     siteName: "마케팅방주",
-    url: "/",
   },
 };
 

@@ -185,6 +185,76 @@ export const PRICING: PricingGroup[] = [
     ],
   },
   {
+    key: "sns",
+    icon: "📸",
+    title: "SNS 채널",
+    description: "인스타그램·유튜브 반응을 항목별로 채웁니다. 계정 로그인 정보는 받지 않아요.",
+    items: [
+      {
+        name: "인스타 게시물 좋아요",
+        price: "5,000원 ~",
+        unit: "50건",
+        amountKrw: 5_000,
+      },
+      {
+        name: "인스타 팔로워",
+        price: "15,000원 ~",
+        unit: "100명",
+        amountKrw: 15_000,
+        note: "국내 실사용자 기반",
+      },
+      {
+        name: "인스타 댓글·저장 등",
+        price: "항목별 견적",
+        inquiry: true,
+      },
+      {
+        name: "유튜브 조회수",
+        price: "10,000원 ~",
+        unit: "1,000회",
+        amountKrw: 10_000,
+      },
+      {
+        name: "유튜브 구독자",
+        price: "60,000원 ~",
+        unit: "200명",
+        amountKrw: 60_000,
+      },
+      {
+        name: "유튜브 좋아요·재생시간 등",
+        price: "항목별 견적",
+        inquiry: true,
+      },
+    ],
+  },
+  {
+    key: "kakaomap",
+    icon: "🗺️",
+    title: "카카오맵",
+    description: "카카오맵 리뷰·트래픽으로 평판과 지도 노출을 강화합니다.",
+    items: [
+      {
+        name: "카카오맵 트래픽",
+        price: "10,000원 ~",
+        unit: "1,000건",
+        amountKrw: 10_000,
+      },
+      {
+        name: "카카오맵 별점 리뷰",
+        price: "18,000원 ~",
+        unit: "10건",
+        amountKrw: 18_000,
+      },
+      {
+        name: "카카오맵 내용 리뷰",
+        price: "90,000원 ~",
+        unit: "30건",
+        amountKrw: 90_000,
+        note: "메뉴·서비스 키워드 반영",
+      },
+    ],
+  },
+  {
     key: "press",
     icon: "📰",
     title: "언론홍보",

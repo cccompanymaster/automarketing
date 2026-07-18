@@ -76,7 +76,7 @@ function StartFunnel() {
           )}
 
           {stage === "login" && (
-            <LoginForm onSwitchToSignup={() => setStage("signup")} />
+            <LoginForm onSwitchToSignup={() => setStage("signup")} afterHref={afterHref} />
           )}
         </div>
 

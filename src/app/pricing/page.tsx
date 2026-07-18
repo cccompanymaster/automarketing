@@ -1,11 +1,11 @@
 "use client";
 
-// Logged-in product & price list. Mirrors the internal rate card so members
-// can review costs before ordering. Redirects to /start when not authenticated.
+// Public product & price list — the landing promises "가격은 가입 전에 전부
+// 보여드려요", so guests can browse every rate here. Ordering/charging stays
+// member-only: guests' order/inquiry actions route into the signup funnel.
 // TODO(payment): turn each row into an orderable item via the billing API.
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
 import { useWallet } from "@/components/WalletProvider";
@@ -17,17 +17,22 @@ import { PRICING, sortedItems, type PricingItem } from "@/lib/pricing";
 import { formatCash } from "@/lib/cash";
 
 export default function PricingPage() {
-  const router = useRouter();
   const { isAuthenticated, hydrated } = useAuth();
   const { balance } = useWallet();
   const [orderItem, setOrderItem] = useState<PricingItem | null>(null);
   const [chargeOpen, setChargeOpen] = useState(false);
 
-  useEffect(() => {
-    if (hydrated && !isAuthenticated) router.replace("/start");
-  }, [hydrated, isAuthenticated, router]);
+  const authed = hydrated && isAuthenticated;
 
-  if (!hydrated || !isAuthenticated) return null;
+  // Replay the fragment scroll after hydration: on a hard load the sections
+  // exist in static HTML, but client-side auth swaps can shift layout, so
+  // re-anchor once we know the final state (scroll-mt-24 applies).
+  useEffect(() => {
+    if (!hydrated) return;
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+    document.getElementById(decodeURIComponent(hash))?.scrollIntoView();
+  }, [hydrated]);
 
   return (
     <>
@@ -42,13 +47,22 @@ export default function PricingPage() {
                 표시 금액은 부가세 별도입니다.
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => setChargeOpen(true)}
-              className="rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
-            >
-              보유 {formatCash(balance)} · 충전
-            </button>
+            {authed ? (
+              <button
+                type="button"
+                onClick={() => setChargeOpen(true)}
+                className="rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+              >
+                보유 {formatCash(balance)} · 충전
+              </button>
+            ) : (
+              <Link
+                href="/start"
+                className="rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
+              >
+                3분 가입하고 주문하기
+              </Link>
+            )}
           </header>
 
           {/* Legend — what each action means */}
@@ -126,23 +140,33 @@ export default function PricingPage() {
                           )}
                         </div>
 
-                        {/* Action — fixed-width column so buttons align */}
+                        {/* Action — fixed-width column so buttons align.
+                            Guests: everything funnels into signup. */}
                         <div className="w-[68px] shrink-0 sm:w-[76px]">
                           {isBlogWrite ? (
                             <Link
                               href="/tools/blog-writer"
-                              className="block rounded-lg bg-emerald-600 px-2 py-2 text-center text-xs font-semibold text-white transition hover:bg-emerald-700"
+                              className="block rounded-lg bg-emerald-700 px-2 py-2 text-center text-xs font-semibold text-white transition hover:bg-emerald-800"
                             >
                               AI 작성
                             </Link>
                           ) : orderable ? (
-                            <button
-                              type="button"
-                              onClick={() => setOrderItem(item)}
-                              className="block w-full rounded-lg bg-emerald-600 px-2 py-2 text-center text-xs font-semibold text-white transition hover:bg-emerald-700"
-                            >
-                              주문
-                            </button>
+                            authed ? (
+                              <button
+                                type="button"
+                                onClick={() => setOrderItem(item)}
+                                className="block w-full rounded-lg bg-emerald-700 px-2 py-2 text-center text-xs font-semibold text-white transition hover:bg-emerald-800"
+                              >
+                                주문
+                              </button>
+                            ) : (
+                              <Link
+                                href="/start"
+                                className="block rounded-lg bg-emerald-700 px-2 py-2 text-center text-xs font-semibold text-white transition hover:bg-emerald-800"
+                              >
+                                주문
+                              </Link>
+                            )
                           ) : comingSoon ? (
                             <span
                               aria-disabled="true"
@@ -152,7 +176,7 @@ export default function PricingPage() {
                             </span>
                           ) : (
                             <Link
-                              href="/mypage"
+                              href={authed ? "/mypage" : "/start"}
                               className="block rounded-lg border border-slate-200 px-2 py-2 text-center text-xs font-semibold text-slate-500 transition hover:bg-slate-50"
                             >
                               문의
@@ -168,13 +192,13 @@ export default function PricingPage() {
           </div>
 
           {/* Inquiry CTA (quote-based items) */}
-          <div className="mt-8 rounded-2xl bg-emerald-600 px-6 py-7 text-center">
+          <div className="mt-8 rounded-2xl bg-emerald-700 px-6 py-7 text-center">
             <h2 className="text-lg font-bold text-white">키워드 단가·견적이 궁금하신가요?</h2>
             <p className="mt-1.5 text-sm text-emerald-50">
               상위노출 보장형·쿠팡 트래픽 등 견적형 상품은 키워드 문의 후 24시간 내 회신드립니다.
             </p>
             <Link
-              href="/mypage"
+              href={authed ? "/mypage" : "/start"}
               className="mt-5 inline-block rounded-xl bg-white px-7 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
             >
               견적·문의하기

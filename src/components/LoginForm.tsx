@@ -10,7 +10,14 @@ import { useAuth } from "@/components/AuthProvider";
 import { KakaoButton } from "@/components/KakaoButton";
 import { track } from "@/lib/analytics";
 
-export function LoginForm({ onSwitchToSignup }: { onSwitchToSignup: () => void }) {
+export function LoginForm({
+  onSwitchToSignup,
+  afterHref,
+}: {
+  onSwitchToSignup: () => void;
+  /** Post-login destination (e.g. the chosen product's pricing rows). */
+  afterHref?: string;
+}) {
   const router = useRouter();
   const { loginWithEmail } = useAuth();
   const [email, setEmail] = useState("");
@@ -20,7 +27,7 @@ export function LoginForm({ onSwitchToSignup }: { onSwitchToSignup: () => void }
   const finish = () => {
     track("login_success");
     toast.success("로그인되었습니다.");
-    router.push("/mypage");
+    router.push(afterHref ?? "/mypage");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

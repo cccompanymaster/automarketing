@@ -26,7 +26,8 @@ export function RefundLanding() {
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <TrackedCta
-                    href="/start"
+                    href="/start?service=refund"
+                    authedHref="/mypage"
                     slug="refund"
                     className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-violet-700 transition hover:bg-violet-50"
                   >
@@ -130,7 +131,8 @@ export function RefundLanding() {
               기존 광고는 그대로 두고 계정만 연결하면 매월 환급액이 지급됩니다.
             </p>
             <TrackedCta
-              href="/start"
+              href="/start?service=refund"
+              authedHref="/mypage"
               slug="refund"
               className="mt-7 inline-block rounded-xl bg-white px-8 py-3.5 text-sm font-semibold text-violet-700 transition hover:bg-violet-50"
             >

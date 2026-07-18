@@ -49,7 +49,7 @@ export interface Product {
   detail: {
     headline: string;
     subhead: string;
-    /** Minimum "from" price shown at the top of the detail page (e.g. "25원"). */
+    /** Minimum "from" price shown at the top of the detail page (e.g. "30원"). */
     fromPrice?: string;
     benefits: string[];
     steps: ProductDetailStep[];
@@ -81,7 +81,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     detail: {
       headline: "지역 검색 상위 노출로 매장 방문 고객을 늘리세요",
       subhead: "내 업종·지역에서 어떤 키워드로 노출되는지 진단하고, 상위 노출 전략을 제안해 드립니다.",
-      fromPrice: "25원",
+      fromPrice: "30원",
       benefits: [
         "지역 키워드 상위 노출로 신규 방문 고객 증가",
         "리뷰·예약·문의 전환까지 이어지는 동선 설계",
@@ -117,7 +117,6 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     detail: {
       headline: "쇼핑 검색 상위 노출로 판매량을 극대화하세요",
       subhead: "전환이 잘 되는 키워드를 찾아 광고비 대비 매출(ROAS)을 끌어올립니다.",
-      fromPrice: "30원",
       benefits: [
         "구매 의도가 높은 쇼핑 키워드 집중 공략",
         "광고비 대비 매출(ROAS) 기준의 운영 최적화",
@@ -368,7 +367,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     detail: {
       headline: "조회수·구독자·재생시간으로 채널 성장을 앞당기세요",
       subhead: "조회수·구독자·좋아요·재생시간 등 필요한 항목만 골라 진행합니다. 채널 권한 없이 영상 링크만으로 시작합니다.",
-      fromPrice: "5,000원",
+      fromPrice: "10,000원",
       benefits: [
         "국내 실사용자 기반 조회수·구독자·좋아요로 채널 활성화",
         "채널 로그인 권한 없이 채널·영상 링크만으로 진행",
@@ -521,7 +520,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     detail: {
       headline: "리워드 트래픽으로 플레이스 상위 노출을 최적화하세요",
       subhead: "실사용자에게 리워드를 제공해 저장하기·플레이스 트래픽을 자연스럽게 발생시킵니다. 네이버·카카오맵·구글맵까지 채널을 골라 진행합니다.",
-      fromPrice: "32,500원",
+      fromPrice: "30원",
       benefits: [
         "리워드 기반 실사용자 저장하기·트래픽으로 노출 신호 강화",
         "네이버 플레이스·카카오맵·구글맵 채널별 선택 진행",
@@ -532,7 +531,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
         { title: "2. 매장·키워드 전달", desc: "매장 정보와 검색 키워드를 전달해 작업 대상을 설정합니다." },
         { title: "3. 분산 진행·확인", desc: "일별로 자연스럽게 분산 진행하고 노출 변화를 확인합니다." },
       ],
-      costRange: "저장하기+트래픽 500건 3.25만 원~ / 플레이스 트래픽 1,000건 4만 원~ (채널·수량별 책정)",
+      costRange: "일반 30원 / 고품질 50원 / 체류형 100원 (1타당, 수량 자유)",
       costNote: "채널(네이버·카카오맵·구글맵)과 수량, 분산 기간에 따라 달라집니다. 신청 후 정확한 견적을 안내합니다.",
       conditions: [
         "작업은 일별 수량으로 분산해 자연스럽게 진행됩니다.",

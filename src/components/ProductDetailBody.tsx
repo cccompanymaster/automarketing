@@ -3,6 +3,7 @@
 // category page's tabs, so the two never drift apart.
 
 import { TrackedCta } from "@/components/TrackedCta";
+import { TrendRankingMock } from "@/components/TrendRankingMock";
 import type { Product, ProductSlug } from "@/lib/products";
 import { PRODUCT_STORIES } from "@/lib/productStories";
 
@@ -134,6 +135,9 @@ export function ProductDetailBody({
           </>
         );
       })()}
+
+      {/* KakaoMap only: where the trend-ranking guarantee shows up */}
+      {product.slug === "kakaomap" && <TrendRankingMock />}
 
       {/* Benefits */}
       <section>

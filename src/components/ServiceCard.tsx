@@ -15,11 +15,14 @@ export function ServiceCard({
   card,
   featured = false,
   wide = false,
+  ribbon,
 }: {
   card: ServiceCardData;
   featured?: boolean;
   /** Full-row banner layout (horizontal on sm+), used by the closing card. */
   wide?: boolean;
+  /** Corner ribbon label (e.g. "인기 묶음 ⭐"); omit for no ribbon. */
+  ribbon?: string;
 }) {
   if (wide) {
     return (
@@ -56,10 +59,10 @@ export function ServiceCard({
         featured ? "p-7 sm:p-8" : "p-6"
       }`}
     >
-      {/* Featured ribbon */}
-      {featured && (
+      {/* Corner ribbon */}
+      {ribbon && (
         <span className="absolute right-0 top-0 rounded-bl-2xl bg-slate-900 px-4 py-1.5 text-xs font-extrabold tracking-wide text-white">
-          인기 묶음 ⭐
+          {ribbon}
         </span>
       )}
 

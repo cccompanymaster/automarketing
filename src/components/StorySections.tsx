@@ -132,6 +132,7 @@ const CHAPTERS: Chapter[] = [
     links: [
       { label: "플레이스·지도 상위노출", href: "/services/place-map" },
       { label: "리워드 트래픽", href: "/services/place-map#place-traffic" },
+      { label: "당근 단골 만들기", href: "/services/daangn" },
     ],
     emoji: "📍",
     metric: { label: "지도에서 매장을 찾는 손님", value: "10명 중 8명*" },

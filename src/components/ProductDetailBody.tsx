@@ -23,6 +23,7 @@ const PRICING_ANCHOR: Partial<Record<ProductSlug, string>> = {
   instagram: "sns",
   youtube: "sns",
   kakaomap: "kakaomap",
+  daangn: "daangn",
 };
 
 export function pricingHref(slug: ProductSlug): string {

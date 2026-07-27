@@ -15,6 +15,7 @@ export type ProductSlug =
   | "youtube"
   | "kakaomap"
   | "cafe"
+  | "daangn"
   | "ai-influencer"
   | "place-traffic"
   | "refund"
@@ -462,6 +463,48 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       ],
     },
   },
+  daangn: {
+    slug: "daangn",
+    icon: "🥕",
+    name: "당근 단골 만들기",
+    summary: ["동네 이웃들이 매일 쓰는 당근에서", "비즈프로필 단골·후기·바이럴을 채웁니다."],
+    cta: "당근 마케팅 신청하기",
+    accent: {
+      chip: "bg-orange-50 text-orange-700",
+      iconBg: "bg-orange-100",
+      cardRing: "hover:ring-orange-200",
+      button: "bg-orange-700 hover:bg-orange-800 text-white",
+      gradient: "from-orange-50 to-white",
+    },
+    detail: {
+      headline: "동네 앱 1등 ‘당근’에서 우리 가게 단골을 만드세요",
+      subhead: "비즈프로필 단골·찜·후기부터 동네생활 바이럴 게시글, 숏폼 영상 제작까지 — 건당 단가로 필요한 만큼만, 또는 30일 관리 프로젝트로 한 번에 진행합니다.",
+      fromPrice: "500원",
+      benefits: [
+        "단골 추가·하트 찜·소식글 관심 1건 500원부터, 항목별 수량 선택",
+        "일반·포토 후기와 동네생활 바이럴 게시글로 동네 신뢰 형성",
+        "A~S 프로젝트 패키지(30일 관리 15만 원~)로 통합 관리 가능",
+      ],
+      steps: [
+        { title: "1. 항목·수량 선택", desc: "단골·찜·후기·게시글 등 필요한 항목과 수량(또는 프로젝트)을 고릅니다." },
+        { title: "2. 비즈프로필 전달", desc: "계정 정보 없이 비즈프로필 링크와 매장 소개·키워드를 전달합니다." },
+        { title: "3. 분산 진행·보고", desc: "자연스러운 속도로 나눠 진행하고 결과를 보고합니다." },
+      ],
+      costRange: "단골·찜·관심 1건 500원 / 후기 5,000원~ / 바이럴 게시글 20,000원 / 프로젝트 월 150,000원~",
+      costNote: "항목별 최소 수량(단골·찜 50건, 후기 5건 등)이 있으며, 프로젝트는 관리 기간 기준입니다.",
+      conditions: [
+        "계정 로그인 정보는 요구하지 않으며, 비즈프로필 링크만으로 진행합니다.",
+        "프로젝트 완료 시 ‘동네업체’ 카테고리 특정 키워드 10위권 미달이면 추가 작업을 진행합니다.",
+        "당근 정책·노출 환경에 따라 진행 속도와 결과가 달라질 수 있습니다.",
+      ],
+      materials: [
+        "당근 비즈프로필 링크",
+        "매장 소개와 대표 사진 (후기·게시글용)",
+        "공략할 동네·키워드 (예: ○○동 네일)",
+        "후기에 꼭 들어갈 포인트·금지 표현",
+      ],
+    },
+  },
   "ai-influencer": {
     slug: "ai-influencer",
     icon: "✨",
@@ -625,6 +668,7 @@ export const PRODUCT_LIST: Product[] = [
   PRODUCTS.youtube,
   PRODUCTS.kakaomap,
   PRODUCTS.cafe,
+  PRODUCTS.daangn,
   PRODUCTS["ai-influencer"],
   PRODUCTS["place-traffic"],
   PRODUCTS.refund,
@@ -643,6 +687,7 @@ export const PRODUCT_SLUGS: ProductSlug[] = [
   "youtube",
   "kakaomap",
   "cafe",
+  "daangn",
   "ai-influencer",
   "place-traffic",
   "refund",
@@ -749,6 +794,7 @@ export const LANDING_CARDS: ServiceCardData[] = [
   productCard(PRODUCTS.instagram),
   productCard(PRODUCTS.youtube),
   productCard(PRODUCTS.cafe),
+  productCard(PRODUCTS.daangn),
   productCard(PRODUCTS.blogwrite),
   productCard(PRODUCTS.experience),
   productCard(PRODUCTS.press),

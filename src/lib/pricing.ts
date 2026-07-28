@@ -107,6 +107,20 @@ export const PRICING: PricingGroup[] = [
         note: "단가 협의 예정",
       },
       {
+        name: "쿠팡 가구매",
+        price: "1,500원",
+        unit: "1건",
+        amountKrw: 1_500,
+        note: "실구매 리워드 진행 · 증빙처리 가능!",
+      },
+      {
+        name: "쿠팡 가구매 (택배대행 포함)",
+        price: "2,000원",
+        unit: "1건",
+        amountKrw: 2_000,
+        note: "실제 택배 발송 대행까지 포함 · 증빙처리 가능!",
+      },
+      {
         name: "쿠팡 트래픽",
         price: "별도 문의",
         inquiry: true,

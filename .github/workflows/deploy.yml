@@ -56,6 +56,9 @@ jobs:
           NEXT_PUBLIC_GTM_ID: ${{ vars.NEXT_PUBLIC_GTM_ID }}
           # Admin dashboard allowlist (comma-separated emails). Empty = no admin.
           NEXT_PUBLIC_ADMIN_EMAILS: ${{ vars.NEXT_PUBLIC_ADMIN_EMAILS }}
+          # Live price sheet (published CSV) + inquiry webhook (Apps Script).
+          NEXT_PUBLIC_PRICE_SHEET_CSV_URL: ${{ vars.NEXT_PUBLIC_PRICE_SHEET_CSV_URL }}
+          NEXT_PUBLIC_INQUIRY_WEBHOOK_URL: ${{ vars.NEXT_PUBLIC_INQUIRY_WEBHOOK_URL }}
           # Payment (PortOne) client keys. Empty = test-charge stub.
           NEXT_PUBLIC_PORTONE_STORE_ID: ${{ vars.NEXT_PUBLIC_PORTONE_STORE_ID }}
           NEXT_PUBLIC_PORTONE_CHANNEL_KEY: ${{ vars.NEXT_PUBLIC_PORTONE_CHANNEL_KEY }}

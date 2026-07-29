@@ -13,7 +13,9 @@ import { ChargeModal } from "@/components/ChargeModal";
 import { OrderModal } from "@/components/OrderModal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { PRICING, sortedItems, type PricingItem } from "@/lib/pricing";
+import { PRICING, sortedItems, type PricingGroup, type PricingItem } from "@/lib/pricing";
+import { fetchLivePricing, isSheetPricingConfigured } from "@/lib/sheetPricing";
+import { InquiryModal } from "@/components/InquiryModal";
 import { formatCash } from "@/lib/cash";
 
 export default function PricingPage() {
@@ -21,6 +23,23 @@ export default function PricingPage() {
   const { balance } = useWallet();
   const [orderItem, setOrderItem] = useState<PricingItem | null>(null);
   const [chargeOpen, setChargeOpen] = useState(false);
+  const [inquiryTopic, setInquiryTopic] = useState<string | null>(null);
+  // Built-in catalog first; live sheet prices override once fetched.
+  const [groups, setGroups] = useState<PricingGroup[]>(PRICING);
+  const [live, setLive] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    void fetchLivePricing().then((merged) => {
+      if (active && merged) {
+        setGroups(merged);
+        setLive(true);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const authed = hydrated && isAuthenticated;
 
@@ -79,10 +98,16 @@ export default function PricingPage() {
               <span className="h-2.5 w-2.5 rounded-full bg-slate-300" aria-hidden="true" />
               준비 중
             </span>
+            {isSheetPricingConfigured && live && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 font-semibold text-emerald-700">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" aria-hidden="true" />
+                실시간 단가 반영 중
+              </span>
+            )}
           </div>
 
           <div className="mt-8 space-y-6">
-            {PRICING.map((group) => (
+            {groups.map((group) => (
               <section
                 key={group.key}
                 id={group.key}
@@ -175,12 +200,13 @@ export default function PricingPage() {
                               준비 중
                             </span>
                           ) : (
-                            <Link
-                              href={authed ? "/mypage" : "/start"}
-                              className="block rounded-lg border border-slate-200 px-2 py-2 text-center text-xs font-semibold text-slate-500 transition hover:bg-slate-50"
+                            <button
+                              type="button"
+                              onClick={() => setInquiryTopic(item.name)}
+                              className="block w-full rounded-lg border border-slate-200 px-2 py-2 text-center text-xs font-semibold text-slate-500 transition hover:bg-slate-50"
                             >
                               문의
-                            </Link>
+                            </button>
                           )}
                         </div>
                       </li>
@@ -197,13 +223,13 @@ export default function PricingPage() {
             <p className="mt-1.5 text-sm text-emerald-50">
               상위노출 보장형·쿠팡 트래픽 등 견적형 상품은 키워드 문의 후 24시간 내 회신드립니다.
             </p>
-            <Link
-              href={authed ? "/mypage" : "/start"}
+            <button
+              type="button"
+              onClick={() => setInquiryTopic("컨설팅·견적 상담")}
               className="mt-5 inline-block rounded-xl bg-white px-7 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
             >
               견적·문의하기
-            </Link>
-            {/* TODO(backend): connect to a real inquiry / quote request form. */}
+            </button>
           </div>
         </div>
       </main>
@@ -215,6 +241,11 @@ export default function PricingPage() {
         onNeedCharge={() => setChargeOpen(true)}
       />
       <ChargeModal open={chargeOpen} onClose={() => setChargeOpen(false)} />
+      <InquiryModal
+        open={inquiryTopic !== null}
+        topic={inquiryTopic ?? ""}
+        onClose={() => setInquiryTopic(null)}
+      />
     </>
   );
 }

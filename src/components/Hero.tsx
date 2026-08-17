@@ -156,7 +156,7 @@ export function Hero() {
         style={{
           position: "relative",
           width: "100%",
-          minHeight: "calc(100svh - 64px)",
+          minHeight: "100svh",
           overflow: "hidden",
           background:
             "radial-gradient(120% 95% at 78% 12%,#d9f6e4 0%,#eafaf0 38%,#f3fbf6 70%,#ffffff 100%)",
@@ -173,7 +173,7 @@ export function Hero() {
             zIndex: 20,
             maxWidth: 1240,
             margin: "0 auto",
-            minHeight: "calc(100svh - 64px)",
+            minHeight: "100svh",
             display: "flex",
             flexWrap: "wrap",
             alignItems: "center",

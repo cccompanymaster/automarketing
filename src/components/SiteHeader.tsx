@@ -39,6 +39,13 @@ export function SiteHeader() {
     setOpen(false);
   }, [pathname]);
 
+  // Reserve space for the always-open wing on desktop (pages have no shared
+  // wrapper, so the offset lives on <body> — see globals.css .has-wing).
+  useEffect(() => {
+    document.body.classList.add("has-wing");
+    return () => document.body.classList.remove("has-wing");
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
@@ -62,16 +69,16 @@ export function SiteHeader() {
       {/* ===== Desktop: floating left wing dock ===== */}
       <nav
         aria-label="주 메뉴"
-        className="group/dock fixed left-4 top-1/2 z-40 hidden -translate-y-1/2 lg:block"
+        className="fixed left-4 top-1/2 z-40 hidden -translate-y-1/2 lg:block"
       >
-        <div className="flex w-14 flex-col gap-1 overflow-hidden rounded-2xl border border-slate-100 bg-white/90 p-2 shadow-xl backdrop-blur transition-[width] duration-300 group-hover/dock:w-52">
+        <div className="flex w-52 flex-col gap-1 rounded-2xl border border-slate-100 bg-white/95 p-2 shadow-xl backdrop-blur">
           {/* Brand */}
           <Link
             href="/"
             className="flex h-10 items-center gap-3 rounded-xl px-2 font-extrabold text-slate-900 transition hover:bg-emerald-50"
           >
             <span className="shrink-0 text-xl" aria-hidden="true">🌱</span>
-            <span className="whitespace-nowrap text-sm opacity-0 transition-opacity duration-200 group-hover/dock:opacity-100">
+            <span className="whitespace-nowrap text-sm">
               {COMPANY.serviceName}
             </span>
           </Link>
@@ -87,7 +94,7 @@ export function SiteHeader() {
               <span className="w-6 shrink-0 text-center text-lg" aria-hidden="true">
                 {item.icon}
               </span>
-              <span className="whitespace-nowrap text-sm font-semibold opacity-0 transition-opacity duration-200 group-hover/dock:opacity-100">
+              <span className="whitespace-nowrap text-sm font-semibold">
                 {item.label}
               </span>
             </Link>
@@ -103,7 +110,7 @@ export function SiteHeader() {
               className="flex h-10 items-center gap-3 rounded-xl px-2 text-slate-400 transition hover:bg-slate-50 hover:text-slate-700"
             >
               <span className="w-6 shrink-0 text-center text-lg" aria-hidden="true">🚪</span>
-              <span className="whitespace-nowrap text-sm font-semibold opacity-0 transition-opacity duration-200 group-hover/dock:opacity-100">
+              <span className="whitespace-nowrap text-sm font-semibold">
                 로그아웃
               </span>
             </button>
@@ -113,7 +120,7 @@ export function SiteHeader() {
               className="flex h-11 items-center gap-3 rounded-xl bg-emerald-700 px-2 text-white transition hover:bg-emerald-800"
             >
               <span className="w-6 shrink-0 text-center text-lg" aria-hidden="true">🚀</span>
-              <span className="whitespace-nowrap text-sm font-bold opacity-0 transition-opacity duration-200 group-hover/dock:opacity-100">
+              <span className="whitespace-nowrap text-sm font-bold">
                 시작하기
               </span>
             </Link>

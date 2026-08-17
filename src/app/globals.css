@@ -387,6 +387,14 @@
   }
 }
 
+/* Reserve room for the always-open left wing nav (SiteHeader adds .has-wing
+   to <body> while mounted; funnel pages without the wing stay full-width). */
+@media (min-width: 1024px) {
+  body.has-wing {
+    padding-left: 15rem; /* wing w-52 (13rem) + left-4 + breathing room */
+  }
+}
+
 /* ===== Storytelling landing: scroll-triggered reveals ===== */
 .reveal {
   opacity: 0;

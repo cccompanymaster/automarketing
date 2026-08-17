@@ -4,6 +4,7 @@
 
 import { TrackedCta } from "@/components/TrackedCta";
 import { TrendRankingMock } from "@/components/TrendRankingMock";
+import { PlaceRankingMock } from "@/components/PlaceRankingMock";
 import type { Product, ProductSlug } from "@/lib/products";
 import { PRODUCT_STORIES } from "@/lib/productStories";
 
@@ -139,6 +140,9 @@ export function ProductDetailBody({
 
       {/* KakaoMap only: where the trend-ranking guarantee shows up */}
       {product.slug === "kakaomap" && <TrendRankingMock />}
+
+      {/* Naver Place only: ad slots vs the organic position we target */}
+      {product.slug === "place" && <PlaceRankingMock />}
 
       {/* Benefits */}
       <section>

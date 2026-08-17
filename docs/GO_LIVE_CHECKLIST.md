@@ -43,6 +43,15 @@
 - [ ] `blog-writer` Edge Function 배포 + `ANTHROPIC_API_KEY` 시크릿
 - [ ] 변수 `NEXT_PUBLIC_BLOG_API_URL` 등록
 
+## 시트 연동 (단가 실시간 조정 + 문의 접수) — docs/SHEET_INTEGRATION.md
+- [ ] 스프레드시트 생성 (`prices` + `inquiries` 탭)
+- [ ] `prices` 웹에 게시(CSV) → 변수 `NEXT_PUBLIC_PRICE_SHEET_CSV_URL`
+- [ ] Apps Script 웹 앱 배포 → 변수 `NEXT_PUBLIC_INQUIRY_WEBHOOK_URL`
+
+## 이미지 제작 (프롬프트 문서 참조)
+- [ ] 온보딩 4장 — docs/ONBOARDING_IMAGES.md
+- [ ] 상세페이지 13장 — docs/DETAIL_IMAGES.md
+
 ## 성능 (외부 점검 후속 — 코드로 미해결 항목)
 - [ ] Pretendard **자체 호스팅 + 서브셋(woff2)** 전환 — 현재 CDN 전체 로드(~410KB)
 - [ ] 해시 자산 장기 캐시(`immutable`) — GitHub Pages는 캐시 헤더 설정 불가,

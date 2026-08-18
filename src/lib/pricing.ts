@@ -39,6 +39,33 @@ export function priceSortValue(item: PricingItem): number {
   return m ? Number(m[0]) : Number.POSITIVE_INFINITY;
 }
 
+
+/** Normalized price for display — keeps every row's price rendered the same way. */
+export interface DisplayPrice {
+  /** "1,500원" · "견적" · "준비 중" */
+  main: string;
+  /** True when the amount is a starting price (shows a "부터" tag). */
+  from: boolean;
+  /** Per-unit suffix ("1건", "50건" …), already trimmed. */
+  unit?: string;
+  kind: "order" | "quote" | "soon";
+}
+
+export function displayPrice(item: PricingItem): DisplayPrice {
+  const soon = item.price.includes("준비");
+  const from = item.price.includes("~");
+  if (soon) return { main: "준비 중", from: false, unit: item.unit, kind: "soon" };
+  if (item.amountKrw != null && !item.inquiry) {
+    return {
+      main: `${item.amountKrw.toLocaleString("ko-KR")}원`,
+      from,
+      unit: item.unit,
+      kind: "order",
+    };
+  }
+  return { main: "견적", from: false, unit: item.unit, kind: "quote" };
+}
+
 /** Items sorted by price ascending (non-priced items last, original order kept). */
 export function sortedItems(group: PricingGroup): PricingItem[] {
   return [...group.items].sort((a, b) => priceSortValue(a) - priceSortValue(b));

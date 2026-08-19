@@ -87,13 +87,13 @@ function BridgeSection() {
           <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-slate-300 sm:text-lg">
             마케팅방주는 필요한 것만 골라 쓰는 셀프 마케팅 플랫폼이에요.
             <br className="hidden sm:block" />
-            가격은 가입 전에 전부 보여드리고, 주문이 어떻게 되고 있는지도 내 화면에서 바로 확인할 수 있어요.
+            상품마다 예상 비용을 미리 공개하고, 가입하면 전체 단가표가 열려요. 주문 진행 상황도 내 화면에서 바로 확인할 수 있고요.
           </p>
         </Reveal>
         <Reveal delayMs={150}>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-semibold text-slate-200">
             <span className="flex items-center gap-2">
-              <span className="text-emerald-400" aria-hidden="true">✓</span> 가격, 먼저 보여드려요
+              <span className="text-emerald-400" aria-hidden="true">✓</span> 예상 비용, 미리 알려드려요
             </span>
             <span className="flex items-center gap-2">
               <span className="text-emerald-400" aria-hidden="true">✓</span> 필요한 만큼만 주문해요

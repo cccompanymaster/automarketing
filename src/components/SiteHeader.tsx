@@ -19,10 +19,10 @@ interface NavItem {
   label: string;
 }
 
+// Public items — visible to everyone.
 const NAV_ITEMS: NavItem[] = [
   { href: "/", icon: "🏠", label: "홈" },
   { href: "/#services", icon: "🧩", label: "전체 서비스" },
-  { href: "/pricing", icon: "💰", label: "상품·요금" },
   { href: "/#reviews", icon: "💬", label: "고객후기" },
   { href: "/tools/blog-writer", icon: "📝", label: "AI 원고" },
 ];
@@ -57,8 +57,10 @@ export function SiteHeader() {
     };
   }, [open]);
 
+  // Members-only items — the full rate card lives behind signup.
   const authItems: NavItem[] = isAuthenticated
     ? [
+        { href: "/pricing", icon: "💰", label: "상품·요금" },
         { href: "/mypage", icon: "👤", label: "마이페이지" },
         ...(isAdmin ? [{ href: "/admin", icon: "🛠️", label: "관리자" }] : []),
       ]

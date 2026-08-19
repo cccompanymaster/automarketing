@@ -1,13 +1,14 @@
 "use client";
 
-// Public product & price list, organized by channel. A summary grid shows every
-// channel at a glance (item count · lowest price · what it does); picking one
-// filters the tables below. "전체" keeps the full list. Ordering/charging stays
-// member-only: guests' order/inquiry actions route into the signup funnel.
+// Members-only product & price list, organized by channel. A summary grid shows
+// every channel at a glance (item count · lowest price); picking one filters the
+// tables below. Guests are redirected into the signup funnel — public pages
+// expose each product's 예상 비용 instead of the full rate card.
 // TODO(payment): turn each row into an orderable item via the billing API.
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { useWallet } from "@/components/WalletProvider";
 import { ChargeModal } from "@/components/ChargeModal";
@@ -37,6 +38,7 @@ function fromPrice(group: PricingGroup): string {
 }
 
 export default function PricingPage() {
+  const router = useRouter();
   const { isAuthenticated, hydrated } = useAuth();
   const { balance } = useWallet();
   const [orderItem, setOrderItem] = useState<PricingItem | null>(null);
@@ -62,6 +64,12 @@ export default function PricingPage() {
   }, []);
 
   const authed = hydrated && isAuthenticated;
+
+  // Members only: send guests into the funnel once the session is restored.
+  useEffect(() => {
+    if (hydrated && !isAuthenticated) router.replace("/start");
+  }, [hydrated, isAuthenticated, router]);
+
   const shown = useMemo(
     () => (channel ? groups.filter((g) => g.key === channel) : groups),
     [groups, channel],
@@ -87,6 +95,8 @@ export default function PricingPage() {
     }
   };
 
+  if (!authed) return null;
+
   return (
     <>
       <SiteHeader />
@@ -100,22 +110,13 @@ export default function PricingPage() {
                 주문할 수 있고, 표시 금액은 부가세 별도입니다.
               </p>
             </div>
-            {authed ? (
-              <button
-                type="button"
-                onClick={() => setChargeOpen(true)}
-                className="rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
-              >
-                보유 {formatCash(balance)} · 충전
-              </button>
-            ) : (
-              <Link
-                href="/start"
-                className="rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
-              >
-                3분 가입하고 주문하기
-              </Link>
-            )}
+            <button
+              type="button"
+              onClick={() => setChargeOpen(true)}
+              className="rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+            >
+              보유 {formatCash(balance)} · 충전
+            </button>
           </header>
 
           {/* ===== Channel overview — every channel at a glance ===== */}
@@ -297,22 +298,13 @@ export default function PricingPage() {
                               AI 작성
                             </Link>
                           ) : orderable ? (
-                            authed ? (
-                              <button
-                                type="button"
-                                onClick={() => setOrderItem(item)}
-                                className="flex h-9 w-full items-center justify-center rounded-lg bg-emerald-700 text-xs font-bold text-white transition hover:bg-emerald-800"
-                              >
-                                주문
-                              </button>
-                            ) : (
-                              <Link
-                                href="/start"
-                                className="flex h-9 w-full items-center justify-center rounded-lg bg-emerald-700 text-xs font-bold text-white transition hover:bg-emerald-800"
-                              >
-                                주문
-                              </Link>
-                            )
+                            <button
+                              type="button"
+                              onClick={() => setOrderItem(item)}
+                              className="flex h-9 w-full items-center justify-center rounded-lg bg-emerald-700 text-xs font-bold text-white transition hover:bg-emerald-800"
+                            >
+                              주문
+                            </button>
                           ) : price.kind === "soon" ? (
                             <span
                               aria-disabled="true"

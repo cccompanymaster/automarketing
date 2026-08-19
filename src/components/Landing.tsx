@@ -40,7 +40,7 @@ export function Landing() {
             필요한 것만 골라 담으세요
           </h2>
           <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            절차랑 예상 비용, 가입하기 전에 전부 보여드려요.
+            상품마다 절차와 예상 비용을 미리 확인할 수 있어요. 전체 단가표는 가입하면 바로 열려요.
           </p>
         </Reveal>
 

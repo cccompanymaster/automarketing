@@ -12,6 +12,7 @@ import { useWallet } from "@/components/WalletProvider";
 import { useOrders } from "@/components/OrdersProvider";
 import { useDeliverables } from "@/components/DeliverablesProvider";
 import { DeliverableModal } from "@/components/DeliverableModal";
+import { ConsentSettings } from "@/components/ConsentSettings";
 import { ChargeModal } from "@/components/ChargeModal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -139,6 +140,9 @@ export default function MyPage() {
               →
             </span>
           </Link>
+
+          {/* Optional-consent management (제3자 제공 철회 창구) */}
+          <ConsentSettings />
 
           {isAdmin && (
             <Link

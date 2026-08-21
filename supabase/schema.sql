@@ -319,3 +319,44 @@ $$;
 
 revoke all on function public.review_deliverable(uuid, boolean, text) from public, anon;
 grant execute on function public.review_deliverable(uuid, boolean, text) to authenticated;
+
+-- 동의 이력 (제3자 제공 등) ----------------------------------------------------
+-- 개인정보 제3자 제공은 "동의를 받았다"는 사실을 입증할 수 있어야 하므로,
+-- 가입·변경 시점의 동의 상태를 append-only 로 적재합니다. 최신 상태는 가장
+-- 최근 행(created_at desc)이며, 과거 행은 수정·삭제하지 않습니다.
+create table if not exists public.consent_logs (
+  id           uuid primary key default gen_random_uuid(),
+  user_id      uuid not null references auth.users (id) on delete cascade,
+  terms        boolean not null default false,
+  privacy      boolean not null default false,
+  third_party  boolean not null default false,  -- 제3자 정보제공 (선택)
+  marketing    boolean not null default false,  -- 마케팅 정보 수신 (선택)
+  doc_version  text not null default '2026-08-01',
+  source       text not null default 'signup'   -- signup | mypage
+                 check (source in ('signup','mypage')),
+  created_at   timestamptz not null default now()
+);
+
+create index if not exists consent_logs_user_created_idx
+  on public.consent_logs (user_id, created_at desc);
+
+alter table public.consent_logs enable row level security;
+
+-- 본인 이력 조회 + 관리자 전체 조회.
+drop policy if exists "own consents readable" on public.consent_logs;
+create policy "own consents readable"
+  on public.consent_logs for select
+  using (auth.uid() = user_id or public.is_admin());
+
+-- 본인 동의 기록 추가만 허용 (수정·삭제 정책 없음 → append-only).
+drop policy if exists "own consents insertable" on public.consent_logs;
+create policy "own consents insertable"
+  on public.consent_logs for insert
+  with check (auth.uid() = user_id);
+
+-- 최신 동의 상태 조회용 뷰 (사용자별 1행).
+create or replace view public.current_consents as
+select distinct on (user_id)
+  user_id, terms, privacy, third_party, marketing, doc_version, source, created_at
+from public.consent_logs
+order by user_id, created_at desc;

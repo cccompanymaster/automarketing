@@ -165,6 +165,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // a dedicated success notice by the signup form, not an error toast.
           throw new EmailConfirmationRequiredError();
         }
+        // Append the auditable consent record. Best-effort: a failure here must
+        // not undo a successful signup (the metadata copy above still stands).
+        if (consents) {
+          try {
+            const { recordConsents } = await import("@/lib/consents");
+            await recordConsents(consents, "signup", data.user.id);
+          } catch {
+            /* ignore */
+          }
+        }
         return mapSupabaseUser(data.user);
       }
       const next: User = { id: email, email, name, provider: "email" };

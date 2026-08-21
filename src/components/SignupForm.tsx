@@ -230,20 +230,39 @@ export function SignupForm({
         </div>
 
         {/* Consents — required and optional are separated (PIPA 제22조) */}
-        <fieldset className="rounded-2xl border border-slate-200 p-4">
+        <fieldset className="overflow-hidden rounded-2xl border border-slate-200">
           <legend className="sr-only">약관 동의</legend>
 
-          <label className="flex items-center gap-2.5 pb-3 text-sm font-bold text-slate-800">
-            <input
-              type="checkbox"
-              checked={allChecked}
-              onChange={(e) => toggleAll(e.target.checked)}
-              className="h-[18px] w-[18px] rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-            />
-            전체 동의 <span className="text-xs font-medium text-slate-400">(선택 포함)</span>
-          </label>
+          {/* Agree-to-all — a full-width tap target, not a small checkbox */}
+          <button
+            type="button"
+            onClick={() => toggleAll(!allChecked)}
+            aria-pressed={allChecked}
+            className={`flex w-full items-center gap-3 px-4 py-4 text-left transition ${
+              allChecked ? "bg-emerald-700 text-white" : "bg-slate-50 hover:bg-slate-100"
+            }`}
+          >
+            <span
+              aria-hidden="true"
+              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-black transition ${
+                allChecked
+                  ? "bg-white text-emerald-700"
+                  : "border-2 border-slate-300 bg-white text-transparent"
+              }`}
+            >
+              ✓
+            </span>
+            <span className="flex-1">
+              <span className={`block text-[15px] font-bold ${allChecked ? "text-white" : "text-slate-800"}`}>
+                전체 동의하기
+              </span>
+              <span className={`block text-xs ${allChecked ? "text-emerald-50" : "text-slate-400"}`}>
+                필수·선택 항목에 모두 동의합니다
+              </span>
+            </span>
+          </button>
 
-          <div className="space-y-2.5 border-t border-slate-100 pt-3">
+          <div className="space-y-1 p-4">
             {[
               {
                 checked: agreeTerms,
@@ -274,24 +293,30 @@ export function SignupForm({
                 doc: "marketing" as LegalDocKey,
               },
             ].map((c) => (
-              <div key={c.label} className="flex items-center gap-2.5 text-sm">
-                <input
-                  id={`consent-${c.doc}`}
-                  type="checkbox"
-                  checked={c.checked}
-                  onChange={(e) => c.set(e.target.checked)}
-                  className="h-[18px] w-[18px] shrink-0 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-                />
-                <label htmlFor={`consent-${c.doc}`} className="flex-1 text-slate-600">
-                  <span className={c.required ? "font-semibold text-slate-500" : "text-slate-400"}>
-                    [{c.required ? "필수" : "선택"}]
-                  </span>{" "}
-                  {c.label}
+              <div key={c.label} className="flex items-center gap-1 text-sm">
+                {/* Whole row toggles the consent — bigger, easier target */}
+                <label
+                  htmlFor={`consent-${c.doc}`}
+                  className="flex min-h-11 flex-1 cursor-pointer items-center gap-2.5 rounded-lg px-1 transition hover:bg-slate-50"
+                >
+                  <input
+                    id={`consent-${c.doc}`}
+                    type="checkbox"
+                    checked={c.checked}
+                    onChange={(e) => c.set(e.target.checked)}
+                    className="h-[18px] w-[18px] shrink-0 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                  />
+                  <span className="text-slate-600">
+                    <span className={c.required ? "font-semibold text-slate-500" : "text-slate-400"}>
+                      [{c.required ? "필수" : "선택"}]
+                    </span>{" "}
+                    {c.label}
+                  </span>
                 </label>
                 <button
                   type="button"
                   onClick={() => setModalDoc(c.doc)}
-                  className="shrink-0 text-xs font-semibold text-slate-400 underline underline-offset-2 hover:text-emerald-700"
+                  className="flex min-h-11 shrink-0 items-center px-2 text-xs font-semibold text-slate-400 underline underline-offset-2 transition hover:text-emerald-700"
                 >
                   보기
                 </button>
@@ -299,7 +324,7 @@ export function SignupForm({
             ))}
           </div>
 
-          <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
+          <p className="border-t border-slate-100 px-4 pb-4 pt-3 text-[11px] leading-relaxed text-slate-400">
             선택 항목에 동의하지 않아도 회원가입과 모든 서비스 이용에 제한이 없어요. 동의 후에도
             언제든지 철회할 수 있습니다.
           </p>

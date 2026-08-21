@@ -36,6 +36,9 @@ export function SiteFooter() {
             <Link href="/privacy" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
               개인정보처리방침
             </Link>
+            <Link href="/third-party" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
+              제3자 제공
+            </Link>
           </nav>
         </div>
 

@@ -17,6 +17,18 @@ import {
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { getSupabase } from "@/lib/supabase";
 
+/** Consent snapshot captured at signup (audit trail for 제3자 제공 동의). */
+export interface ConsentRecord {
+  terms: boolean;
+  privacy: boolean;
+  /** 제3자 정보제공 (선택) — DB 제공·판매의 법적 근거. */
+  thirdParty: boolean;
+  /** 마케팅 정보 수신 (선택). */
+  marketing: boolean;
+  /** ISO timestamp of the agreement. */
+  agreedAt: string;
+}
+
 export interface User {
   id: string;
   email: string;
@@ -30,7 +42,12 @@ interface AuthContextValue {
   /** False until the session has been restored on the client. */
   hydrated: boolean;
   loginWithEmail: (email: string, password: string) => Promise<User>;
-  signupWithEmail: (email: string, password: string, name?: string) => Promise<User>;
+  signupWithEmail: (
+    email: string,
+    password: string,
+    name?: string,
+    consents?: ConsentRecord,
+  ) => Promise<User>;
   loginWithKakao: () => Promise<User>;
   logout: () => void;
 }
@@ -127,12 +144,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const signupWithEmail = useCallback(
-    async (email: string, password: string, name?: string): Promise<User> => {
+    async (
+      email: string,
+      password: string,
+      name?: string,
+      consents?: ConsentRecord,
+    ): Promise<User> => {
       if (supabase) {
+        // Consents ride along in user_metadata so the record survives with the
+        // account. TODO(backend): mirror into an append-only consent log table
+        // (with timestamp/version) if consents ever need to be audited.
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { name } },
+          options: { data: { name, consents } },
         });
         if (error) throw new Error(error.message);
         if (!data.session || !data.user) {
@@ -144,6 +169,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       const next: User = { id: email, email, name, provider: "email" };
       persistStub(next);
+      // Stub mode: keep the consent snapshot alongside the local session.
+      if (consents) {
+        try {
+          localStorage.setItem(`${STORAGE_KEY}.consents`, JSON.stringify(consents));
+        } catch {
+          /* ignore */
+        }
+      }
       return next;
     },
     [supabase, persistStub],

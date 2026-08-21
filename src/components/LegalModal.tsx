@@ -5,12 +5,12 @@
 // Traps focus while open, closes on Escape, and restores focus on close.
 
 import { useEffect, useRef } from "react";
-import { LEGAL_DOCS } from "@/lib/legal";
+import { LEGAL_DOCS, type LegalDocKey } from "@/lib/legal";
 import { LegalContent } from "@/components/LegalContent";
 
 interface LegalModalProps {
   open: boolean;
-  docKey: "terms" | "privacy" | null;
+  docKey: LegalDocKey | null;
   onClose: () => void;
 }
 

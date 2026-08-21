@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useAuth, EmailConfirmationRequiredError } from "@/components/AuthProvider";
 import { KakaoButton } from "@/components/KakaoButton";
 import { LegalModal } from "@/components/LegalModal";
+import type { LegalDocKey } from "@/lib/legal";
 import { track } from "@/lib/analytics";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,9 +30,14 @@ export function SignupForm({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [agreed, setAgreed] = useState(false);
+  // Consents are split per PIPA: required ones gate signup, optional ones are
+  // recorded but never block it (제22조 — 선택 동의 거부 시 서비스 제한 금지).
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreePrivacy, setAgreePrivacy] = useState(false);
+  const [agreeThirdParty, setAgreeThirdParty] = useState(false);
+  const [agreeMarketing, setAgreeMarketing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [modalDoc, setModalDoc] = useState<"terms" | "privacy" | null>(null);
+  const [modalDoc, setModalDoc] = useState<LegalDocKey | null>(null);
   const [confirmSent, setConfirmSent] = useState(false);
   const [fieldError, setFieldError] = useState<{ field: "email" | "password"; message: string } | null>(null);
 
@@ -52,9 +58,28 @@ export function SignupForm({
     router.push(afterHref ?? "/mypage");
   };
 
+  const requiredOk = agreeTerms && agreePrivacy;
+  const allChecked = agreeTerms && agreePrivacy && agreeThirdParty && agreeMarketing;
+
+  const toggleAll = (checked: boolean) => {
+    setAgreeTerms(checked);
+    setAgreePrivacy(checked);
+    setAgreeThirdParty(checked);
+    setAgreeMarketing(checked);
+  };
+
+  /** Consent snapshot recorded with the account (audit trail for 제3자 제공). */
+  const consents = () => ({
+    terms: agreeTerms,
+    privacy: agreePrivacy,
+    thirdParty: agreeThirdParty,
+    marketing: agreeMarketing,
+    agreedAt: new Date().toISOString(),
+  });
+
   const guardConsent = (): boolean => {
-    if (!agreed) {
-      toast.error("약관 및 개인정보 처리방침에 동의해 주세요.");
+    if (!requiredOk) {
+      toast.error("필수 항목(이용약관·개인정보 수집·이용)에 동의해 주세요.");
       return false;
     }
     return true;
@@ -79,13 +104,10 @@ export function SignupForm({
       failField("password", `비밀번호는 ${PASSWORD_MIN_LENGTH}자 이상 입력해 주세요.`);
       return;
     }
-    if (!agreed) {
-      toast.error("약관 및 개인정보 처리방침에 동의해 주세요.");
-      return;
-    }
+    if (!guardConsent()) return;
     setSubmitting(true);
     try {
-      await signupWithEmail(email, password, name || undefined);
+      await signupWithEmail(email, password, name || undefined, consents());
       finish();
     } catch (err) {
       if (err instanceof EmailConfirmationRequiredError) {
@@ -207,32 +229,81 @@ export function SignupForm({
           )}
         </div>
 
-        <label className="flex items-start gap-2 text-sm text-slate-600">
-          <input
-            type="checkbox"
-            checked={agreed}
-            onChange={(e) => setAgreed(e.target.checked)}
-            className="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-          />
-          <span>
-            <button
-              type="button"
-              onClick={() => setModalDoc("terms")}
-              className="font-semibold text-emerald-600 hover:underline"
-            >
-              이용약관
-            </button>{" "}
-            및{" "}
-            <button
-              type="button"
-              onClick={() => setModalDoc("privacy")}
-              className="font-semibold text-emerald-600 hover:underline"
-            >
-              개인정보처리방침
-            </button>
-            에 동의합니다.
-          </span>
-        </label>
+        {/* Consents — required and optional are separated (PIPA 제22조) */}
+        <fieldset className="rounded-2xl border border-slate-200 p-4">
+          <legend className="sr-only">약관 동의</legend>
+
+          <label className="flex items-center gap-2.5 pb-3 text-sm font-bold text-slate-800">
+            <input
+              type="checkbox"
+              checked={allChecked}
+              onChange={(e) => toggleAll(e.target.checked)}
+              className="h-[18px] w-[18px] rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+            />
+            전체 동의 <span className="text-xs font-medium text-slate-400">(선택 포함)</span>
+          </label>
+
+          <div className="space-y-2.5 border-t border-slate-100 pt-3">
+            {[
+              {
+                checked: agreeTerms,
+                set: setAgreeTerms,
+                required: true,
+                label: "이용약관 동의",
+                doc: "terms" as LegalDocKey,
+              },
+              {
+                checked: agreePrivacy,
+                set: setAgreePrivacy,
+                required: true,
+                label: "개인정보 수집·이용 동의",
+                doc: "privacy" as LegalDocKey,
+              },
+              {
+                checked: agreeThirdParty,
+                set: setAgreeThirdParty,
+                required: false,
+                label: "제3자 정보제공 동의",
+                doc: "thirdParty" as LegalDocKey,
+              },
+              {
+                checked: agreeMarketing,
+                set: setAgreeMarketing,
+                required: false,
+                label: "마케팅 정보 수신 동의",
+                doc: "marketing" as LegalDocKey,
+              },
+            ].map((c) => (
+              <div key={c.label} className="flex items-center gap-2.5 text-sm">
+                <input
+                  id={`consent-${c.doc}`}
+                  type="checkbox"
+                  checked={c.checked}
+                  onChange={(e) => c.set(e.target.checked)}
+                  className="h-[18px] w-[18px] shrink-0 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <label htmlFor={`consent-${c.doc}`} className="flex-1 text-slate-600">
+                  <span className={c.required ? "font-semibold text-slate-500" : "text-slate-400"}>
+                    [{c.required ? "필수" : "선택"}]
+                  </span>{" "}
+                  {c.label}
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setModalDoc(c.doc)}
+                  className="shrink-0 text-xs font-semibold text-slate-400 underline underline-offset-2 hover:text-emerald-700"
+                >
+                  보기
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
+            선택 항목에 동의하지 않아도 회원가입과 모든 서비스 이용에 제한이 없어요. 동의 후에도
+            언제든지 철회할 수 있습니다.
+          </p>
+        </fieldset>
 
         <button
           type="submit"

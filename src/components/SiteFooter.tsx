@@ -30,6 +30,9 @@ export function SiteFooter() {
           </div>
 
           <nav className="flex gap-2 text-sm font-medium text-slate-600">
+            <Link href="/#faq" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
+              자주 묻는 질문
+            </Link>
             <Link href="/terms" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
               이용약관
             </Link>

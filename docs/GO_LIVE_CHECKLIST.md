@@ -61,9 +61,17 @@
 - [x] 동의 기록 감사 테이블 `consent_logs` (append-only, RLS) + `current_consents` 뷰
 - [ ] **schema.sql 재실행** 후 consent_logs 생성 확인
 
+## 상위노출(SEO·AEO) — 오픈 후 운영
+- [x] 구조화 데이터: Organization / WebSite / FAQPage / Service(가격) / BreadcrumbList
+- [x] FAQ 8문항 (검색 스니펫·AI 인용용 자문자답 형식)
+- [ ] **Google Search Console + 네이버 서치어드바이저 등록** → sitemap.xml 제출
+- [ ] 리치 결과 테스트(search.google.com/test/rich-results)로 Service·FAQ 검증
+- [ ] 최종 도메인 확정 후 `NEXT_PUBLIC_SITE_URL` 갱신 (구조화 데이터 @id가 이 값 기준)
+- [ ] FAQ 문항을 실제 문의 로그 기반으로 주기적 보강 (인용 확률↑)
+
 ## 성능 (외부 점검 후속 — 코드로 미해결 항목)
 - [ ] Pretendard **자체 호스팅 + 서브셋(woff2)** 전환 — 현재 CDN 전체 로드(~410KB)
 - [ ] 해시 자산 장기 캐시(`immutable`) — GitHub Pages는 캐시 헤더 설정 불가,
       Cloudflare Cache Rules로 `/_next/static/*` 1년 캐시 적용
-- [ ] `og:image` 제작·등록 (1200×630 브랜드 이미지)
+- [ ] `og:image` 제작·등록 (1200×630 브랜드 이미지) — 구조화 데이터는 적용 완료
 - [ ] 홈 대표 서비스를 목표별(방문↑/판매↑/신뢰↑/비용↓) 재분류 — 콘텐츠 기획 필요

@@ -13,7 +13,7 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 // Map a product to the matching /pricing group anchor so a logged-in member's
 // CTA lands on the rows they can order. Products without a dedicated price
 // group just open the full list.
-const PRICING_ANCHOR: Partial<Record<ProductSlug, string>> = {
+export const PRICING_ANCHOR: Partial<Record<ProductSlug, string>> = {
   place: "place",
   blog: "blog",
   "blog-neighbor": "blog",

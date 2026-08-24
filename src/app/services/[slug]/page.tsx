@@ -7,8 +7,10 @@ import { RefundLanding } from "@/components/RefundLanding";
 import { PressLanding } from "@/components/PressLanding";
 import { BrandLogo } from "@/components/BrandLogo";
 import { GroupTabs } from "@/components/GroupTabs";
+import { JsonLd } from "@/components/JsonLd";
+import { serviceLd, breadcrumbLd } from "@/lib/seo";
 import { TrackedCta } from "@/components/TrackedCta";
-import { ProductDetailBody, pricingHref } from "@/components/ProductDetailBody";
+import { ProductDetailBody, pricingHref, PRICING_ANCHOR } from "@/components/ProductDetailBody";
 import {
   getProduct,
   getGroup,
@@ -61,6 +63,15 @@ export default async function ServiceDetailPage({
     const members = groupMembers(group);
     return (
       <>
+        <JsonLd
+          data={[
+            breadcrumbLd([
+              { name: "홈", path: "/" },
+              { name: group.name, path: `/services/${slug}/` },
+            ]),
+            ...members.map((m) => serviceLd(m, PRICING_ANCHOR[m.slug])),
+          ]}
+        />
         <SiteHeader />
         <main className="flex-1">
           <section className={`bg-gradient-to-b ${group.accent.gradient}`}>
@@ -124,6 +135,15 @@ export default async function ServiceDetailPage({
 
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbLd([
+            { name: "홈", path: "/" },
+            { name: product.name, path: `/services/${slug}/` },
+          ]),
+          serviceLd(product, PRICING_ANCHOR[product.slug]),
+        ]}
+      />
       <SiteHeader />
       <main className="flex-1">
         {/* Hero */}

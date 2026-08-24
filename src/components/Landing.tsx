@@ -16,6 +16,8 @@ import { Marquee } from "@/components/Marquee";
 import { Reveal } from "@/components/Reveal";
 import { StoryIntro, ProcessSection } from "@/components/StorySections";
 import { ScamNoticePopup } from "@/components/ScamNoticePopup";
+import { FaqAccordion } from "@/components/FaqAccordion";
+import { SITE_FAQS } from "@/lib/faq";
 
 export function Landing() {
   return (
@@ -71,6 +73,23 @@ export function Landing() {
             </div>
           ))}
         </Marquee>
+      </section>
+
+      {/* FAQ — self-contained Q&A, mirrored as FAQPage structured data so
+          search snippets and answer engines can quote a single item. */}
+      <section id="faq" className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <p className="text-sm font-bold tracking-widest text-emerald-700">자주 묻는 질문</p>
+          <h2 className="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">
+            궁금한 건 여기서 먼저 확인하세요
+          </h2>
+          <p className="mt-3 text-sm text-slate-600 sm:text-base">
+            가격·진행 방식·계정 보안까지, 가장 많이 받는 질문만 모았어요.
+          </p>
+        </Reveal>
+        <div className="mt-10">
+          <FaqAccordion items={SITE_FAQS} />
+        </div>
       </section>
 
       {/* How it starts — 3 steps, 3 minutes */}

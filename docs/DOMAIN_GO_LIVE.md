@@ -24,6 +24,37 @@
 
 ---
 
+## 바로가기 링크 모음
+
+Cloudflare 링크의 `:account` 는 로그인하면 자동으로 채워집니다.
+
+| 단계 | 들어갈 곳 | 링크 |
+|---|---|---|
+| 1 | Cloudflare 가입 | https://dash.cloudflare.com/sign-up |
+| 1 | 사이트 추가 (Add a site) | https://dash.cloudflare.com/?to=/:account/add-site |
+| 1 | 가비아 네임서버 변경 | https://dns.gabia.com |
+| 1 | 후이즈 네임서버 변경 | https://domain.whois.co.kr |
+| 2 | Cloudflare DNS 레코드 | https://dash.cloudflare.com/?to=/:account/selfmarketing.ai.kr/dns/records |
+| 3 | GitHub Actions Variables | https://github.com/cccompanymaster/automarketing/settings/variables/actions |
+| 3 | Actions (재배포 Re-run) | https://github.com/cccompanymaster/automarketing/actions |
+| 4 | GitHub Pages 설정 | https://github.com/cccompanymaster/automarketing/settings/pages |
+| 5 | Cloudflare SSL/TLS | https://dash.cloudflare.com/?to=/:account/selfmarketing.ai.kr/ssl-tls |
+| 5 | Cloudflare Snippets | https://dash.cloudflare.com/?to=/:account/selfmarketing.ai.kr/rules/snippets |
+| 5 | 붙여넣을 헤더 코드 | https://github.com/cccompanymaster/automarketing/blob/claude/pensive-fermat-MZ94X/docs/SECURITY_HEADERS.md |
+| 6 | Supabase Auth URL 설정 | https://supabase.com/dashboard/project/weytdwzwviamqrtzrjmg/auth/url-configuration |
+| 6 | 카카오 개발자센터 | https://developers.kakao.com/console/app |
+| 7 | Supabase SQL Editor | https://supabase.com/dashboard/project/weytdwzwviamqrtzrjmg/sql/new |
+| 7 | 붙여넣을 schema.sql | https://github.com/cccompanymaster/automarketing/blob/claude/pensive-fermat-MZ94X/supabase/schema.sql |
+| 8 | 새 사이트 | https://selfmarketing.ai.kr |
+| 8 | 관리자 페이지 | https://selfmarketing.ai.kr/admin |
+| 9 | Supabase API 키 재발급 | https://supabase.com/dashboard/project/weytdwzwviamqrtzrjmg/settings/api-keys |
+| 9 | 통신판매업 신고 (정부24) | https://www.gov.kr |
+| 10 | Google Search Console | https://search.google.com/search-console |
+| 10 | 네이버 서치어드바이저 | https://searchadvisor.naver.com |
+| 10 | 리치 결과 테스트 | https://search.google.com/test/rich-results |
+
+---
+
 ## 1단계. Cloudflare에 도메인 등록 — 10분 + 전파 대기
 
 1. Cloudflare 가입 → **Add a site** → `selfmarketing.ai.kr` 입력 → **Free** 플랜

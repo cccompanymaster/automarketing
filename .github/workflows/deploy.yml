@@ -40,11 +40,32 @@ jobs:
         with:
           enablement: true
 
+      # A custom domain serves the site at the root, so basePath must be empty.
+      # We can't read that from configure-pages on the very first run: Pages only
+      # learns the domain from the CNAME we are about to publish, so its outputs
+      # still describe the old project-site URL. Setting the PAGES_CUSTOM_DOMAIN
+      # repo Variable overrides both, which also makes the cutover a one-switch
+      # change instead of a commit.
+      - name: Resolve base path and canonical URL
+        id: site
+        env:
+          CUSTOM_DOMAIN: ${{ vars.PAGES_CUSTOM_DOMAIN }}
+          PAGES_ORIGIN: ${{ steps.pages.outputs.origin }}
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: |
+          if [ -n "$CUSTOM_DOMAIN" ]; then
+            echo "base_path=" >> "$GITHUB_OUTPUT"
+            echo "site_url=https://$CUSTOM_DOMAIN" >> "$GITHUB_OUTPUT"
+          else
+            echo "base_path=$PAGES_BASE_PATH" >> "$GITHUB_OUTPUT"
+            echo "site_url=$PAGES_ORIGIN$PAGES_BASE_PATH" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build static export
         env:
-          # Project site is served under /<repo>; drive basePath + canonical URL.
-          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
-          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.origin }}${{ steps.pages.outputs.base_path }}
+          # Project site is served under /<repo>; a custom domain serves at root.
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.site.outputs.base_path }}
+          NEXT_PUBLIC_SITE_URL: ${{ steps.site.outputs.site_url }}
           # Real auth + cash backend (Supabase). Set these as repo Variables to
           # switch from local stub to real signup/login. Empty = stub mode.
           # (anon key is a publishable client key — safe to expose.)
@@ -66,6 +87,15 @@ jobs:
 
       - name: Disable Jekyll (serve _next assets as-is)
         run: touch out/.nojekyll
+
+      # This deploy uploads out/ as an artifact rather than committing to a
+      # branch, so the CNAME has to live inside the artifact. Without it Pages
+      # drops the custom domain on every deploy.
+      - name: Write CNAME for custom domain
+        if: vars.PAGES_CUSTOM_DOMAIN != ''
+        env:
+          CUSTOM_DOMAIN: ${{ vars.PAGES_CUSTOM_DOMAIN }}
+        run: printf '%s\n' "$CUSTOM_DOMAIN" > out/CNAME
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -176,7 +176,7 @@ export default function AdminPage() {
                     <tr key={m.id} className="border-t border-slate-50">
                       <td className="px-3 py-3 font-medium text-slate-800">{m.email}</td>
                       <td className="px-3 py-3 text-slate-500">
-                        {m.provider === "kakao" ? "카카오" : "이메일"}
+                        {{ kakao: "카카오", naver: "네이버", email: "이메일" }[m.provider]}
                       </td>
                       <td className="px-3 py-3 font-semibold tabular-nums text-slate-700">
                         {formatCash(m.balance)}

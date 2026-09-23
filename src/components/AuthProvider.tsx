@@ -16,6 +16,11 @@ import {
 } from "react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { getSupabase } from "@/lib/supabase";
+import {
+  SOCIAL_PROVIDERS,
+  socialProviderFromSupabase,
+  type SocialProvider,
+} from "@/lib/socialAuth";
 
 /** Consent snapshot captured at signup (audit trail for 제3자 제공 동의). */
 export interface ConsentRecord {
@@ -33,7 +38,7 @@ export interface User {
   id: string;
   email: string;
   name?: string;
-  provider: "email" | "kakao";
+  provider: "email" | SocialProvider;
 }
 
 interface AuthContextValue {
@@ -48,7 +53,8 @@ interface AuthContextValue {
     name?: string,
     consents?: ConsentRecord,
   ) => Promise<User>;
-  loginWithKakao: () => Promise<User>;
+  /** Redirects to the provider (real mode); returns a fake session in stub mode. */
+  loginWithSocial: (provider: SocialProvider) => Promise<User>;
   logout: () => void;
 }
 
@@ -69,7 +75,7 @@ export class EmailConfirmationRequiredError extends Error {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 function mapSupabaseUser(u: SupabaseUser): User {
-  const provider = (u.app_metadata?.provider as string) === "kakao" ? "kakao" : "email";
+  const provider = socialProviderFromSupabase(u.app_metadata?.provider as string) ?? "email";
   return {
     id: u.id,
     email: u.email ?? "",
@@ -151,9 +157,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       consents?: ConsentRecord,
     ): Promise<User> => {
       if (supabase) {
-        // Consents ride along in user_metadata so the record survives with the
-        // account. TODO(backend): mirror into an append-only consent log table
-        // (with timestamp/version) if consents ever need to be audited.
+        // Consents ride along in user_metadata so they survive email
+        // confirmation (no session yet, so consent_logs can't be written here);
+        // ConsentGate copies them into the audit table on first login.
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -192,29 +198,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [supabase, persistStub],
   );
 
-  const loginWithKakao = useCallback(async (): Promise<User> => {
-    if (supabase) {
-      // Requires Kakao provider enabled in Supabase Auth.
-      // Return to the deployed site root (includes the GitHub Pages base path).
-      // window.location.origin alone would drop /automarketing and 404.
-      const returnTo =
-        process.env.NEXT_PUBLIC_SITE_URL ??
-        (typeof window !== "undefined"
-          ? `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}`
-          : undefined);
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "kakao",
-        options: { redirectTo: returnTo },
-      });
-      if (error) throw new Error(error.message);
-      // OAuth redirects away; the returned value is unused.
-      return { id: "kakao", email: "", provider: "kakao" };
-    }
-    // TODO(backend): real Kakao OAuth. Stub credits a fake session.
-    const next: User = { id: "kakao-user", email: "kakao-user@example.com", provider: "kakao" };
-    persistStub(next);
-    return next;
-  }, [supabase, persistStub]);
+  const loginWithSocial = useCallback(
+    async (provider: SocialProvider): Promise<User> => {
+      if (supabase) {
+        // Land on the callback page, which forwards to the stashed destination.
+        // SITE_URL carries the GitHub Pages base path when there is one;
+        // window.location.origin alone would drop it.
+        const root =
+          process.env.NEXT_PUBLIC_SITE_URL ??
+          `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}`;
+        const { error } = await supabase.auth.signInWithOAuth({
+          // Custom providers ("custom:naver") aren't in supabase-js's Provider union.
+          provider: SOCIAL_PROVIDERS[provider].supabaseId as "kakao",
+          options: { redirectTo: `${root.replace(/\/$/, "")}/auth/callback/` },
+        });
+        if (error) throw new Error(error.message);
+        // OAuth redirects away; the returned value is unused.
+        return { id: provider, email: "", provider };
+      }
+      // Stub mode: fake a session so the demo flow can continue.
+      const next: User = { id: `${provider}-user`, email: `${provider}-user@example.com`, provider };
+      persistStub(next);
+      return next;
+    },
+    [supabase, persistStub],
+  );
 
   const logout = useCallback(() => {
     if (supabase) {
@@ -231,10 +239,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       hydrated,
       loginWithEmail,
       signupWithEmail,
-      loginWithKakao,
+      loginWithSocial,
       logout,
     }),
-    [user, hydrated, loginWithEmail, signupWithEmail, loginWithKakao, logout],
+    [user, hydrated, loginWithEmail, signupWithEmail, loginWithSocial, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

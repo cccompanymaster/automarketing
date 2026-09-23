@@ -1,6 +1,6 @@
 "use client";
 
-// Email + Kakao signup with terms/privacy consent (opens LegalModal).
+// Email + social (Kakao/Naver) signup with terms/privacy consent.
 // Fires `signup_start` on mount and `signup_complete` on success, then routes
 // to /mypage. Provides a switch to the login view (same screen, no URL change).
 
@@ -8,9 +8,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth, EmailConfirmationRequiredError } from "@/components/AuthProvider";
-import { KakaoButton, KAKAO_LOGIN_AVAILABLE } from "@/components/KakaoButton";
-import { LegalModal } from "@/components/LegalModal";
-import type { LegalDocKey } from "@/lib/legal";
+import { SocialLoginButtons, SOCIAL_LOGIN_AVAILABLE } from "@/components/SocialLoginButtons";
+import {
+  ConsentChecklist,
+  NO_CONSENT,
+  requiredConsentsOk,
+  type ConsentValue,
+} from "@/components/ConsentChecklist";
 import { track } from "@/lib/analytics";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,12 +36,8 @@ export function SignupForm({
   const [password, setPassword] = useState("");
   // Consents are split per PIPA: required ones gate signup, optional ones are
   // recorded but never block it (제22조 — 선택 동의 거부 시 서비스 제한 금지).
-  const [agreeTerms, setAgreeTerms] = useState(false);
-  const [agreePrivacy, setAgreePrivacy] = useState(false);
-  const [agreeThirdParty, setAgreeThirdParty] = useState(false);
-  const [agreeMarketing, setAgreeMarketing] = useState(false);
+  const [agree, setAgree] = useState<ConsentValue>(NO_CONSENT);
   const [submitting, setSubmitting] = useState(false);
-  const [modalDoc, setModalDoc] = useState<LegalDocKey | null>(null);
   const [confirmSent, setConfirmSent] = useState(false);
   const [fieldError, setFieldError] = useState<{ field: "email" | "password"; message: string } | null>(null);
 
@@ -58,27 +58,11 @@ export function SignupForm({
     router.push(afterHref ?? "/mypage");
   };
 
-  const requiredOk = agreeTerms && agreePrivacy;
-  const allChecked = agreeTerms && agreePrivacy && agreeThirdParty && agreeMarketing;
-
-  const toggleAll = (checked: boolean) => {
-    setAgreeTerms(checked);
-    setAgreePrivacy(checked);
-    setAgreeThirdParty(checked);
-    setAgreeMarketing(checked);
-  };
-
   /** Consent snapshot recorded with the account (audit trail for 제3자 제공). */
-  const consents = () => ({
-    terms: agreeTerms,
-    privacy: agreePrivacy,
-    thirdParty: agreeThirdParty,
-    marketing: agreeMarketing,
-    agreedAt: new Date().toISOString(),
-  });
+  const consents = () => ({ ...agree, agreedAt: new Date().toISOString() });
 
   const guardConsent = (): boolean => {
-    if (!requiredOk) {
+    if (!requiredConsentsOk(agree)) {
       toast.error("필수 항목(이용약관·개인정보 수집·이용)에 동의해 주세요.");
       return false;
     }
@@ -157,11 +141,17 @@ export function SignupForm({
         몇 가지 정보만 입력하면 바로 시작할 수 있습니다.
       </p>
 
-      {/* One-tap signup first — fewer fields, less mobile drop-off */}
-      {KAKAO_LOGIN_AVAILABLE ? (
+      {/* One-tap signup first — fewer fields, less mobile drop-off. Consents
+          ticked below ride along; otherwise ConsentGate asks after login. */}
+      {SOCIAL_LOGIN_AVAILABLE ? (
         <>
           <div className="mt-6">
-            <KakaoButton label="카카오로 3초만에 시작하기" guard={guardConsent} onDone={finish} />
+            <SocialLoginButtons
+              intent="signup"
+              next={afterHref}
+              consents={() => (requiredConsentsOk(agree) ? agree : null)}
+              onDone={finish}
+            />
           </div>
 
           <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
@@ -236,105 +226,7 @@ export function SignupForm({
         </div>
 
         {/* Consents — required and optional are separated (PIPA 제22조) */}
-        <fieldset className="overflow-hidden rounded-2xl border border-slate-200">
-          <legend className="sr-only">약관 동의</legend>
-
-          {/* Agree-to-all — a full-width tap target, not a small checkbox */}
-          <button
-            type="button"
-            onClick={() => toggleAll(!allChecked)}
-            aria-pressed={allChecked}
-            className={`flex w-full items-center gap-3 px-4 py-4 text-left transition ${
-              allChecked ? "bg-emerald-700 text-white" : "bg-slate-50 hover:bg-slate-100"
-            }`}
-          >
-            <span
-              aria-hidden="true"
-              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-black transition ${
-                allChecked
-                  ? "bg-white text-emerald-700"
-                  : "border-2 border-slate-300 bg-white text-transparent"
-              }`}
-            >
-              ✓
-            </span>
-            <span className="flex-1">
-              <span className={`block text-[15px] font-bold ${allChecked ? "text-white" : "text-slate-800"}`}>
-                전체 동의하기
-              </span>
-              <span className={`block text-xs ${allChecked ? "text-emerald-50" : "text-slate-400"}`}>
-                필수·선택 항목에 모두 동의합니다
-              </span>
-            </span>
-          </button>
-
-          <div className="space-y-1 p-4">
-            {[
-              {
-                checked: agreeTerms,
-                set: setAgreeTerms,
-                required: true,
-                label: "이용약관 동의",
-                doc: "terms" as LegalDocKey,
-              },
-              {
-                checked: agreePrivacy,
-                set: setAgreePrivacy,
-                required: true,
-                label: "개인정보 수집·이용 동의",
-                doc: "privacy" as LegalDocKey,
-              },
-              {
-                checked: agreeThirdParty,
-                set: setAgreeThirdParty,
-                required: false,
-                label: "제3자 정보제공 동의",
-                doc: "thirdParty" as LegalDocKey,
-              },
-              {
-                checked: agreeMarketing,
-                set: setAgreeMarketing,
-                required: false,
-                label: "마케팅 정보 수신 동의",
-                doc: "marketing" as LegalDocKey,
-              },
-            ].map((c) => (
-              <div key={c.label} className="flex items-center gap-1 text-sm">
-                {/* Whole row toggles the consent — bigger, easier target */}
-                <label
-                  htmlFor={`consent-${c.doc}`}
-                  className="flex min-h-11 flex-1 cursor-pointer items-center gap-2.5 rounded-lg px-1 transition hover:bg-slate-50"
-                >
-                  <input
-                    id={`consent-${c.doc}`}
-                    type="checkbox"
-                    checked={c.checked}
-                    onChange={(e) => c.set(e.target.checked)}
-                    className="h-[18px] w-[18px] shrink-0 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-                  />
-                  <span className="text-slate-600">
-                    <span className={c.required ? "font-semibold text-slate-500" : "text-slate-400"}>
-                      [{c.required ? "필수" : "선택"}]
-                    </span>{" "}
-                    {c.label}
-                  </span>
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setModalDoc(c.doc)}
-                  className="flex min-h-11 shrink-0 items-center px-2 text-xs font-semibold text-slate-400 underline underline-offset-2 transition hover:text-emerald-700"
-                >
-                  보기
-                </button>
-              </div>
-            ))}
-          </div>
-
-          <p className="border-t border-slate-100 px-4 pb-4 pt-3 text-[11px] leading-relaxed text-slate-400">
-            선택 항목에 동의하지 않아도 회원가입과 모든 서비스 이용에 제한이 없어요. 동의 후에도
-            언제든지 철회할 수 있습니다.
-          </p>
-        </fieldset>
+        <ConsentChecklist value={agree} onChange={setAgree} />
 
         <button
           type="submit"
@@ -356,7 +248,6 @@ export function SignupForm({
         </button>
       </p>
 
-      <LegalModal open={modalDoc !== null} docKey={modalDoc} onClose={() => setModalDoc(null)} />
     </div>
   );
 }

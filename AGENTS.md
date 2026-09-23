@@ -36,6 +36,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 | `/mypage` | 지갑·주문·컨펌요청(산출물 승인/수정요청). 미인증 시 `/start` 리다이렉트 |
 | `/admin` | 관리자 대시보드(이메일 allowlist) — 주문/충전/회원 + 산출물 업로드·컨펌 현황 |
 | `/tools/blog-writer` | AI 원고 작성 도구 (1건 1,000캐시) |
+| `/auth/callback` | 카카오·네이버 로그인 복귀 지점 → 가입 전 보던 페이지로 이동 (`docs/SOCIAL_LOGIN.md`) |
 | `/terms`, `/privacy` | 약관/방침 (단독 페이지 + `LegalModal` 모달 공용) |
 
 ## 주요 파일
@@ -52,7 +53,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - `src/components/AuthProvider.tsx` — 클라이언트 인증 컨텍스트 (stub). `hydrated` 플래그로
   세션 복원 완료를 알림 — 인증 기반 리다이렉트는 반드시 `hydrated`를 기다릴 것
 - `src/app/robots.ts`, `src/app/sitemap.ts`, `src/app/not-found.tsx` — SEO/404
-- 컴포넌트: `Landing`, `ServiceCard`, `SuccessStory`, `AuthEntry`, `Onboarding`, `LoginForm`, `SignupForm`, `LegalModal`, `SiteHeader`, `SiteFooter`, `KakaoButton`, `TrackedCta`
+- 컴포넌트: `Landing`, `ServiceCard`, `SuccessStory`, `AuthEntry`, `Onboarding`, `LoginForm`, `SignupForm`, `ConsentChecklist`, `ConsentGate`, `SocialLoginButtons`, `LegalModal`, `SiteHeader`, `SiteFooter`, `TrackedCta`
 
 ## 전환 이벤트 (6종)
 

@@ -12,7 +12,7 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
       // Logged-in skeleton — no value in search indexes.
-      disallow: ["/mypage", "/admin", "/pricing"],
+      disallow: ["/mypage", "/admin", "/pricing", "/auth"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

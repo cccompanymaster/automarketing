@@ -102,3 +102,38 @@ export async function recordConsents(
     /* ignore */
   }
 }
+
+// Social signups: the checkboxes are ticked before the OAuth redirect, but the
+// account (and therefore the user id RLS needs) only exists after it. The
+// choice is parked here and recorded by ConsentGate once the session is back.
+const PENDING_KEY = "selfmarketing.oauth.consents";
+const PENDING_MAX_AGE_MS = 30 * 60 * 1000;
+
+export type ConsentChoice = Omit<ConsentState, "agreedAt">;
+
+export function stashPendingConsents(c: ConsentChoice): void {
+  try {
+    localStorage.setItem(PENDING_KEY, JSON.stringify({ ...c, at: Date.now() }));
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Read and clear the parked choice (null if absent or stale). */
+export function takePendingConsents(): ConsentChoice | null {
+  try {
+    const raw = localStorage.getItem(PENDING_KEY);
+    localStorage.removeItem(PENDING_KEY);
+    if (!raw) return null;
+    const c = JSON.parse(raw) as ConsentChoice & { at?: number };
+    if (!c.at || Date.now() - c.at > PENDING_MAX_AGE_MS) return null;
+    return {
+      terms: !!c.terms,
+      privacy: !!c.privacy,
+      thirdParty: !!c.thirdParty,
+      marketing: !!c.marketing,
+    };
+  } catch {
+    return null;
+  }
+}

@@ -71,9 +71,11 @@ jobs:
           # (anon key is a publishable client key — safe to expose.)
           NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          # "true" once the Kakao provider is enabled in Supabase Auth. Until
-          # then the Kakao buttons are hidden (they'd hit a provider error).
+          # "true" once each provider is enabled in Supabase Auth (Naver as the
+          # custom:naver provider). Until then its buttons stay hidden — they'd
+          # hit a "provider is not enabled" error. See docs/SOCIAL_LOGIN.md.
           NEXT_PUBLIC_KAKAO_LOGIN_ENABLED: ${{ vars.NEXT_PUBLIC_KAKAO_LOGIN_ENABLED }}
+          NEXT_PUBLIC_NAVER_LOGIN_ENABLED: ${{ vars.NEXT_PUBLIC_NAVER_LOGIN_ENABLED }}
           # AI blog writer proxy (optional). Empty = demo mode.
           NEXT_PUBLIC_BLOG_API_URL: ${{ vars.NEXT_PUBLIC_BLOG_API_URL }}
           # Conversion tracking (GTM container). Empty = console fallback.

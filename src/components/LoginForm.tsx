@@ -1,13 +1,13 @@
 "use client";
 
-// Email + Kakao login. On success fires `login_success` and routes to /mypage.
+// Email + social (Kakao/Naver) login. On success fires `login_success` and routes to /mypage.
 // Provides a switch to the signup view (same screen, no URL change).
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
-import { KakaoButton, KAKAO_LOGIN_AVAILABLE } from "@/components/KakaoButton";
+import { SocialLoginButtons, SOCIAL_LOGIN_AVAILABLE } from "@/components/SocialLoginButtons";
 import { track } from "@/lib/analytics";
 
 export function LoginForm({
@@ -93,7 +93,7 @@ export function LoginForm({
         </button>
       </form>
 
-      {KAKAO_LOGIN_AVAILABLE && (
+      {SOCIAL_LOGIN_AVAILABLE && (
         <>
           <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
             <span className="h-px flex-1 bg-slate-100" />
@@ -101,7 +101,7 @@ export function LoginForm({
             <span className="h-px flex-1 bg-slate-100" />
           </div>
 
-          <KakaoButton label="카카오로 로그인" onDone={finish} />
+          <SocialLoginButtons intent="login" next={afterHref} onDone={finish} />
         </>
       )}
 

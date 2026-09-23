@@ -13,6 +13,7 @@ import { useOrders } from "@/components/OrdersProvider";
 import { useDeliverables } from "@/components/DeliverablesProvider";
 import { DeliverableModal } from "@/components/DeliverableModal";
 import { ConsentSettings } from "@/components/ConsentSettings";
+import { ProfileCard } from "@/components/ProfileCard";
 import { ChargeModal } from "@/components/ChargeModal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -142,6 +143,7 @@ export default function MyPage() {
           </Link>
 
           {/* Optional-consent management (제3자 제공 철회 창구) */}
+          <ProfileCard />
           <ConsentSettings />
 
           {isAdmin && (

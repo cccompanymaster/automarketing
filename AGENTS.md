@@ -49,11 +49,12 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - `src/lib/successStories.ts` — 성공 사례 더미 (수치+업종+기간)
 - `src/lib/company.ts` — 푸터 사업자 정보 (더미값)
 - `src/lib/legal.ts` — 약관/방침 본문 (모달·페이지 공용)
+- `src/lib/profile.ts` — 회원 내 정보(이름·휴대폰·생년월일·연령대·성별). 소셜 가입 시 자동 채움, user_metadata.profile에 수정본 저장
 - `src/lib/payments.ts` — 결제 단일 진입점 (PortOne 키 없으면 stub, 적립은 서버 웹훅 전용)
 - `src/components/AuthProvider.tsx` — 클라이언트 인증 컨텍스트 (stub). `hydrated` 플래그로
   세션 복원 완료를 알림 — 인증 기반 리다이렉트는 반드시 `hydrated`를 기다릴 것
 - `src/app/robots.ts`, `src/app/sitemap.ts`, `src/app/not-found.tsx` — SEO/404
-- 컴포넌트: `Landing`, `ServiceCard`, `SuccessStory`, `AuthEntry`, `Onboarding`, `LoginForm`, `SignupForm`, `ConsentChecklist`, `ConsentGate`, `SocialLoginButtons`, `LegalModal`, `SiteHeader`, `SiteFooter`, `TrackedCta`
+- 컴포넌트: `Landing`, `ServiceCard`, `SuccessStory`, `AuthEntry`, `Onboarding`, `LoginForm`, `SignupForm`, `ConsentChecklist`, `ConsentGate`, `ProfileCard`, `SocialLoginButtons`, `LegalModal`, `SiteHeader`, `SiteFooter`, `TrackedCta`
 
 ## 전환 이벤트 (6종)
 

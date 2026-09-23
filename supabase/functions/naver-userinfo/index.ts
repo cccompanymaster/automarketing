@@ -21,7 +21,14 @@ interface NaverProfile {
   name?: string;
   nickname?: string;
   profile_image?: string;
+  mobile?: string; // "010-1234-5678"
+  gender?: string; // "F" | "M" | "U"
+  age?: string; // age range, e.g. "30-39"
+  birthyear?: string; // "1990"
+  birthday?: string; // "MM-DD"
 }
+
+const GENDER: Record<string, string> = { F: "female", M: "male" };
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -65,5 +72,15 @@ Deno.serve(async (req: Request) => {
     name: p.name || p.nickname || undefined,
     nickname: p.nickname || undefined,
     picture: p.profile_image || undefined,
+    // Standard OIDC claim names where they exist, so Supabase keeps them in
+    // user_metadata; the rest ride along as custom claims. Shown and editable
+    // on /mypage (내 정보) — the usage Naver's review asks to see.
+    phone_number: p.mobile || undefined,
+    gender: (p.gender && GENDER[p.gender]) || undefined,
+    birthdate:
+      p.birthyear && p.birthday ? `${p.birthyear}-${p.birthday}` : p.birthyear || undefined,
+    birthyear: p.birthyear || undefined,
+    birthday: p.birthday || undefined,
+    age_range: p.age || undefined,
   });
 });

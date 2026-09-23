@@ -61,13 +61,13 @@ export const TERMS: LegalDocument = {
 export const PRIVACY: LegalDocument = {
   key: "privacy",
   title: "개인정보처리방침",
-  updatedAt: "2026-06-01",
+  updatedAt: "2026-09-23",
   sections: [
     {
       heading: "1. 수집하는 개인정보 항목",
       body: [
         "회원가입 및 서비스 제공을 위해 이메일, 비밀번호, 이름(선택), 사업자 정보 등을 수집할 수 있습니다.",
-        "카카오 간편가입 이용 시 카카오로부터 제공받는 정보가 포함될 수 있습니다.",
+        "카카오·네이버 간편가입 이용 시 해당 서비스로부터 이용자 식별값과 이메일 주소를 제공받습니다(이용자가 해당 서비스의 정보 제공 화면에서 동의한 경우에 한함). 비밀번호는 제공받지 않습니다.",
       ],
     },
     {
@@ -114,7 +114,7 @@ export const PRIVACY: LegalDocument = {
 export const THIRD_PARTY: LegalDocument = {
   key: "thirdParty",
   title: "제3자 정보제공 동의 (선택)",
-  updatedAt: "2026-08-01",
+  updatedAt: "2026-09-23",
   sections: [
     {
       heading: "1. 개인정보를 제공받는 자",
@@ -137,6 +137,7 @@ export const THIRD_PARTY: LegalDocument = {
         "이름, 이메일 주소, 연락처(입력한 경우)",
         "업종·지역 등 서비스 이용 과정에서 입력한 사업장 정보",
         "※ 비밀번호, 결제수단 정보 등 민감·인증 정보는 제공하지 않습니다.",
+        "※ 네이버 로그인으로 제공받은 정보(이메일 주소, 이용자 식별값 등)는 네이버 로그인 이용약관에 따라 제3자에게 제공하지 않습니다.",
       ],
     },
     {

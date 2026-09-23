@@ -16,20 +16,28 @@ import {
 
 export const SOCIAL_LOGIN_AVAILABLE = ENABLED_SOCIAL_PROVIDERS.length > 0;
 
-// Brand colors per each provider's login button guidelines.
+// Each provider's login-button guide is part of its terms (Naver's review
+// rejects deviations): fixed background colors, the official symbol rather
+// than a typed letter or emoji, and a label smaller than the symbol.
 const STYLE: Record<SocialProvider, { name: string; className: string; mark: React.ReactNode }> = {
   kakao: {
     name: "카카오",
-    className: "bg-[#FEE500] text-[#191600] focus-visible:ring-yellow-500",
-    mark: <span aria-hidden="true">💬</span>,
+    // Kakao: #FEE500 background, black speech-bubble symbol, 85% black label.
+    className: "bg-[#FEE500] text-black/85 focus-visible:ring-yellow-500",
+    mark: (
+      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[18px] w-[18px] shrink-0" fill="#000">
+        <path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.84 5.31 4.6 6.72l-.94 3.44c-.08.3.26.54.52.37l4.12-2.72c.56.08 1.13.12 1.7.12 5.52 0 10-3.58 10-8S17.52 3 12 3Z" />
+      </svg>
+    ),
   },
   naver: {
     name: "네이버",
-    className: "bg-[#03C75A] text-white focus-visible:ring-green-600",
+    // Naver BI: #03A94D background, white N logotype (min 16px), white label.
+    className: "bg-[#03A94D] text-white focus-visible:ring-green-600",
     mark: (
-      <span aria-hidden="true" className="text-base font-black leading-none">
-        N
-      </span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[16px] w-[16px] shrink-0" fill="#fff">
+        <path d="M16.273 12.845 7.376 0H0v24h7.726V11.156L16.624 24H24V0h-7.727v12.845Z" />
+      </svg>
     ),
   },
 };
@@ -77,6 +85,8 @@ export function SocialLoginButtons({
           key={p}
           type="button"
           onClick={() => void start(p)}
+          // gap-2 = the 8px logo-to-label spacing both guides specify; the
+          // 14px label stays smaller than the 16–18px symbol as Naver requires.
           className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition hover:brightness-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${STYLE[p].className}`}
         >
           {STYLE[p].mark}

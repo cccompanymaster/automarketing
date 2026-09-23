@@ -12,8 +12,12 @@
 import { getSupabase } from "@/lib/supabase";
 import type { ConsentRecord } from "@/components/AuthProvider";
 
-/** Version of the consent documents the user agreed to (see lib/legal.ts). */
-export const CONSENT_DOC_VERSION = "2026-08-01";
+/**
+ * Version of the consent documents the user agreed to (see lib/legal.ts).
+ * 2026-09-23: third-party provision now excludes Naver-login data (narrower
+ * scope, so earlier consents stay valid).
+ */
+export const CONSENT_DOC_VERSION = "2026-09-23";
 
 const STUB_KEY = "selfmarketing.auth.user.consents";
 

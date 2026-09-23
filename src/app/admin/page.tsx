@@ -177,6 +177,13 @@ export default function AdminPage() {
                       <td className="px-3 py-3 font-medium text-slate-800">{m.email}</td>
                       <td className="px-3 py-3 text-slate-500">
                         {{ kakao: "카카오", naver: "네이버", email: "이메일" }[m.provider]}
+                        {/* Naver login terms forbid passing Naver-provided data
+                            to third parties, whatever the member consented to. */}
+                        {m.provider === "naver" && (
+                          <span className="ml-1.5 rounded bg-rose-50 px-1.5 py-0.5 text-[10px] font-semibold text-rose-600">
+                            제3자 제공 불가
+                          </span>
+                        )}
                       </td>
                       <td className="px-3 py-3 font-semibold tabular-nums text-slate-700">
                         {formatCash(m.balance)}

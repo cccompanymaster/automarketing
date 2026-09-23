@@ -37,6 +37,12 @@ export const metadata: Metadata = {
     icon: `${BASE_PATH}/icon.svg`,
     apple: `${BASE_PATH}/icon.svg`,
   },
+  // Search-console ownership checks (네이버 서치어드바이저).
+  verification: {
+    other: {
+      "naver-site-verification": "5422308667fd7f1bd83c5e52ef1fe02f0186ef34",
+    },
+  },
   openGraph: {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,

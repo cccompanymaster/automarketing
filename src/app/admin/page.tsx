@@ -127,7 +127,7 @@ export default function AdminPage() {
                 type="button"
                 onClick={() => void load(true)}
                 disabled={reloading}
-                className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-emerald-300 disabled:opacity-50"
+                className="flex min-h-9 items-center rounded-full border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-600 transition hover:border-emerald-300 disabled:opacity-50"
               >
                 {reloading ? "불러오는 중…" : "새로고침"}
               </button>
@@ -202,7 +202,7 @@ export default function AdminPage() {
                             onChange={(e) => void changeStatus(o.id, e.target.value as OrderStatus)}
                             disabled={o.status === "canceled"}
                             aria-label="주문 상태 변경"
-                            className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-emerald-400 disabled:bg-slate-50 disabled:text-slate-400"
+                            className="min-h-9 rounded-lg border border-slate-200 px-2 text-xs font-semibold text-slate-700 outline-none focus:border-emerald-400 disabled:bg-slate-50 disabled:text-slate-400"
                           >
                             {ORDER_STATUSES.map((st) => (
                               <option key={st} value={st}>
@@ -211,7 +211,7 @@ export default function AdminPage() {
                             ))}
                           </select>
                           {o.status === "canceled" && (
-                            <p className="mt-1 text-[10px] text-slate-400">환불 완료</p>
+                            <p className="mt-1 text-[11px] text-slate-400">환불 완료</p>
                           )}
                         </td>
                         <td className="px-3 py-3 text-xs text-slate-400">{fmtDate(o.createdAt)}</td>
@@ -256,7 +256,7 @@ export default function AdminPage() {
                         {/* Naver login terms forbid passing Naver-provided data
                             to third parties, whatever the member consented to. */}
                         {m.provider === "naver" && (
-                          <span className="ml-1.5 rounded bg-rose-50 px-1.5 py-0.5 text-[10px] font-semibold text-rose-600">
+                          <span className="ml-1.5 rounded bg-rose-50 px-1.5 py-0.5 text-[11px] font-semibold text-rose-600">
                             제3자 제공 불가
                           </span>
                         )}
@@ -428,7 +428,7 @@ function ConsentBadge({ label, on }: { label: string; on: boolean | null }) {
         ? "bg-emerald-50 text-emerald-700"
         : "bg-slate-100 text-slate-400";
   return (
-    <span className={`mr-1 inline-block rounded px-1.5 py-0.5 text-[10px] font-semibold ${style}`}>
+    <span className={`mr-1 inline-block rounded px-1.5 py-0.5 text-[11px] font-semibold ${style}`}>
       {label} {on === null ? "-" : on ? "O" : "X"}
     </span>
   );

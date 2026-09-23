@@ -249,7 +249,7 @@ export function SignupForm({
         <button
           type="button"
           onClick={onSwitchToLogin}
-          className="font-semibold text-emerald-600 hover:underline"
+          className="-my-2 px-1 py-2 font-semibold text-emerald-600 hover:underline"
         >
           로그인
         </button>

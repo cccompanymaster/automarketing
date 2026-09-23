@@ -91,7 +91,7 @@ export function ProfileCard() {
               setDraft(profile);
               setEditing(true);
             }}
-            className="shrink-0 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700"
+            className="flex min-h-9 shrink-0 items-center rounded-lg border border-slate-200 px-3.5 text-xs font-semibold text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700"
           >
             수정
           </button>
@@ -181,7 +181,7 @@ export function ProfileCard() {
           {rows.map(([label, value]) => (
             <div key={label} className="flex items-center gap-3 px-3.5 py-2.5 text-sm">
               <dt className="w-24 shrink-0 text-slate-400">{label}</dt>
-              <dd className={value ? "font-medium text-slate-800" : "text-slate-300"}>
+              <dd className={`min-w-0 break-all ${value ? "font-medium text-slate-800" : "text-slate-300"}`}>
                 {value || "미입력"}
               </dd>
             </div>

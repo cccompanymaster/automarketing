@@ -179,7 +179,7 @@ export default function PricingPage() {
                     </span>
                     {orderableCount > 0 && (
                       <span
-                        className={`mt-1 inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                        className={`mt-1 inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold ${
                           active ? "bg-white/20 text-white" : "bg-emerald-50 text-emerald-700"
                         }`}
                       >

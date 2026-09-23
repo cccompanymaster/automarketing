@@ -11,7 +11,8 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
       <SiteHeader />
       <main className="flex-1">
         <div className="mx-auto max-w-3xl px-5 py-14">
-          <h1 className="text-2xl font-bold text-slate-900">{doc.title}</h1>
+          {/* pr on phones: long titles wrap under the floating menu button. */}
+          <h1 className="pr-28 text-2xl font-bold text-slate-900 lg:pr-0">{doc.title}</h1>
           <div className="mt-6">
             <LegalContent doc={doc} />
           </div>

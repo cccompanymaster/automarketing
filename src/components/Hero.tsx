@@ -203,12 +203,14 @@ export function Hero() {
             <p className="hero-anim" style={{ margin: "22px 0 0", fontSize: "clamp(15px,1.5vw,19px)", lineHeight: 1.6, color: "#4d6657", maxWidth: 440, animation: "rise .8s ease 1.35s both" }}>
               상위 노출, 손님 늘리기, 판매 올리기, 광고비 환급까지 — 우리 가게에 필요한 것만 골라서 바로 시작하면 돼요.
             </p>
-            <div className="hero-anim" style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 34, animation: "rise .8s ease 1.45s both" }}>
-              <Link href="/start" style={{ position: "relative", overflow: "hidden", textDecoration: "none", fontWeight: 800, fontSize: 16, color: "#fff", padding: "16px 30px", borderRadius: 14, background: "linear-gradient(135deg,#0b8f52,#065f46)", boxShadow: "0 14px 30px rgba(6,95,70,.38)" }}>
+            {/* flex 1 1 200px: equal full-width buttons stacked on phones, an even
+                pair side by side on wider screens. */}
+            <div className="hero-anim" style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 34, maxWidth: 460, animation: "rise .8s ease 1.45s both" }}>
+              <Link href="/start" style={{ flex: "1 1 200px", textAlign: "center", position: "relative", overflow: "hidden", textDecoration: "none", fontWeight: 800, fontSize: 16, color: "#fff", padding: "16px 30px", borderRadius: 14, background: "linear-gradient(135deg,#0b8f52,#065f46)", boxShadow: "0 14px 30px rgba(6,95,70,.38)" }}>
                 무료로 시작하기
                 <span style={{ position: "absolute", top: 0, left: 0, width: "55%", height: "100%", background: "linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent)", animation: "sheen 3.4s ease-in-out 2s infinite" }} />
               </Link>
-              <a href="#services" style={{ border: "1.5px solid #cfe4d8", textDecoration: "none", fontWeight: 700, fontSize: 16, color: "#1f5a3c", padding: "16px 28px", borderRadius: 14, background: "rgba(255,255,255,.7)" }}>
+              <a href="#services" style={{ flex: "1 1 200px", textAlign: "center", border: "1.5px solid #cfe4d8", textDecoration: "none", fontWeight: 700, fontSize: 16, color: "#1f5a3c", padding: "16px 28px", borderRadius: 14, background: "rgba(255,255,255,.7)" }}>
                 서비스 둘러보기 →
               </a>
             </div>

@@ -131,13 +131,15 @@ export function SiteHeader() {
         </div>
       </nav>
 
-      {/* ===== Mobile: floating menu button ===== */}
+      {/* ===== Mobile: floating menu button =====
+          Top-RIGHT: every page's heading and back link sit top-left, so a
+          left button covered them. Clears the notch via safe-area insets. */}
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-label="메뉴 열기"
         aria-expanded={open}
-        className="fixed left-4 top-4 z-40 flex h-12 items-center gap-2 rounded-2xl border border-slate-100 bg-white/90 px-3.5 shadow-lg backdrop-blur transition hover:shadow-xl lg:hidden"
+        className="fixed right-[max(1rem,env(safe-area-inset-right))] top-[max(1rem,env(safe-area-inset-top))] z-40 flex h-12 items-center gap-2 rounded-2xl border border-slate-100 bg-white/90 px-3.5 shadow-lg backdrop-blur transition hover:shadow-xl lg:hidden"
       >
         <span className="text-lg" aria-hidden="true">🌱</span>
         <span className="flex flex-col gap-[5px]" aria-hidden="true">
@@ -147,7 +149,7 @@ export function SiteHeader() {
         </span>
       </button>
 
-      {/* ===== Mobile: left slide-in drawer ===== */}
+      {/* ===== Mobile: slide-in drawer (from the right, next to its button) ===== */}
       {open && (
         <div
           className="fixed inset-0 z-50 lg:hidden"
@@ -161,7 +163,7 @@ export function SiteHeader() {
             onClick={() => setOpen(false)}
             className="absolute inset-0 bg-slate-900/50"
           />
-          <div className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col bg-white p-5 shadow-2xl">
+          <div className="absolute inset-y-0 right-0 flex w-72 max-w-[85vw] flex-col bg-white p-5 pt-[max(1.25rem,env(safe-area-inset-top))] shadow-2xl">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center gap-2 font-extrabold text-slate-900">
                 <span className="text-xl" aria-hidden="true">🌱</span>

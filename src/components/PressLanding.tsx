@@ -22,7 +22,7 @@ export function PressLanding() {
       {/* Hero card */}
       <section className="bg-gradient-to-b from-indigo-50 to-white">
         <div className="mx-auto max-w-4xl px-5 py-14 sm:py-20">
-          <Link href="/" className="text-sm text-slate-500 transition hover:text-slate-800">
+          <Link href="/#services" className="-my-2 inline-flex min-h-10 items-center text-sm text-slate-500 transition hover:text-slate-800">
             ← 전체 서비스
           </Link>
           <div className="mt-6 rounded-3xl bg-indigo-600 px-6 py-10 sm:px-10 sm:py-12">

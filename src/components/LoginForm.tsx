@@ -174,7 +174,7 @@ export function LoginForm({
           <button
             type="button"
             onClick={() => setMode("reset")}
-            className="mt-2 text-xs font-medium text-slate-400 underline underline-offset-2 transition hover:text-emerald-700"
+            className="mt-1 py-2 text-xs font-medium text-slate-400 underline underline-offset-2 transition hover:text-emerald-700"
           >
             비밀번호를 잊으셨나요?
           </button>
@@ -206,7 +206,7 @@ export function LoginForm({
         <button
           type="button"
           onClick={onSwitchToSignup}
-          className="font-semibold text-emerald-600 hover:underline"
+          className="-my-2 px-1 py-2 font-semibold text-emerald-600 hover:underline"
         >
           가입하기
         </button>

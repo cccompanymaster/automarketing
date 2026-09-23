@@ -90,7 +90,7 @@ export function ConsentSettings() {
                 <button
                   type="button"
                   onClick={() => setModalDoc(r.doc)}
-                  className="text-xs font-medium text-slate-400 underline underline-offset-2 hover:text-emerald-700"
+                  className="-my-2 py-2 text-xs font-medium text-slate-400 underline underline-offset-2 hover:text-emerald-700"
                 >
                   내용 보기
                 </button>
@@ -104,14 +104,14 @@ export function ConsentSettings() {
               aria-label={r.label}
               disabled={busy !== null}
               onClick={() => toggle(r.key)}
-              className={`relative h-7 w-12 shrink-0 rounded-full transition disabled:opacity-50 ${
+              className={`relative h-8 w-14 shrink-0 rounded-full transition disabled:opacity-50 ${
                 state[r.key] ? "bg-emerald-600" : "bg-slate-200"
               }`}
             >
               <span
                 aria-hidden="true"
-                className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-all ${
-                  state[r.key] ? "left-6" : "left-1"
+                className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-all ${
+                  state[r.key] ? "left-7" : "left-1"
                 }`}
               />
             </button>

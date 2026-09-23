@@ -105,6 +105,10 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Korean: wrap at spaces, not mid-word ("먹 / 기"). break-word still
+       splits a single over-long token (URL, email) instead of overflowing. */
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
   h1,
   h2,

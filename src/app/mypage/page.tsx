@@ -218,7 +218,10 @@ export default function MyPage() {
           <section className="mt-10">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-slate-900">내 주문</h2>
-              <Link href="/pricing" className="text-sm font-semibold text-emerald-600 hover:underline">
+              <Link
+                href="/pricing"
+                className="-my-2 inline-flex min-h-10 items-center text-sm font-semibold text-emerald-600 hover:underline"
+              >
                 상품 주문하기 →
               </Link>
             </div>
@@ -266,30 +269,24 @@ export default function MyPage() {
             )}
           </section>
 
-          <h2 className="mt-10 text-lg font-bold text-slate-900">서비스 현황</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          {/* Shortcut grid. Real progress lives in 내 주문 above; the old
+              per-service cards all said "아직 신청한 내역이 없습니다" and ran
+              ~2,000px on a phone. */}
+          <h2 className="mt-10 text-lg font-bold text-slate-900">서비스 둘러보기</h2>
+          <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
             {PRODUCT_LIST.map((p) => (
-              <div
+              <Link
                 key={p.slug}
-                className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
+                href={`/services/${p.slug}`}
+                className="flex min-h-14 items-center gap-2.5 rounded-xl border border-slate-100 bg-white px-3.5 py-3 shadow-sm transition hover:border-emerald-200 hover:shadow-md"
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl" aria-hidden="true">
-                    {p.icon}
-                  </span>
-                  <h3 className="text-base font-bold text-slate-900">{p.name}</h3>
-                </div>
-                <p className="mt-2 text-sm text-slate-500">
-                  {/* TODO(backend): show real campaign / refund status. */}
-                  아직 신청한 내역이 없습니다.
-                </p>
-                <Link
-                  href={`/services/${p.slug}`}
-                  className="mt-3 inline-block text-sm font-semibold text-emerald-600 hover:underline"
-                >
-                  자세히 보기 →
-                </Link>
-              </div>
+                <span className="shrink-0 text-xl" aria-hidden="true">
+                  {p.icon}
+                </span>
+                <span className="min-w-0 text-sm font-semibold leading-snug text-slate-800">
+                  {p.name}
+                </span>
+              </Link>
             ))}
           </div>
         </div>

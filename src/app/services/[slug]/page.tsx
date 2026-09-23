@@ -76,7 +76,10 @@ export default async function ServiceDetailPage({
         <main className="flex-1">
           <section className={`bg-gradient-to-b ${group.accent.gradient}`}>
             <div className="mx-auto max-w-4xl px-5 py-14 sm:py-20">
-              <Link href="/" className="text-sm text-slate-500 transition hover:text-slate-800">
+              <Link
+                href="/#services"
+                className="-my-2 inline-flex min-h-10 items-center text-sm text-slate-500 transition hover:text-slate-800"
+              >
                 ← 전체 서비스
               </Link>
               <div className="mt-6 flex items-start gap-4">
@@ -149,7 +152,10 @@ export default async function ServiceDetailPage({
         {/* Hero */}
         <section className={`bg-gradient-to-b ${accent.gradient}`}>
           <div className="mx-auto max-w-4xl px-5 py-14 sm:py-20">
-            <Link href="/" className="text-sm text-slate-500 transition hover:text-slate-800">
+            <Link
+                href="/#services"
+                className="-my-2 inline-flex min-h-10 items-center text-sm text-slate-500 transition hover:text-slate-800"
+              >
               ← 전체 서비스
             </Link>
             <div className="mt-6 flex items-start gap-4">

@@ -19,10 +19,29 @@ export function LoginForm({
   afterHref?: string;
 }) {
   const router = useRouter();
-  const { loginWithEmail } = useAuth();
+  const { loginWithEmail, sendPasswordReset } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  // "reset" swaps the form for a send-reset-link form; "sent" confirms it.
+  const [mode, setMode] = useState<"login" | "reset" | "sent">("login");
+
+  const handleReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast.error("가입하신 이메일을 입력해 주세요.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await sendPasswordReset(email);
+      setMode("sent");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "메일을 보내지 못했습니다.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const finish = () => {
     track("login_success");
@@ -46,6 +65,76 @@ export function LoginForm({
       setSubmitting(false);
     }
   };
+
+  if (mode === "sent") {
+    return (
+      <div className="text-center">
+        <div
+          className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-3xl"
+          aria-hidden="true"
+        >
+          📩
+        </div>
+        <h1 className="mt-4 text-2xl font-bold text-slate-900">메일함을 확인해 주세요</h1>
+        <p className="mt-3 text-sm leading-relaxed text-slate-600">
+          <b className="text-slate-800">{email}</b> 로 비밀번호 재설정 링크를 보냈어요.
+          <br />
+          링크를 누르면 새 비밀번호를 정할 수 있습니다.
+        </p>
+        <p className="mt-3 text-xs text-slate-400">
+          가입된 이메일이 아니면 메일이 가지 않아요. 스팸함도 확인해 주세요.
+        </p>
+        <button
+          type="button"
+          onClick={() => setMode("login")}
+          className="mt-6 w-full rounded-xl bg-emerald-700 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
+        >
+          로그인 화면으로
+        </button>
+      </div>
+    );
+  }
+
+  if (mode === "reset") {
+    return (
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900">비밀번호 찾기</h1>
+        <p className="mt-2 text-sm text-slate-500">
+          가입하신 이메일로 비밀번호 재설정 링크를 보내드려요.
+        </p>
+        <form onSubmit={handleReset} className="mt-6 space-y-4">
+          <div>
+            <label htmlFor="reset-email" className="block text-sm font-medium text-slate-700">
+              이메일
+            </label>
+            <input
+              id="reset-email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              placeholder="name@example.com"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full rounded-xl bg-emerald-600 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+          >
+            {submitting ? "보내는 중…" : "재설정 링크 보내기"}
+          </button>
+        </form>
+        <button
+          type="button"
+          onClick={() => setMode("login")}
+          className="mt-4 w-full text-center text-sm font-semibold text-slate-500 hover:text-emerald-700"
+        >
+          ← 로그인으로 돌아가기
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -82,6 +171,13 @@ export function LoginForm({
             className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             placeholder="비밀번호"
           />
+          <button
+            type="button"
+            onClick={() => setMode("reset")}
+            className="mt-2 text-xs font-medium text-slate-400 underline underline-offset-2 transition hover:text-emerald-700"
+          >
+            비밀번호를 잊으셨나요?
+          </button>
         </div>
 
         <button

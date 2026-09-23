@@ -16,6 +16,7 @@ import {
 } from "react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { getSupabase } from "@/lib/supabase";
+import { koreanAuthError } from "@/lib/authErrors";
 import {
   SOCIAL_PROVIDERS,
   socialProviderFromSupabase,
@@ -55,6 +56,10 @@ interface AuthContextValue {
   ) => Promise<User>;
   /** Redirects to the provider (real mode); returns a fake session in stub mode. */
   loginWithSocial: (provider: SocialProvider) => Promise<User>;
+  /** Emails a reset link that lands on /auth/reset. */
+  sendPasswordReset: (email: string) => Promise<void>;
+  /** Sets a new password for the signed-in (or recovering) member. */
+  updatePassword: (password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -70,6 +75,30 @@ export class EmailConfirmationRequiredError extends Error {
     super(message);
     this.name = "EmailConfirmationRequiredError";
   }
+}
+
+/**
+ * Thrown by signupWithEmail when the email already has an account. Supabase
+ * answers such a signup with a fake success (anti-enumeration) and sends no
+ * mail, so without this the form would tell the member to wait for an email
+ * that never comes.
+ */
+export class EmailAlreadyRegisteredError extends Error {
+  constructor(message = "이미 가입된 이메일이에요. 로그인해 주세요.") {
+    super(message);
+    this.name = "EmailAlreadyRegisteredError";
+  }
+}
+
+/**
+ * Absolute site root for auth redirects. SITE_URL carries the GitHub Pages
+ * base path when there is one; window.location.origin alone would drop it.
+ */
+function siteRoot(): string {
+  const root =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}`;
+  return root.replace(/\/$/, "");
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -139,7 +168,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (email: string, password: string): Promise<User> => {
       if (supabase) {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw new Error(error.message);
+        if (error) throw new Error(koreanAuthError(error.message));
         return mapSupabaseUser(data.user);
       }
       const next: User = { id: email, email, provider: "email" };
@@ -165,7 +194,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           password,
           options: { data: { name, consents } },
         });
-        if (error) throw new Error(error.message);
+        if (error) throw new Error(koreanAuthError(error.message));
+        // An existing account comes back as a user with no identities.
+        if (data.user && (data.user.identities?.length ?? 0) === 0) {
+          throw new EmailAlreadyRegisteredError();
+        }
         if (!data.session || !data.user) {
           // Email confirmation required (configurable in Supabase). Surfaced as
           // a dedicated success notice by the signup form, not an error toast.
@@ -202,17 +235,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (provider: SocialProvider): Promise<User> => {
       if (supabase) {
         // Land on the callback page, which forwards to the stashed destination.
-        // SITE_URL carries the GitHub Pages base path when there is one;
-        // window.location.origin alone would drop it.
-        const root =
-          process.env.NEXT_PUBLIC_SITE_URL ??
-          `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}`;
         const { error } = await supabase.auth.signInWithOAuth({
           // Custom providers ("custom:naver") aren't in supabase-js's Provider union.
           provider: SOCIAL_PROVIDERS[provider].supabaseId as "kakao",
-          options: { redirectTo: `${root.replace(/\/$/, "")}/auth/callback/` },
+          options: { redirectTo: `${siteRoot()}/auth/callback/` },
         });
-        if (error) throw new Error(error.message);
+        if (error) throw new Error(koreanAuthError(error.message));
         // OAuth redirects away; the returned value is unused.
         return { id: provider, email: "", provider };
       }
@@ -222,6 +250,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return next;
     },
     [supabase, persistStub],
+  );
+
+  const sendPasswordReset = useCallback(
+    async (email: string): Promise<void> => {
+      if (!supabase) return; // Stub mode: nothing to send.
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${siteRoot()}/auth/reset/`,
+      });
+      if (error) throw new Error(koreanAuthError(error.message));
+    },
+    [supabase],
+  );
+
+  const updatePassword = useCallback(
+    async (password: string): Promise<void> => {
+      if (!supabase) return;
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) throw new Error(koreanAuthError(error.message));
+    },
+    [supabase],
   );
 
   const logout = useCallback(() => {
@@ -240,9 +288,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loginWithEmail,
       signupWithEmail,
       loginWithSocial,
+      sendPasswordReset,
+      updatePassword,
       logout,
     }),
-    [user, hydrated, loginWithEmail, signupWithEmail, loginWithSocial, logout],
+    [
+      user,
+      hydrated,
+      loginWithEmail,
+      signupWithEmail,
+      loginWithSocial,
+      sendPasswordReset,
+      updatePassword,
+      logout,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

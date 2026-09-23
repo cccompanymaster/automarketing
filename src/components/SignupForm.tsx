@@ -7,7 +7,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useAuth, EmailConfirmationRequiredError } from "@/components/AuthProvider";
+import {
+  useAuth,
+  EmailAlreadyRegisteredError,
+  EmailConfirmationRequiredError,
+} from "@/components/AuthProvider";
 import { SocialLoginButtons, SOCIAL_LOGIN_AVAILABLE } from "@/components/SocialLoginButtons";
 import {
   ConsentChecklist,
@@ -97,6 +101,9 @@ export function SignupForm({
       if (err instanceof EmailConfirmationRequiredError) {
         // Not a failure — the account was created and needs email verification.
         setConfirmSent(true);
+      } else if (err instanceof EmailAlreadyRegisteredError) {
+        toast.info(err.message);
+        onSwitchToLogin();
       } else {
         toast.error(err instanceof Error ? err.message : "가입에 실패했습니다.");
       }

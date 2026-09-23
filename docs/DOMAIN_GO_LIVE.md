@@ -39,7 +39,7 @@ Cloudflare 링크의 `:account` 는 로그인하면 자동으로 채워집니다
 | 3 | Actions (재배포 Re-run) | https://github.com/cccompanymaster/automarketing/actions |
 | 4 | GitHub Pages 설정 | https://github.com/cccompanymaster/automarketing/settings/pages |
 | 5 | Cloudflare SSL/TLS | https://dash.cloudflare.com/?to=/:account/selfmarketing.ai.kr/ssl-tls |
-| 5 | Cloudflare Snippets | https://dash.cloudflare.com/?to=/:account/selfmarketing.ai.kr/rules/snippets |
+| 5 | Cloudflare Rules (헤더) | https://dash.cloudflare.com/?to=/:account/selfmarketing.ai.kr/rules/overview |
 | 5 | 붙여넣을 헤더 코드 | https://github.com/cccompanymaster/automarketing/blob/claude/pensive-fermat-MZ94X/docs/SECURITY_HEADERS.md |
 | 6 | Supabase Auth URL 설정 | https://supabase.com/dashboard/project/weytdwzwviamqrtzrjmg/auth/url-configuration |
 | 6 | 카카오 개발자센터 | https://developers.kakao.com/console/app |
@@ -126,12 +126,13 @@ GitHub → `cccompanymaster/automarketing` → Settings →
 
 **4단계에서 HTTPS가 정상 동작한 뒤에** 진행하세요.
 
-1. Cloudflare → **SSL/TLS → Overview** → 모드를 **Full** 로 설정
+1. Cloudflare → **SSL/TLS → Overview** → 모드를 **Full (strict)** 로 설정
    (Flexible로 두면 무한 리다이렉트가 납니다)
 2. DNS Records 로 돌아가 위 5개 레코드를 **주황색(Proxied)** 으로 전환
 3. 도메인 재접속해서 정상인지 확인
-4. 정상이면 `docs/SECURITY_HEADERS.md` 의 Snippet 코드를 Cloudflare →
-   **Rules → Snippets** 에 등록
+4. 정상이면 `docs/SECURITY_HEADERS.md` 의 헤더 6개를 Cloudflare →
+   **Rules → Response Header Transform Rule** 에 등록
+   (Snippets는 유료 플랜 전용이라 무료 플랜은 Transform Rules를 씁니다)
 5. 브라우저 개발자도구 콘솔을 열고 사이트를 둘러보며 빨간 CSP 차단 오류가
    없는지 확인 (있으면 알려주세요, 제가 정책 수정)
 

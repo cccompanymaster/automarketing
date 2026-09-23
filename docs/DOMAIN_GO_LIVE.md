@@ -130,7 +130,7 @@ GitHub → `cccompanymaster/automarketing` → Settings →
    (Flexible로 두면 무한 리다이렉트가 납니다)
 2. DNS Records 로 돌아가 위 5개 레코드를 **주황색(Proxied)** 으로 전환
 3. 도메인 재접속해서 정상인지 확인
-4. 정상이면 `docs/SECURITY_HEADERS.md` 의 헤더 4개를 (CSP는 사이트 코드에 포함) Cloudflare →
+4. 정상이면 `docs/SECURITY_HEADERS.md` 의 헤더 5개를 (CSP는 사이트 코드에 포함) Cloudflare →
    **Rules → Response Header Transform Rule** 에 등록
    (Snippets는 유료 플랜 전용이라 무료 플랜은 Transform Rules를 씁니다)
 5. 브라우저 개발자도구 콘솔을 열고 사이트를 둘러보며 빨간 CSP 차단 오류가

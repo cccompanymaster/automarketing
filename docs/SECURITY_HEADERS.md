@@ -36,7 +36,7 @@ CSP를 넣으면 두 정책이 동시에 적용돼서, 한쪽만 고쳤을 때 �
 감싸는 것 차단)를 지원하지 않습니다. 그래서 아래 `X-Frame-Options`는 Cloudflare에
 꼭 넣어야 합니다.
 
-## Cloudflare에 넣을 헤더 (4개)
+## Cloudflare에 넣을 헤더 (5개)
 
 | 헤더 이름 | 값 |
 |---|---|
@@ -44,8 +44,15 @@ CSP를 넣으면 두 정책이 동시에 적용돼서, 한쪽만 고쳤을 때 �
 | `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` |
 | `X-Content-Type-Options` | `nosniff` |
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=(), browsing-topics=()` |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` |
 
-(`Referrer-Policy`도 사이트 코드의 `<meta name="referrer">`로 적용돼 있습니다.)
+`Referrer-Policy`는 사이트 코드의 `<meta name="referrer">`로도 적용돼 있지만, 값이 같아
+중복돼도 문제없고 헤더로 두면 securityheaders.com 같은 점검 도구가 인식합니다.
+
+> **securityheaders.com 등급 참고**: 이 도구는 HTTP 응답 헤더만 읽고 HTML 안의
+> `<meta>` CSP는 보지 않습니다. 그래서 CSP가 실제로 동작 중이어도 "Missing"으로
+> 표시되고 최고 등급은 **A**입니다. 브라우저 보호 효과는 헤더와 같습니다
+> (frame-ancestors만 예외 — 그래서 X-Frame-Options를 헤더로 넣습니다).
 
 > **`script-src 'unsafe-inline'`**: GTM은 인라인 부트스트랩 스크립트를 쓰고 태그를
 > 동적으로 주입하므로 nonce 기반 엄격 CSP를 적용하기 어렵습니다. 추후 서버 사이드
@@ -71,7 +78,7 @@ Cloudflare → **SSL/TLS → Overview** → **Full (strict)**
 2. Rule name: `security-headers`
 3. If incoming requests match… → **All incoming requests**
 4. Then… → **Set static** 선택 → 위 표의 헤더 이름·값 입력
-5. **+ Set new header** 로 4개 모두 추가
+5. **+ Set new header** 로 5개 모두 추가
 6. **Deploy**
 
 ### (유료 플랜이면) 대안 — Snippet
@@ -92,7 +99,7 @@ export default {
 ```
 
 ## 검증
-1. https://securityheaders.com 에 `https://selfmarketing.ai.kr` 입력 → 목표 **A 이상**
+1. https://securityheaders.com 에 `https://selfmarketing.ai.kr` 입력 → 목표 **A** (CSP는 meta라 "Missing"으로 표시되는 게 정상)
 2. 사이트에서 **F12 → Console** 열고 홈 / 로그인 / 회원가입 / 마이페이지를 한 번씩 이동
 3. 빨간 글씨로 `Refused to ... because it violates the Content Security Policy` 가
    보이면 캡처해서 전달 → `src/lib/csp.ts`에 해당 출처를 추가합니다

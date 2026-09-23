@@ -1,8 +1,9 @@
 "use client";
 
 // Orders context. Stub mode persists per-user in localStorage; when Supabase is
-// configured it reads/writes the `orders` table (RLS-scoped to the user).
-// An order is recorded after a successful cash spend (OrderModal).
+// configured it reads the `orders` table (RLS-scoped to the user) and places
+// orders through the place_order RPC, which deducts cash and records the order
+// in one transaction — there is no client INSERT on orders.
 
 import {
   createContext,
@@ -15,19 +16,22 @@ import {
 } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { useAuth } from "@/components/AuthProvider";
+import { useWallet } from "@/components/WalletProvider";
 import type { Order, OrderStatus } from "@/lib/orders";
 
-interface CreateOrderInput {
+interface PlaceOrderInput {
   productName: string;
   amountCash: number;
   qty: number;
+  /** Customer's request / materials note, shown to the admin with the order. */
+  request?: string;
 }
 
 interface OrdersContextValue {
   orders: Order[];
   loading: boolean;
-  /** Record a new order (status starts at "received"). */
-  createOrder: (input: CreateOrderInput) => Promise<void>;
+  /** Pay with cash and record the order (status starts at "received"). */
+  placeOrder: (input: PlaceOrderInput) => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -62,6 +66,7 @@ function newId(): string {
 export function OrdersProvider({ children }: { children: ReactNode }) {
   const supabase = getSupabase();
   const { user } = useAuth();
+  const { spend, refresh: refreshWallet } = useWallet();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -99,21 +104,24 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     void refresh();
   }, [refresh]);
 
-  const createOrder = useCallback(
-    async (input: CreateOrderInput) => {
+  const placeOrder = useCallback(
+    async (input: PlaceOrderInput) => {
       if (!user) throw new Error("로그인이 필요합니다.");
+      const request = input.request?.trim() || undefined;
       if (supabase) {
-        const { error } = await supabase.from("orders").insert({
-          user_id: user.id,
-          product_name: input.productName,
-          amount_cash: input.amountCash,
-          qty: input.qty,
-          status: "received",
+        const { error } = await supabase.rpc("place_order", {
+          p_product_name: input.productName,
+          p_amount: input.amountCash,
+          p_qty: input.qty,
+          p_request: request ?? null,
         });
         if (error) throw new Error(error.message);
-        await refresh();
+        await Promise.all([refresh(), refreshWallet()]);
         return;
       }
+      // Stub: spend locally, then keep the order alongside the session.
+      const base = input.qty > 1 ? `${input.productName} ×${input.qty}` : input.productName;
+      await spend(input.amountCash, request ? `${base} — ${request.slice(0, 300)}` : base);
       const order: Order = {
         id: newId(),
         productName: input.productName,
@@ -126,12 +134,12 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       saveStub(user.id, next);
       setOrders(next);
     },
-    [supabase, user, refresh],
+    [supabase, user, refresh, refreshWallet, spend],
   );
 
   const value = useMemo<OrdersContextValue>(
-    () => ({ orders, loading, createOrder, refresh }),
-    [orders, loading, createOrder, refresh],
+    () => ({ orders, loading, placeOrder, refresh }),
+    [orders, loading, placeOrder, refresh],
   );
 
   return <OrdersContext.Provider value={value}>{children}</OrdersContext.Provider>;

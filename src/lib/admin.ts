@@ -1,12 +1,12 @@
 // Admin domain — gating + data access for the admin-only dashboard (/admin).
 //
 // Gating: an email allowlist from NEXT_PUBLIC_ADMIN_EMAILS (comma-separated).
-// IMPORTANT: this client-side check only hides the UI. It is NOT a security
-// boundary — the real protection must live server-side (Supabase RLS / an
-// admin role / a service-role function). Never expose the service-role key to
-// the client. TODO(backend): enforce admin access in the data layer too.
+// That client-side check only hides the UI. The real boundary is server-side:
+// admin_overview / admin_update_order_status are security-definer RPCs that
+// refuse anyone not in public.admin_users (is_admin()).
 
-import { isSupabaseConfigured } from "@/lib/supabase";
+import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
+import { socialProviderFromSupabase } from "@/lib/socialAuth";
 import type { User } from "@/components/AuthProvider";
 import type { CashTxnType } from "@/lib/cash";
 import type { OrderStatus } from "@/lib/orders";
@@ -36,6 +36,9 @@ export interface AdminOrder {
   userEmail: string;
   productName: string;
   amountCash: number;
+  qty: number;
+  /** Customer's request / materials note from the order form. */
+  request: string | null;
   status: OrderStatus;
   createdAt: string; // ISO
 }
@@ -54,6 +57,11 @@ export interface AdminMember {
   provider: User["provider"];
   balance: number;
   joinedAt: string; // ISO
+  name: string | null;
+  phone: string | null;
+  /** Latest recorded consents (null = no record yet). */
+  thirdParty: boolean | null;
+  marketing: boolean | null;
 }
 
 export interface AdminMetrics {
@@ -77,26 +85,69 @@ export const TXN_TYPE_LABEL: Record<CashTxnType, string> = {
   bonus: "보너스",
 };
 
-/**
- * Fetch the admin overview.
- * TODO(backend): when Supabase is configured, read aggregates and recent rows
- * from admin-scoped views/RPCs (server-side, service-role). For now this
- * returns demo placeholders so the screen is reviewable end to end.
- */
+/** Fetch the admin overview (real data via admin_overview RPC; demo in stub mode). */
 export async function getAdminOverview(): Promise<AdminOverview> {
-  // TODO(backend): replace with real queries when isAdminBackendConfigured.
-  return DEMO_OVERVIEW;
+  const supabase = getSupabase();
+  if (!supabase) return DEMO_OVERVIEW;
+
+  const { data, error } = await supabase.rpc("admin_overview");
+  if (error) throw new Error(error.message);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const d = data as any;
+  return {
+    metrics: {
+      members: Number(d.metrics.members),
+      ordersToday: Number(d.metrics.ordersToday),
+      chargeCashToday: Number(d.metrics.chargeCashToday),
+      pendingOrders: Number(d.metrics.pendingOrders),
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recentOrders: (d.recentOrders ?? []).map((o: any) => ({
+      id: o.id,
+      userEmail: o.userEmail ?? "(탈퇴 회원)",
+      productName: o.productName,
+      amountCash: Number(o.amountCash),
+      qty: Number(o.qty ?? 1),
+      request: o.request ?? null,
+      status: o.status as OrderStatus,
+      createdAt: o.createdAt,
+    })),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recentCharges: (d.recentCharges ?? []).map((c: any) => ({
+      id: c.id,
+      userEmail: c.userEmail ?? "(탈퇴 회원)",
+      amountCash: Number(c.amountCash),
+      method: c.method || "충전",
+      createdAt: c.createdAt,
+    })),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    members: (d.members ?? []).map((m: any) => ({
+      id: m.id,
+      email: m.email ?? "",
+      provider: socialProviderFromSupabase(m.provider) ?? "email",
+      balance: Number(m.balance ?? 0),
+      joinedAt: m.joinedAt,
+      name: m.name || null,
+      phone: m.phone || null,
+      thirdParty: m.thirdParty ?? null,
+      marketing: m.marketing ?? null,
+    })),
+  };
 }
 
 /**
- * Update an order's status.
- * TODO(backend): persist via an admin-only path — an `update_order_status` RPC
- * guarded by an is_admin() policy, or a service-role server action. In demo
- * mode this is a no-op and the dashboard updates its local state optimistically.
+ * Change an order's status. Moving to "canceled" refunds the order's cash to
+ * the member's ledger (server-side, in the same transaction); a canceled order
+ * can't be reopened, so refunds can't be issued twice.
  */
 export async function updateOrderStatus(orderId: string, status: OrderStatus): Promise<void> {
-  void orderId;
-  void status;
+  const supabase = getSupabase();
+  if (!supabase) return; // Demo mode: the dashboard only updates locally.
+  const { error } = await supabase.rpc("admin_update_order_status", {
+    p_order_id: orderId,
+    p_status: status,
+  });
+  if (error) throw new Error(error.message);
 }
 
 // --- Demo (placeholder) data — clearly flagged in the UI --------------------
@@ -114,6 +165,8 @@ const DEMO_OVERVIEW: AdminOverview = {
       userEmail: "owner1@example.com",
       productName: "플레이스 영수증 리뷰 ×30",
       amountCash: 30_000,
+      qty: 1,
+      request: "가게 사진 5장 첨부했어요",
       status: "in_progress",
       createdAt: "2026-06-29T01:20:00.000Z",
     },
@@ -122,6 +175,8 @@ const DEMO_OVERVIEW: AdminOverview = {
       userEmail: "seller2@example.com",
       productName: "블로그 준최적 배포",
       amountCash: 20_000,
+      qty: 1,
+      request: null,
       status: "received",
       createdAt: "2026-06-29T00:55:00.000Z",
     },
@@ -130,6 +185,8 @@ const DEMO_OVERVIEW: AdminOverview = {
       userEmail: "cafe3@example.com",
       productName: "일반 리워드 트래픽 ×1,000",
       amountCash: 30_000,
+      qty: 1,
+      request: null,
       status: "done",
       createdAt: "2026-06-28T09:10:00.000Z",
     },
@@ -157,6 +214,10 @@ const DEMO_OVERVIEW: AdminOverview = {
       provider: "email",
       balance: 70_000,
       joinedAt: "2026-06-20T00:00:00.000Z",
+      name: "김사장",
+      phone: "010-0000-0001",
+      thirdParty: true,
+      marketing: true,
     },
     {
       id: "usr_demo_02",
@@ -164,6 +225,10 @@ const DEMO_OVERVIEW: AdminOverview = {
       provider: "kakao",
       balance: 0,
       joinedAt: "2026-06-24T00:00:00.000Z",
+      name: null,
+      phone: null,
+      thirdParty: false,
+      marketing: false,
     },
     {
       id: "usr_demo_03",
@@ -171,6 +236,10 @@ const DEMO_OVERVIEW: AdminOverview = {
       provider: "email",
       balance: 20_000,
       joinedAt: "2026-06-27T00:00:00.000Z",
+      name: "박대표",
+      phone: null,
+      thirdParty: true,
+      marketing: false,
     },
   ],
 };

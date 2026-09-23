@@ -19,8 +19,8 @@ export function OrderModal({
   onClose: () => void;
   onNeedCharge: () => void;
 }) {
-  const { balance, spend, loading } = useWallet();
-  const { createOrder } = useOrders();
+  const { balance, loading } = useWallet();
+  const { placeOrder } = useOrders();
   const [qty, setQty] = useState(1);
   const [request, setRequest] = useState("");
 
@@ -50,20 +50,15 @@ export function OrderModal({
   const enough = balance >= totalCash;
 
   const handleOrder = async () => {
-    const base = hasUnit && quantity > 1 ? `${item.name} ×${quantity}` : item.name;
-    // Materials/requests ride along in the ledger memo so the admin sees them
-    // with the order. TODO(backend): store as a structured order field.
-    const memo = request.trim() ? `${base} — ${request.trim().slice(0, 300)}` : base;
     try {
-      await spend(totalCash, memo);
-      // Record the order so it shows up (with status) on the member's page and
-      // in the admin dashboard. Spend already succeeded, so a record failure
-      // shouldn't block the user — surface it but keep the success state.
-      try {
-        await createOrder({ productName: item.name, amountCash: totalCash, qty: quantity });
-      } catch {
-        /* order record is best-effort; the cash ledger is the source of truth */
-      }
+      // One call: cash is deducted and the order (with the request note) is
+      // recorded together, so a paid order can't go missing.
+      await placeOrder({
+        productName: item.name,
+        amountCash: totalCash,
+        qty: quantity,
+        request: request.trim().slice(0, 1000),
+      });
       toast.success(`주문 완료 — ${formatCash(totalCash)} 차감되었습니다.`);
       onClose();
     } catch (e) {

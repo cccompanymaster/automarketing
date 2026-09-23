@@ -135,11 +135,8 @@ create policy "own orders readable"
   on public.orders for select
   using (auth.uid() = user_id);
 
--- 본인 주문만 생성 가능 (결제 차감 성공 후 기록).
-drop policy if exists "own orders insertable" on public.orders;
-create policy "own orders insertable"
-  on public.orders for insert
-  with check (auth.uid() = user_id);
+-- 주문 생성은 place_order RPC(캐시 차감과 한 트랜잭션)로만 가능합니다 — 아래 참고.
+-- 클라이언트 INSERT 정책은 두지 않습니다(결제 없이 주문 행을 만들 수 있었음).
 
 -- 상태 변경(UPDATE)/삭제는 클라이언트에 허용하지 않습니다. 관리자 상태 변경은
 -- 서버(service_role) 또는 is_admin() 정책을 둔 update_order_status RPC로 처리하세요.
@@ -364,3 +361,198 @@ select distinct on (user_id)
   user_id, terms, privacy, third_party, marketing, doc_version, source, created_at
 from public.consent_logs
 order by user_id, created_at desc;
+
+-- 주문 생성 (원자적) -------------------------------------------------------------
+-- 캐시 차감과 주문 기록을 한 트랜잭션으로 처리합니다. 예전에는 클라이언트가
+-- use_cash 후 orders 에 직접 insert 해서 (1) 결제 없이 주문 행을 만들 수 있었고
+-- (2) 차감 후 기록이 실패하면 돈만 빠지고 주문이 사라졌습니다.
+alter table public.orders add column if not exists request text;
+
+drop policy if exists "own orders insertable" on public.orders;  -- 이제 place_order 로만 생성
+
+create or replace function public.place_order(
+  p_product_name text,
+  p_amount bigint,
+  p_qty integer default 1,
+  p_request text default null
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_uid uuid := auth.uid();
+  v_balance bigint;
+  v_order uuid;
+  v_memo text;
+begin
+  if v_uid is null then
+    raise exception 'not authenticated';
+  end if;
+  if p_amount <= 0 then
+    raise exception 'amount must be positive';
+  end if;
+  if coalesce(trim(p_product_name), '') = '' then
+    raise exception 'product is required';
+  end if;
+  -- NOTE: 단가는 클라이언트 값입니다(단가표가 코드/시트에 있음). 관리자 화면에서
+  -- 상품·수량 대비 금액을 확인하세요. 서버 단가표 도입 시 여기서 검증합니다.
+
+  perform pg_advisory_xact_lock(hashtextextended(v_uid::text, 0));
+
+  select coalesce((
+    select balance_after from public.cash_transactions
+    where user_id = v_uid order by created_at desc limit 1
+  ), 0) into v_balance;
+
+  if v_balance < p_amount then
+    raise exception '캐시가 부족합니다';
+  end if;
+
+  insert into public.orders (user_id, product_name, amount_cash, qty, status, request)
+  values (v_uid, trim(p_product_name), p_amount, greatest(coalesce(p_qty, 1), 1), 'received',
+          nullif(left(trim(coalesce(p_request, '')), 1000), ''))
+  returning id into v_order;
+
+  v_memo := trim(p_product_name) || case when coalesce(p_qty, 1) > 1 then ' ×' || p_qty else '' end;
+  insert into public.cash_transactions (user_id, type, amount, balance_after, memo)
+  values (v_uid, 'use', -p_amount, v_balance - p_amount, v_memo);
+
+  return v_order;
+end;
+$$;
+
+revoke all on function public.place_order(text, bigint, integer, text) from public, anon;
+grant execute on function public.place_order(text, bigint, integer, text) to authenticated;
+
+-- 관리자 대시보드 ---------------------------------------------------------------
+-- auth.users 와 다른 회원의 원장·주문은 RLS 로 막혀 있으므로, is_admin() 확인 후
+-- 필요한 필드만 돌려주는 security definer RPC 로 제공합니다.
+create or replace function public.admin_overview()
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_today timestamptz := date_trunc('day', now() at time zone 'Asia/Seoul') at time zone 'Asia/Seoul';
+begin
+  if not public.is_admin() then
+    raise exception '관리자만 사용할 수 있습니다.';
+  end if;
+
+  return jsonb_build_object(
+    'metrics', jsonb_build_object(
+      'members',         (select count(*) from auth.users),
+      'ordersToday',     (select count(*) from public.orders where created_at >= v_today),
+      'chargeCashToday', (select coalesce(sum(amount), 0) from public.cash_transactions
+                           where type = 'charge' and created_at >= v_today),
+      'pendingOrders',   (select count(*) from public.orders where status in ('received', 'in_progress'))
+    ),
+    'recentOrders', coalesce((
+      select jsonb_agg(o order by o."createdAt" desc) from (
+        select ord.id, u.email as "userEmail", ord.product_name as "productName",
+               ord.amount_cash as "amountCash", ord.qty, ord.request, ord.status,
+               ord.created_at as "createdAt"
+        from public.orders ord
+        left join auth.users u on u.id = ord.user_id
+        order by ord.created_at desc
+        limit 100
+      ) o
+    ), '[]'::jsonb),
+    'recentCharges', coalesce((
+      select jsonb_agg(c order by c."createdAt" desc) from (
+        select t.id, u.email as "userEmail", t.amount as "amountCash", t.memo as method,
+               t.created_at as "createdAt"
+        from public.cash_transactions t
+        left join auth.users u on u.id = t.user_id
+        where t.type = 'charge'
+        order by t.created_at desc
+        limit 50
+      ) c
+    ), '[]'::jsonb),
+    'members', coalesce((
+      select jsonb_agg(m order by m."joinedAt" desc) from (
+        select u.id, u.email,
+               u.raw_app_meta_data ->> 'provider' as provider,
+               coalesce((select t.balance_after from public.cash_transactions t
+                         where t.user_id = u.id order by t.created_at desc limit 1), 0) as balance,
+               u.created_at as "joinedAt",
+               coalesce(nullif(u.raw_user_meta_data -> 'profile' ->> 'name', ''),
+                        u.raw_user_meta_data ->> 'name',
+                        u.raw_user_meta_data ->> 'full_name') as name,
+               coalesce(nullif(u.raw_user_meta_data -> 'profile' ->> 'phone', ''),
+                        u.raw_user_meta_data ->> 'phone_number',
+                        u.raw_user_meta_data -> 'custom_claims' ->> 'phone_number') as phone,
+               c.third_party as "thirdParty",
+               c.marketing
+        from auth.users u
+        left join lateral (
+          select l.third_party, l.marketing from public.consent_logs l
+          where l.user_id = u.id order by l.created_at desc limit 1
+        ) c on true
+        order by u.created_at desc
+        limit 500
+      ) m
+    ), '[]'::jsonb)
+  );
+end;
+$$;
+
+revoke all on function public.admin_overview() from public, anon;
+grant execute on function public.admin_overview() to authenticated;
+
+-- 주문 상태 변경. '취소'로 바꾸면 결제 캐시를 원장에 환불(type=refund)합니다.
+-- 취소된 주문은 되돌릴 수 없습니다(되돌리면 환불이 중복될 수 있어서).
+create or replace function public.admin_update_order_status(p_order_id uuid, p_status text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_order public.orders%rowtype;
+  v_balance bigint;
+begin
+  if not public.is_admin() then
+    raise exception '관리자만 사용할 수 있습니다.';
+  end if;
+  if p_status not in ('received', 'in_progress', 'done', 'canceled') then
+    raise exception '알 수 없는 상태입니다: %', p_status;
+  end if;
+
+  select * into v_order from public.orders where id = p_order_id for update;
+  if not found then
+    raise exception '주문을 찾을 수 없습니다.';
+  end if;
+  if v_order.status = p_status then
+    return;
+  end if;
+  if v_order.status = 'canceled' then
+    raise exception '취소된 주문은 상태를 바꿀 수 없어요 (이미 환불됨).';
+  end if;
+
+  if p_status = 'canceled' then
+    perform pg_advisory_xact_lock(hashtextextended(v_order.user_id::text, 0));
+    select coalesce((
+      select balance_after from public.cash_transactions
+      where user_id = v_order.user_id order by created_at desc limit 1
+    ), 0) into v_balance;
+    insert into public.cash_transactions (user_id, type, amount, balance_after, memo)
+    values (v_order.user_id, 'refund', v_order.amount_cash, v_balance + v_order.amount_cash,
+            '주문 취소 환불: ' || v_order.product_name);
+  end if;
+
+  update public.orders set status = p_status where id = p_order_id;
+end;
+$$;
+
+revoke all on function public.admin_update_order_status(uuid, text) from public, anon;
+grant execute on function public.admin_update_order_status(uuid, text) to authenticated;
+
+-- 원장 시각: now()는 트랜잭션 시작 시각으로 고정돼 같은 트랜잭션의 행이 동률이
+-- 되고, "가장 최근 행 = 현재 잔액"이 모호해집니다. clock_timestamp()는 행마다 증가.
+alter table public.cash_transactions alter column created_at set default clock_timestamp();
+alter table public.orders alter column created_at set default clock_timestamp();

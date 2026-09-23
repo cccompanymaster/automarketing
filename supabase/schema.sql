@@ -355,7 +355,11 @@ create policy "own consents insertable"
   with check (auth.uid() = user_id);
 
 -- 최신 동의 상태 조회용 뷰 (사용자별 1행).
-create or replace view public.current_consents as
+-- security_invoker: 뷰는 기본적으로 소유자 권한으로 실행돼 RLS를 우회하고,
+-- public 스키마 뷰는 API로 노출되므로 이게 없으면 누구나 전 회원의 동의
+-- 이력을 읽을 수 있습니다. 호출자 권한으로 실행해 consent_logs RLS를 따르게 합니다.
+create or replace view public.current_consents
+with (security_invoker = true) as
 select distinct on (user_id)
   user_id, terms, privacy, third_party, marketing, doc_version, source, created_at
 from public.consent_logs

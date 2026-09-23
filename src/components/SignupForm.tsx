@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth, EmailConfirmationRequiredError } from "@/components/AuthProvider";
-import { KakaoButton } from "@/components/KakaoButton";
+import { KakaoButton, KAKAO_LOGIN_AVAILABLE } from "@/components/KakaoButton";
 import { LegalModal } from "@/components/LegalModal";
 import type { LegalDocKey } from "@/lib/legal";
 import { track } from "@/lib/analytics";
@@ -158,15 +158,21 @@ export function SignupForm({
       </p>
 
       {/* One-tap signup first — fewer fields, less mobile drop-off */}
-      <div className="mt-6">
-        <KakaoButton label="카카오로 3초만에 시작하기" guard={guardConsent} onDone={finish} />
-      </div>
+      {KAKAO_LOGIN_AVAILABLE ? (
+        <>
+          <div className="mt-6">
+            <KakaoButton label="카카오로 3초만에 시작하기" guard={guardConsent} onDone={finish} />
+          </div>
 
-      <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
-        <span className="h-px flex-1 bg-slate-100" />
-        또는 이메일로 가입
-        <span className="h-px flex-1 bg-slate-100" />
-      </div>
+          <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
+            <span className="h-px flex-1 bg-slate-100" />
+            또는 이메일로 가입
+            <span className="h-px flex-1 bg-slate-100" />
+          </div>
+        </>
+      ) : (
+        <div className="mt-6" />
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

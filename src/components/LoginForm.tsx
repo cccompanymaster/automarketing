@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
-import { KakaoButton } from "@/components/KakaoButton";
+import { KakaoButton, KAKAO_LOGIN_AVAILABLE } from "@/components/KakaoButton";
 import { track } from "@/lib/analytics";
 
 export function LoginForm({
@@ -93,13 +93,17 @@ export function LoginForm({
         </button>
       </form>
 
-      <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
-        <span className="h-px flex-1 bg-slate-100" />
-        또는
-        <span className="h-px flex-1 bg-slate-100" />
-      </div>
+      {KAKAO_LOGIN_AVAILABLE && (
+        <>
+          <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
+            <span className="h-px flex-1 bg-slate-100" />
+            또는
+            <span className="h-px flex-1 bg-slate-100" />
+          </div>
 
-      <KakaoButton label="카카오로 로그인" onDone={finish} />
+          <KakaoButton label="카카오로 로그인" onDone={finish} />
+        </>
+      )}
 
       <p className="mt-6 text-center text-sm text-slate-500">
         아직 계정이 없으신가요?{" "}

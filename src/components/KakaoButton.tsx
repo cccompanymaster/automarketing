@@ -1,11 +1,17 @@
 "use client";
 
-// Kakao login/signup button. STUB ONLY — no real OAuth.
-// The real flow would redirect to Kakao's authorize endpoint and handle the
-// callback server-side.
-// TODO(backend): implement Kakao OAuth (authorize redirect + token exchange).
+// Kakao login/signup button. With Supabase configured this starts the real
+// OAuth redirect (AuthProvider.loginWithKakao); in stub mode it fakes a session.
 
 import { useAuth } from "@/components/AuthProvider";
+import { isSupabaseConfigured } from "@/lib/supabase";
+
+// With a real backend the Kakao provider must also be enabled in Supabase Auth,
+// otherwise the redirect lands on a raw "provider is not enabled" JSON error.
+// Hide the button until NEXT_PUBLIC_KAKAO_LOGIN_ENABLED says it's wired up.
+// Stub mode keeps it so the demo flow still works.
+export const KAKAO_LOGIN_AVAILABLE =
+  !isSupabaseConfigured || process.env.NEXT_PUBLIC_KAKAO_LOGIN_ENABLED === "true";
 
 export function KakaoButton({
   label,
@@ -21,8 +27,6 @@ export function KakaoButton({
 
   const handleClick = async () => {
     if (guard && !guard()) return;
-    // TODO(backend): redirect to
-    // https://kauth.kakao.com/oauth/authorize?client_id=...&redirect_uri=...&response_type=code
     await loginWithKakao();
     onDone?.();
   };

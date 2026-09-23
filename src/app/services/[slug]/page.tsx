@@ -8,7 +8,7 @@ import { PressLanding } from "@/components/PressLanding";
 import { BrandLogo } from "@/components/BrandLogo";
 import { GroupTabs } from "@/components/GroupTabs";
 import { JsonLd } from "@/components/JsonLd";
-import { serviceLd, breadcrumbLd } from "@/lib/seo";
+import { serviceLd, breadcrumbLd, OG_BASE } from "@/lib/seo";
 import { TrackedCta } from "@/components/TrackedCta";
 import { ProductDetailBody, pricingHref, PRICING_ANCHOR } from "@/components/ProductDetailBody";
 import {
@@ -32,7 +32,7 @@ export async function generateMetadata({
       title: group.name,
       description: group.summary.join(" "),
       alternates: { canonical: `/services/${slug}/` },
-      openGraph: { title: group.name, description: group.summary.join(" "), url: `/services/${slug}/` },
+      openGraph: { ...OG_BASE, title: group.name, description: group.summary.join(" "), url: `/services/${slug}/` },
     };
   }
   const product = getProduct(slug);
@@ -41,7 +41,7 @@ export async function generateMetadata({
     title: product.name,
     description: product.detail.subhead,
     alternates: { canonical: `/services/${slug}/` },
-    openGraph: { title: product.name, description: product.detail.subhead, url: `/services/${slug}/` },
+    openGraph: { ...OG_BASE, title: product.name, description: product.detail.subhead, url: `/services/${slug}/` },
   };
 }
 

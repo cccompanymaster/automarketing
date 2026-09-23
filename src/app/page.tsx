@@ -3,12 +3,12 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Landing } from "@/components/Landing";
 import { JsonLd } from "@/components/JsonLd";
-import { organizationLd, webSiteLd, faqLd } from "@/lib/seo";
+import { organizationLd, webSiteLd, faqLd, OG_BASE } from "@/lib/seo";
 import { SITE_FAQS } from "@/lib/faq";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
-  openGraph: { url: "/" },
+  openGraph: { ...OG_BASE, url: "/" },
 };
 
 export default function HomePage() {

@@ -19,6 +19,25 @@ const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.exa
 
 export const absoluteUrl = (path: string) => `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 
+/**
+ * Open Graph fields every page shares. Next.js replaces (not merges) a parent's
+ * openGraph when a page sets its own, so pages spread this in to keep the
+ * preview image, site name and locale.
+ */
+export const OG_BASE = {
+  type: "website" as const,
+  locale: "ko_KR",
+  siteName: "마케팅방주",
+  images: [
+    {
+      url: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/og.png`,
+      width: 1200,
+      height: 630,
+      alt: "마케팅방주",
+    },
+  ],
+};
+
 /** Parse "30,000원" / "30원" → 30000 / 30. Returns null for 견적-only copy. */
 export function parseKrw(text: string | undefined): number | null {
   if (!text) return null;

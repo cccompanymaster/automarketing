@@ -8,6 +8,7 @@ import { DeliverablesProvider } from "@/components/DeliverablesProvider";
 import { ConsentGate } from "@/components/ConsentGate";
 import { GtmScript, GtmNoScript } from "@/components/GtmScript";
 import { CONTENT_SECURITY_POLICY } from "@/lib/csp";
+import { OG_BASE } from "@/lib/seo";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -43,12 +44,11 @@ export const metadata: Metadata = {
       "naver-site-verification": "5422308667fd7f1bd83c5e52ef1fe02f0186ef34",
     },
   },
-  openGraph: {
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
-    type: "website",
-    locale: "ko_KR",
-    siteName: "마케팅방주",
+  // Link previews (KakaoTalk, Naver, Facebook).
+  openGraph: { ...OG_BASE, title: SITE_TITLE, description: SITE_DESCRIPTION },
+  twitter: {
+    card: "summary_large_image",
+    images: [`${BASE_PATH}/og.png`],
   },
 };
 

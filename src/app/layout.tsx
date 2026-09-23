@@ -6,6 +6,7 @@ import { WalletProvider } from "@/components/WalletProvider";
 import { OrdersProvider } from "@/components/OrdersProvider";
 import { DeliverablesProvider } from "@/components/DeliverablesProvider";
 import { GtmScript, GtmNoScript } from "@/components/GtmScript";
+import { CONTENT_SECURITY_POLICY } from "@/lib/csp";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -58,6 +59,13 @@ export default function RootLayout({
   return (
     <html lang="ko" className="h-full antialiased">
       <head>
+        {/* Governs everything after it. Next hoists its own chunks above this,
+            but those are same-origin and allowed anyway. Production only: dev
+            needs eval + the HMR socket, which this policy blocks. */}
+        {process.env.NODE_ENV === "production" && (
+          <meta httpEquiv="Content-Security-Policy" content={CONTENT_SECURITY_POLICY} />
+        )}
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
         {/* Pretendard via CDN (dynamic subset). Falls back to system fonts. */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link

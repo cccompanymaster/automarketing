@@ -26,22 +26,26 @@ CSP는 아래 출처만 허용합니다. 코드(`src/`)와 배포 변수로 연�
 > 추가로 띄울 수 있습니다. 결제 테스트 때 콘솔에 CSP 차단이 보이면 그 도메인을
 > `frame-src`에 추가하세요.
 
-## 넣을 헤더 (복사용)
+## CSP는 사이트 코드에 들어 있습니다 (Cloudflare에 넣지 마세요)
+
+CSP는 `src/lib/csp.ts`에서 `<meta>` 태그로 배포됩니다. 코드와 같은 곳에 있어야
+새 외부 서비스를 붙일 때 허용 목록도 같이 고쳐지기 때문입니다. **Cloudflare에도
+CSP를 넣으면 두 정책이 동시에 적용돼서, 한쪽만 고쳤을 때 기능이 막힙니다.**
+
+단, `<meta>` CSP는 `frame-ancestors`(다른 사이트가 우리 페이지를 iframe으로
+감싸는 것 차단)를 지원하지 않습니다. 그래서 아래 `X-Frame-Options`는 Cloudflare에
+꼭 넣어야 합니다.
+
+## Cloudflare에 넣을 헤더 (4개)
 
 | 헤더 이름 | 값 |
 |---|---|
-| `Content-Security-Policy` | 아래 한 줄 전체 |
+| `X-Frame-Options` | `DENY` |
 | `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` |
 | `X-Content-Type-Options` | `nosniff` |
-| `X-Frame-Options` | `DENY` |
-| `Referrer-Policy` | `strict-origin-when-cross-origin` |
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=(), browsing-topics=()` |
 
-**Content-Security-Policy 값** (한 줄로 그대로 복사):
-
-```
-default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://cdn.portone.io; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net data:; img-src 'self' data: blob: https://*.supabase.co https://www.googletagmanager.com https://www.google-analytics.com https://www.facebook.com https://*.g.doubleclick.net; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://docs.google.com https://script.google.com https://*.googleusercontent.com https://*.portone.io https://www.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://stats.g.doubleclick.net https://www.facebook.com; frame-src https://www.googletagmanager.com https://td.doubleclick.net https://*.portone.io https://*.iamport.co; upgrade-insecure-requests
-```
+(`Referrer-Policy`도 사이트 코드의 `<meta name="referrer">`로 적용돼 있습니다.)
 
 > **`script-src 'unsafe-inline'`**: GTM은 인라인 부트스트랩 스크립트를 쓰고 태그를
 > 동적으로 주입하므로 nonce 기반 엄격 CSP를 적용하기 어렵습니다. 추후 서버 사이드
@@ -67,7 +71,7 @@ Cloudflare → **SSL/TLS → Overview** → **Full (strict)**
 2. Rule name: `security-headers`
 3. If incoming requests match… → **All incoming requests**
 4. Then… → **Set static** 선택 → 위 표의 헤더 이름·값 입력
-5. **+ Set new header** 로 6개 모두 추가
+5. **+ Set new header** 로 4개 모두 추가
 6. **Deploy**
 
 ### (유료 플랜이면) 대안 — Snippet
@@ -78,11 +82,9 @@ export default {
   async fetch(request) {
     const res = await fetch(request);
     const h = new Headers(res.headers);
-    h.set("Content-Security-Policy", "<위 CSP 한 줄 그대로>");
     h.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
     h.set("X-Content-Type-Options", "nosniff");
     h.set("X-Frame-Options", "DENY");
-    h.set("Referrer-Policy", "strict-origin-when-cross-origin");
     h.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), browsing-topics=()");
     return new Response(res.body, { status: res.status, headers: h });
   },
@@ -93,8 +95,9 @@ export default {
 1. https://securityheaders.com 에 `https://selfmarketing.ai.kr` 입력 → 목표 **A 이상**
 2. 사이트에서 **F12 → Console** 열고 홈 / 로그인 / 회원가입 / 마이페이지를 한 번씩 이동
 3. 빨간 글씨로 `Refused to ... because it violates the Content Security Policy` 가
-   보이면 캡처해서 전달 → 해당 출처를 추가합니다
+   보이면 캡처해서 전달 → `src/lib/csp.ts`에 해당 출처를 추가합니다
 
 ## 문제가 생기면 (즉시 되돌리기)
 - 사이트 일부가 안 되면: Transform Rule의 **토글을 OFF** → 즉시 원상복구
+  (CSP 때문이면 `src/lib/csp.ts` 수정 후 재배포)
 - 사이트 전체가 안 열리면: DNS 레코드를 다시 **회색 구름** 으로 → GitHub 직결로 복구

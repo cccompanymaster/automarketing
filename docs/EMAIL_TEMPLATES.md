@@ -1,8 +1,8 @@
 # 인증/알림 이메일 템플릿 (한국어 초안)
 
-> ⚠️ 적용 시점: Supabase 기본 메일로는 템플릿 편집이 잠겨 있습니다.
-> **커스텀 SMTP 연결 후**(Authentication → Emails → SMTP Settings) →
-> Templates 잠금 해제 → 아래 내용을 붙여넣어 사용하세요.
+> 적용 위치: https://supabase.com/dashboard/project/weytdwzwviamqrtzrjmg/auth/templates
+> (커스텀 SMTP 연결 후 편집 가능). 사이트가 실제로 쓰는 메일은 1) 가입 인증과
+> 2) 비밀번호 재설정 두 가지입니다.
 >
 > Supabase 템플릿 변수: `{{ .ConfirmationURL }}`, `{{ .SiteURL }}`,
 > `{{ .Email }}`, `{{ .Token }}`(OTP 코드) 등. 변수 표기는 그대로 두세요.
@@ -41,7 +41,7 @@
   <p style="font-size:11px;color:#94a3b8;text-align:center;line-height:1.6;margin:20px 0">
     본 메일은 {{ .Email }} 주소로 발송되었습니다.<br>
     가입을 신청하지 않으셨다면 이 메일을 무시해 주세요.<br>
-    마케팅방주 · 노아마케팅랩
+    마케팅방주 · 씨씨컴퍼니
   </p>
 </div>
 ```
@@ -73,12 +73,14 @@
       비밀번호 재설정
     </a>
     <p style="font-size:12px;color:#94a3b8;margin:20px 0 0">
-      링크는 일정 시간 후 만료됩니다.
+      링크는 일정 시간 후 만료됩니다. 버튼이 동작하지 않으면 아래 주소를 복사해
+      브라우저에 붙여넣으세요.<br>
+      <span style="word-break:break-all">{{ .ConfirmationURL }}</span>
     </p>
   </div>
   <p style="font-size:11px;color:#94a3b8;text-align:center;line-height:1.6;margin:20px 0">
     본 메일은 {{ .Email }} 주소로 발송되었습니다.<br>
-    마케팅방주 · 노아마케팅랩
+    마케팅방주 · 씨씨컴퍼니
   </p>
 </div>
 ```

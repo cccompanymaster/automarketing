@@ -8,13 +8,28 @@ import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
 import { stashPendingConsents, type ConsentChoice } from "@/lib/consents";
 import { isSupabaseConfigured } from "@/lib/supabase";
+import { useEffect, useState } from "react";
 import {
+  ALL_SOCIAL_PROVIDERS,
   ENABLED_SOCIAL_PROVIDERS,
+  readSocialPreview,
   stashOAuthReturn,
   type SocialProvider,
 } from "@/lib/socialAuth";
 
-export const SOCIAL_LOGIN_AVAILABLE = ENABLED_SOCIAL_PROVIDERS.length > 0;
+/**
+ * Providers to show. Starts from the build flags (what the static HTML was
+ * rendered with) and widens to all providers after mount when the owner's
+ * ?social_preview=on test mode is set in this browser.
+ */
+export function useSocialProviders(): { providers: SocialProvider[]; preview: boolean } {
+  const [state, setState] = useState({ providers: ENABLED_SOCIAL_PROVIDERS, preview: false });
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reads a browser-only test flag after hydration
+    if (readSocialPreview()) setState({ providers: ALL_SOCIAL_PROVIDERS, preview: true });
+  }, []);
+  return state;
+}
 
 // Each provider's login-button guide is part of its terms (Naver's review
 // rejects deviations): fixed background colors, the official symbol rather
@@ -43,11 +58,17 @@ const STYLE: Record<SocialProvider, { name: string; className: string; mark: Rea
 };
 
 export function SocialLoginButtons({
+  providers,
+  preview = false,
   intent,
   next,
   consents,
   onDone,
 }: {
+  /** From useSocialProviders() in the parent form. */
+  providers: SocialProvider[];
+  /** Owner test mode is on — show a small notice. */
+  preview?: boolean;
   intent: "signup" | "login";
   /** Site-relative destination after login. */
   next?: string;
@@ -80,7 +101,7 @@ export function SocialLoginButtons({
 
   return (
     <div className="space-y-2.5">
-      {ENABLED_SOCIAL_PROVIDERS.map((p) => (
+      {providers.map((p) => (
         <button
           key={p}
           type="button"
@@ -94,6 +115,13 @@ export function SocialLoginButtons({
           {verb}
         </button>
       ))}
+      {preview && (
+        <p className="rounded-lg bg-amber-50 px-3 py-2 text-center text-[11px] leading-relaxed text-amber-700">
+          테스트 모드: 이 브라우저에서만 모든 간편로그인 버튼이 보여요.
+          <br />
+          끄려면 주소 끝에 <b>?social_preview=off</b> 를 붙여 여세요.
+        </p>
+      )}
     </div>
   );
 }

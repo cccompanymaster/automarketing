@@ -12,7 +12,7 @@ import {
   EmailAlreadyRegisteredError,
   EmailConfirmationRequiredError,
 } from "@/components/AuthProvider";
-import { SocialLoginButtons, SOCIAL_LOGIN_AVAILABLE } from "@/components/SocialLoginButtons";
+import { SocialLoginButtons, useSocialProviders } from "@/components/SocialLoginButtons";
 import {
   ConsentChecklist,
   NO_CONSENT,
@@ -34,6 +34,7 @@ export function SignupForm({
 }) {
   const router = useRouter();
   const { signupWithEmail } = useAuth();
+  const social = useSocialProviders();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -150,10 +151,12 @@ export function SignupForm({
 
       {/* One-tap signup first — fewer fields, less mobile drop-off. Consents
           ticked below ride along; otherwise ConsentGate asks after login. */}
-      {SOCIAL_LOGIN_AVAILABLE ? (
+      {social.providers.length > 0 ? (
         <>
           <div className="mt-6">
             <SocialLoginButtons
+              providers={social.providers}
+              preview={social.preview}
               intent="signup"
               next={afterHref}
               consents={() => (requiredConsentsOk(agree) ? agree : null)}

@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
-import { SocialLoginButtons, SOCIAL_LOGIN_AVAILABLE } from "@/components/SocialLoginButtons";
+import { SocialLoginButtons, useSocialProviders } from "@/components/SocialLoginButtons";
 import { track } from "@/lib/analytics";
 
 export function LoginForm({
@@ -20,6 +20,7 @@ export function LoginForm({
 }) {
   const router = useRouter();
   const { loginWithEmail, sendPasswordReset } = useAuth();
+  const social = useSocialProviders();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -189,7 +190,7 @@ export function LoginForm({
         </button>
       </form>
 
-      {SOCIAL_LOGIN_AVAILABLE && (
+      {social.providers.length > 0 && (
         <>
           <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
             <span className="h-px flex-1 bg-slate-100" />
@@ -197,7 +198,7 @@ export function LoginForm({
             <span className="h-px flex-1 bg-slate-100" />
           </div>
 
-          <SocialLoginButtons intent="login" next={afterHref} onDone={finish} />
+          <SocialLoginButtons providers={social.providers} preview={social.preview} intent="login" next={afterHref} onDone={finish} />
         </>
       )}
 

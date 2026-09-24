@@ -22,6 +22,14 @@
 화면**이 뜹니다. 이메일 인증 대기로 기록이 빠졌던 기존 가입자도 다음 로그인 때
 자동으로 기록됩니다.
 
+
+## 사장님 전용 테스트 모드 (고객에게는 안 보임)
+
+`https://selfmarketing.ai.kr/start?social_preview=on` 으로 한 번 열면 **그 브라우저에서만**
+카카오·네이버 버튼이 보입니다(변수를 켜지 않아도 됨). 끄려면 `?social_preview=off`.
+→ 네이버 검수 전(테스터만 로그인 가능)에도 실제 사이트에서 테스트하고, 검수용 캡처를
+실제 화면으로 찍을 수 있습니다. 고객에게 공개할 때만 GitHub 변수를 `true`로 켜세요.
+
 ---
 
 ## A. 카카오 (약 20분)
@@ -93,6 +101,7 @@ https://developers.naver.com/apps/#/register
 | Token URL | `https://nid.naver.com/oauth2.0/token` |
 | UserInfo URL | `https://weytdwzwviamqrtzrjmg.supabase.co/functions/v1/naver-userinfo` |
 | Scopes | 비워두기 (필수 입력이면 `profile`) |
+| Custom claims allowlist (있으면) | `age_range, birthyear, birthday` ← 내 정보의 연령대·생일 자동 입력용 |
 
 → **Create and enable provider**
 

@@ -78,3 +78,22 @@ export function takeOAuthReturn(): OAuthReturn | null {
     return null;
   }
 }
+
+// Owner test mode. Opening any page with ?social_preview=on shows every
+// provider's button in this browser only (?social_preview=off clears it), so
+// the owner can try Kakao/Naver on the live site — e.g. while Naver's app is
+// still in review and only registered testers can sign in — without exposing
+// the buttons to customers.
+const PREVIEW_KEY = "selfmarketing.social.preview";
+export const ALL_SOCIAL_PROVIDERS = Object.keys(SOCIAL_PROVIDERS) as SocialProvider[];
+
+export function readSocialPreview(): boolean {
+  try {
+    const q = new URLSearchParams(window.location.search).get("social_preview");
+    if (q === "on") localStorage.setItem(PREVIEW_KEY, "1");
+    if (q === "off") localStorage.removeItem(PREVIEW_KEY);
+    return localStorage.getItem(PREVIEW_KEY) === "1";
+  } catch {
+    return false;
+  }
+}

@@ -14,10 +14,20 @@ import type { ConsentRecord } from "@/components/AuthProvider";
 
 /**
  * Version of the consent documents the user agreed to (see lib/legal.ts).
- * 2026-09-23: third-party provision now excludes Naver-login data (narrower
- * scope, so earlier consents stay valid).
+ * 2026-09-23: third-party provision excludes Naver-login data.
+ * 2026-09-24: marketing consent now also covers follow-up sales, new product
+ *   proposals and portfolio use by the company itself. Marketing consents
+ *   recorded under an earlier version only cover the old, narrower wording.
  */
-export const CONSENT_DOC_VERSION = "2026-09-23";
+export const CONSENT_DOC_VERSION = "2026-09-24";
+
+/**
+ * Third-party provision consent. Off: there is no named outside recipient
+ * (the operator's own use is covered by the marketing consent, not this), and
+ * PIPA 제17조 needs the recipient named for the consent to hold. Existing
+ * records stay; turn back on once THIRD_PARTY names a real recipient.
+ */
+export const THIRD_PARTY_CONSENT_ENABLED = false;
 
 const STUB_KEY = "selfmarketing.auth.user.consents";
 

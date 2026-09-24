@@ -8,6 +8,7 @@
 import { useState } from "react";
 import { LegalModal } from "@/components/LegalModal";
 import type { LegalDocKey } from "@/lib/legal";
+import { THIRD_PARTY_CONSENT_ENABLED } from "@/lib/consents";
 
 export interface ConsentValue {
   terms: boolean;
@@ -29,8 +30,13 @@ const ROWS: { key: keyof ConsentValue; doc: LegalDocKey; label: string; required
   { key: "terms", doc: "terms", label: "이용약관 동의", required: true },
   { key: "privacy", doc: "privacy", label: "개인정보 수집·이용 동의", required: true },
   { key: "thirdParty", doc: "thirdParty", label: "제3자 정보제공 동의", required: false },
-  { key: "marketing", doc: "marketing", label: "마케팅 정보 수신 동의", required: false },
-];
+  { key: "marketing", doc: "marketing", label: "마케팅 활용 및 정보 수신 동의", required: false },
+].filter((r) => r.key !== "thirdParty" || THIRD_PARTY_CONSENT_ENABLED) as {
+  key: keyof ConsentValue;
+  doc: LegalDocKey;
+  label: string;
+  required: boolean;
+}[];
 
 export function ConsentChecklist({
   value,
@@ -51,7 +57,12 @@ export function ConsentChecklist({
         type="button"
         onClick={() => {
           const next = !allChecked;
-          onChange({ terms: next, privacy: next, thirdParty: next, marketing: next });
+          onChange({
+            terms: next,
+            privacy: next,
+            thirdParty: next && THIRD_PARTY_CONSENT_ENABLED,
+            marketing: next,
+          });
         }}
         aria-pressed={allChecked}
         className={`flex w-full items-center gap-3 px-4 py-4 text-left transition ${

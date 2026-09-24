@@ -9,7 +9,12 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
 import { LegalModal } from "@/components/LegalModal";
-import { fetchConsents, recordConsents, type ConsentState } from "@/lib/consents";
+import {
+  fetchConsents,
+  recordConsents,
+  THIRD_PARTY_CONSENT_ENABLED,
+  type ConsentState,
+} from "@/lib/consents";
 import type { LegalDocKey } from "@/lib/legal";
 
 export function ConsentSettings() {
@@ -63,10 +68,10 @@ export function ConsentSettings() {
     {
       key: "marketing" as const,
       doc: "marketing" as LegalDocKey,
-      label: "마케팅 정보 수신 동의",
-      desc: "신규 상품·할인 혜택 소식을 이메일·문자로 받아요.",
+      label: "마케팅 활용 및 정보 수신 동의",
+      desc: "맞춤 상품 제안·상담 연락과 혜택 소식을 받고, 성과 사례가 포트폴리오로 소개될 수 있어요.",
     },
-  ];
+  ].filter((r) => r.key !== "thirdParty" || THIRD_PARTY_CONSENT_ENABLED);
 
   return (
     <section

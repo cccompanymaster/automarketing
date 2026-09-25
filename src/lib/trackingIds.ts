@@ -12,5 +12,5 @@ export const GTM_ID = isProd ? process.env.NEXT_PUBLIC_GTM_ID || "GTM-NF44W8RR" 
  * GTM — page views would be counted twice.
  */
 export const GA4_ID = isProd
-  ? process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || "G-V2W8DGXT7W"
+  ? process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || "G-DFPTX589SZ"
   : "";

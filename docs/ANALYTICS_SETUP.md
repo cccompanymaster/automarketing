@@ -5,7 +5,7 @@
 
 | 태그 | ID | 로드 방식 |
 |---|---|---|
-| GA4 | `G-V2W8DGXT7W` | gtag.js 직접 로드 (`src/components/GtmScript.tsx`) |
+| GA4 | `G-DFPTX589SZ` (스트림 ID 15842094999) | gtag.js 직접 로드 (`src/components/GtmScript.tsx`) |
 | GTM | `GTM-NF44W8RR` | 컨테이너 로드 (head 스크립트 + body noscript) |
 
 - 페이지뷰: GA4 기본 설정(향상된 측정 → "브라우저 기록 이벤트 기반 페이지 변경")으로 화면 이동까지 집계.

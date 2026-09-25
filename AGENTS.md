@@ -23,7 +23,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Tailwind CSS v4 (CSS 기반 설정, `src/app/globals.css`)
 - 폰트: Pretendard (CDN, system-ui 폴백) — `src/app/layout.tsx`
 - 토스트: sonner
-- 추적: 단일 GTM 컨테이너(GA4 + Meta Pixel) + `dataLayer` push
+- 추적: GA4 gtag.js 직접 로드 + GTM 컨테이너(Meta Pixel 등) + `dataLayer` push. ID 기본값은 `src/lib/trackingIds.ts`(프로덕션 빌드만 로드, `docs/ANALYTICS_SETUP.md`)
 
 ## 라우팅
 
@@ -41,7 +41,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## 주요 파일
 
-- `src/lib/analytics.ts` — `track(event, params)`. `dataLayer.push` 일원화, GTM 미설정 시 콘솔 폴백
+- `src/lib/analytics.ts` — `track(event, params)`. `dataLayer.push` + GA4 이벤트 전송, 개발 서버에서는 콘솔 폴백
 - `src/lib/products.ts` — 15개 상품 + 그룹 2종(place-map, blog-pack) 카탈로그, `LANDING_CARDS`
 - `src/lib/pricing.ts` — 주문 가능 단가표(그룹·행·amountKrw). 상세/스토리 가격과 반드시 동기화
 - `src/lib/productStories.ts` — 상품별 스토리(불편 3·해결 3·시나리오 3)
@@ -59,7 +59,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## 전환 이벤트 (6종)
 
 `cta_click`(`product_slug`), `onboarding_step_view`(`step`), `onboarding_complete`,
-`signup_start`, `signup_complete`, `login_success`. 모두 `dataLayer` push, GTM 미설정 시 콘솔 확인 가능.
+`signup_start`, `signup_complete`, `login_success`. 모두 GA4 이벤트 + `dataLayer` push, 개발 서버에서는 콘솔 확인 가능.
 
 ## 환경 변수 / Stub
 

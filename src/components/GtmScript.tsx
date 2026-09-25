@@ -1,15 +1,34 @@
-// Google Tag Manager loader. A single GTM container is responsible for
-// managing GA4 + Meta Pixel; we only inject the container here.
-// If NEXT_PUBLIC_GTM_ID is not set, nothing is rendered and `track()` falls
-// back to console logging.
+// Google tags: GA4 (gtag.js, loaded directly) + the GTM container (Meta Pixel
+// and anything else added later). Ids come from lib/trackingIds; both render
+// nothing outside production builds.
 
 import Script from "next/script";
-
-const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
+import { GA4_ID, GTM_ID } from "@/lib/trackingIds";
 
 export function GtmScript() {
-  if (!GTM_ID) return null;
+  return (
+    <>
+      {GA4_ID && (
+        <>
+          <Script
+            id="ga4-src"
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}
+            strategy="afterInteractive"
+          />
+          <Script id="ga4-init" strategy="afterInteractive">
+            {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA4_ID}');`}
+          </Script>
+        </>
+      )}
+      {GTM_ID && <GtmContainer />}
+    </>
+  );
+}
 
+function GtmContainer() {
   return (
     <Script id="gtm-init" strategy="afterInteractive">
       {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

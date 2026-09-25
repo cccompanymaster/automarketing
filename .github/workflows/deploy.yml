@@ -78,8 +78,9 @@ jobs:
           NEXT_PUBLIC_NAVER_LOGIN_ENABLED: ${{ vars.NEXT_PUBLIC_NAVER_LOGIN_ENABLED }}
           # AI blog writer proxy (optional). Empty = demo mode.
           NEXT_PUBLIC_BLOG_API_URL: ${{ vars.NEXT_PUBLIC_BLOG_API_URL }}
-          # Conversion tracking (GTM container). Empty = console fallback.
+          # Tracking ids override the defaults in src/lib/trackingIds.ts (optional).
           NEXT_PUBLIC_GTM_ID: ${{ vars.NEXT_PUBLIC_GTM_ID }}
+          NEXT_PUBLIC_GA4_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_GA4_MEASUREMENT_ID }}
           # Admin dashboard allowlist (comma-separated emails). Empty = no admin.
           NEXT_PUBLIC_ADMIN_EMAILS: ${{ vars.NEXT_PUBLIC_ADMIN_EMAILS }}
           # Live price sheet (published CSV) + inquiry webhook (Apps Script).

@@ -17,6 +17,7 @@ import {
   groupMembers,
   PRODUCT_SLUGS,
   GROUP_KEYS,
+  isPriceAmount,
 } from "@/lib/products";
 
 // Titles/descriptions for search & social sharing — products and groups.
@@ -182,9 +183,9 @@ export default async function ServiceDetailPage({
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                   {detail.fromPrice && (
                     <p className="inline-flex items-baseline gap-1.5 rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-slate-600 ring-1 ring-slate-200">
-                      최소
+                      {isPriceAmount(detail.fromPrice) && "최소"}
                       <span className="num text-lg font-extrabold text-emerald-700">{detail.fromPrice}</span>
-                      부터 ~
+                      {isPriceAmount(detail.fromPrice) && "부터 ~"}
                     </p>
                   )}
                   {/* Above-the-fold CTA — the main CTA at the page bottom stays */}

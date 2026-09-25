@@ -39,6 +39,11 @@ export interface Product {
   summary: string[];
   /** Product-specific CTA label. */
   cta: string;
+  /**
+   * Landing-card price for products without a numeric detail.fromPrice
+   * (e.g. "가입비 0원"). Otherwise the card shows "{fromPrice} 부터".
+   */
+  priceTag?: { amount: string; from?: boolean };
   /** Full Tailwind class strings (kept literal so the JIT picks them up). */
   accent: {
     chip: string;
@@ -108,6 +113,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     name: "쇼핑 1등 먹기",
     summary: ["쇼핑 검색 상위에 상품을 노출해", "판매량을 빠르게 끌어올립니다."],
     cta: "쇼핑 광고 신청하기",
+    priceTag: { amount: "월 30만 원", from: true },
     accent: {
       chip: "bg-orange-50 text-orange-700",
       iconBg: "bg-orange-100",
@@ -260,6 +266,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     detail: {
       headline: "원하는 매체를 골라 보도자료를 셀프 송출하세요",
       subhead: "업종별 매체를 직접 선택해 보도자료를 송출합니다. 가입비 무료, 1건부터, 평균 2~3시간 내 송출됩니다.",
+      fromPrice: "50,000원",
       benefits: [
         "100개 이상 매체를 업종별로 직접 선택해 송출",
         "원고 대필·이미지 제작 옵션으로 자료가 없어도 진행",
@@ -590,6 +597,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     name: "광고비 줍줍 환급",
     summary: ["네이버·카카오에 집행한 광고비의 일부를", "매월 환급받습니다."],
     cta: "광고비 환급 확인하기",
+    priceTag: { amount: "가입비 0원" },
     accent: {
       chip: "bg-violet-50 text-violet-700",
       iconBg: "bg-violet-100",
@@ -625,6 +633,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     name: "막막할 때 도와줘요",
     summary: ["무엇부터 해야 할지 막막하신가요?", "전문가가 우리 매장에 맞는 전략을 짚어드립니다."],
     cta: "도와주세요!",
+    priceTag: { amount: "상담 무료" },
     accent: {
       chip: "bg-teal-50 text-teal-700",
       iconBg: "bg-teal-100",
@@ -759,6 +768,31 @@ export interface ServiceCardData {
   accent: Product["accent"];
   /** Value sent as product_slug with the cta_click event. */
   trackId: string;
+  /** "Starting at" price line, e.g. { amount: "30원", from: true }. */
+  price?: { amount: string; from: boolean };
+}
+
+/** True when a fromPrice is an amount ("1,000원") rather than text ("건별 견적"). */
+export function isPriceAmount(fromPrice: string): boolean {
+  return /^\d/.test(fromPrice);
+}
+
+function productPrice(p: Product): ServiceCardData["price"] {
+  if (p.priceTag) return { amount: p.priceTag.amount, from: !!p.priceTag.from };
+  const f = p.detail.fromPrice;
+  if (!f) return undefined;
+  return { amount: f, from: isPriceAmount(f) };
+}
+
+/** Cheapest numeric fromPrice across a group's members. */
+function groupPrice(g: ProductGroup): ServiceCardData["price"] {
+  const amounts = groupMembers(g)
+    .map((p) => p.detail.fromPrice)
+    .filter((f): f is string => !!f && isPriceAmount(f));
+  if (amounts.length === 0) return undefined;
+  const value = (f: string) => Number(f.replace(/[^\d]/g, ""));
+  const min = amounts.reduce((a, b) => (value(b) < value(a) ? b : a));
+  return { amount: min, from: true };
 }
 
 function productCard(p: Product): ServiceCardData {
@@ -771,6 +805,7 @@ function productCard(p: Product): ServiceCardData {
     cta: p.cta,
     accent: p.accent,
     trackId: p.slug,
+    price: productPrice(p),
   };
 }
 
@@ -783,6 +818,7 @@ function groupCard(g: ProductGroup): ServiceCardData {
     cta: g.cta,
     accent: g.accent,
     trackId: g.key,
+    price: groupPrice(g),
   };
 }
 

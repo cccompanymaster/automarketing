@@ -11,6 +11,16 @@ import type { ProductSlug } from "@/lib/products";
 import { track } from "@/lib/analytics";
 import { BrandLogo } from "@/components/BrandLogo";
 
+/** "30원 부터" line — the price anchor shown before the CTA. */
+function CardPrice({ price, className = "" }: { price: NonNullable<ServiceCardData["price"]>; className?: string }) {
+  return (
+    <p className={`flex items-baseline gap-1 text-slate-500 ${className}`}>
+      <span className="num text-lg font-extrabold text-slate-900">{price.amount}</span>
+      {price.from && <span className="text-sm font-semibold">부터</span>}
+    </p>
+  );
+}
+
 export function ServiceCard({
   card,
   featured = false,
@@ -38,6 +48,7 @@ export function ServiceCard({
         <div className="min-w-0 flex-1">
           <h3 className="text-lg font-extrabold text-slate-900">{card.name}</h3>
           <p className="mt-1 text-sm leading-relaxed text-slate-600">{card.summary.join(" ")}</p>
+          {card.price && <CardPrice price={card.price} className="mt-2" />}
         </div>
         <Link
           href={card.href}
@@ -110,6 +121,8 @@ export function ServiceCard({
           </span>
         ))}
       </p>
+
+      {card.price && <CardPrice price={card.price} className="mt-4" />}
 
       <Link
         href={card.href}

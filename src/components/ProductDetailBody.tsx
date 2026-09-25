@@ -5,7 +5,7 @@
 import { TrackedCta } from "@/components/TrackedCta";
 import { TrendRankingMock } from "@/components/TrendRankingMock";
 import { PlaceRankingMock } from "@/components/PlaceRankingMock";
-import type { Product, ProductSlug } from "@/lib/products";
+import { isPriceAmount, type Product, type ProductSlug } from "@/lib/products";
 import { PRODUCT_STORIES } from "@/lib/productStories";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -53,9 +53,9 @@ export function ProductDetailBody({
           </p>
           {detail.fromPrice && (
             <p className="mt-4 inline-flex items-baseline gap-1.5 rounded-full bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-600 ring-1 ring-slate-200">
-              최소
+              {isPriceAmount(detail.fromPrice) && "최소"}
               <span className="num text-lg font-extrabold text-emerald-600">{detail.fromPrice}</span>
-              부터 ~
+              {isPriceAmount(detail.fromPrice) && "부터 ~"}
             </p>
           )}
         </section>

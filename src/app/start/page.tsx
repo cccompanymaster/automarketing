@@ -4,7 +4,9 @@
 // All transitions happen within this single screen (no URL navigation between
 // steps), driven by local state. A `?service=<slug>` param (set by product
 // CTAs) keeps the chosen product visible through the funnel and routes the
-// new member to that product's order rows after signup.
+// new member to that product's order rows after signup. With `&buy=<row>`
+// (a detail page's order button) new visitors skip the story onboarding and
+// return to that page with the row's order window open.
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -16,6 +18,7 @@ import { LoginForm } from "@/components/LoginForm";
 import { pricingHref } from "@/components/ProductDetailBody";
 import { COMPANY } from "@/lib/company";
 import { getProduct } from "@/lib/products";
+import { BUY_PARAM } from "@/components/QuickOrder";
 
 type Stage = "entry" | "onboarding" | "signup" | "login";
 
@@ -26,7 +29,12 @@ function StartFunnel() {
   // Product carried over from a service-detail CTA (may be absent).
   const searchParams = useSearchParams();
   const service = getProduct(searchParams.get("service") ?? "");
-  const afterHref = service ? pricingHref(service.slug) : undefined;
+  const buy = searchParams.get(BUY_PARAM);
+  const afterHref = service
+    ? buy
+      ? `/services/${service.slug}/?${BUY_PARAM}=${encodeURIComponent(buy)}`
+      : pricingHref(service.slug)
+    : undefined;
 
   // Long forms on mobile: snap back to the top whenever the stage changes,
   // and move keyboard focus onto the new step so it isn't dropped on BODY.
@@ -51,6 +59,7 @@ function StartFunnel() {
             <span aria-hidden="true">{service.icon}</span>
             <span className="text-emerald-900">
               선택한 서비스: <b>{service.name}</b>
+              {buy && <> · {buy}</>}
             </span>
           </div>
         )}
@@ -62,7 +71,7 @@ function StartFunnel() {
         >
           {stage === "entry" && (
             <AuthEntry
-              onNew={() => setStage("onboarding")}
+              onNew={() => setStage(buy ? "signup" : "onboarding")}
               onReturning={() => setStage("login")}
             />
           )}

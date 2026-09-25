@@ -12,12 +12,35 @@ import {
   MIN_CHARGE_KRW,
   formatCash,
   formatKrw,
+  cashToKrw,
   krwToCash,
 } from "@/lib/cash";
 
-export function ChargeModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+/** Smallest preset covering the shortfall, else the shortfall rounded up to 10,000원. */
+function amountFor(shortfallCash: number): number {
+  const need = cashToKrw(shortfallCash);
+  const preset = CHARGE_PRESETS_KRW.find((p) => p >= need);
+  if (preset) return preset;
+  return Math.min(MAX_CHARGE_KRW, Math.ceil(need / 10_000) * 10_000);
+}
+
+export function ChargeModal({
+  open,
+  onClose,
+  shortfallCash,
+}: {
+  open: boolean;
+  onClose: () => void;
+  /** Cash missing for an order in progress — preselects an amount that covers it. */
+  shortfallCash?: number;
+}) {
   const { charge, loading } = useWallet();
   const [amount, setAmount] = useState<number>(CHARGE_PRESETS_KRW[0]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- preset when (re)opened
+    if (open && shortfallCash && shortfallCash > 0) setAmount(amountFor(shortfallCash));
+  }, [open, shortfallCash]);
 
   useEffect(() => {
     if (!open) return;

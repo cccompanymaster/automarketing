@@ -2,7 +2,7 @@
 // steps + CTA. Reused by the standalone service page and by the grouped
 // category page's tabs, so the two never drift apart.
 
-import { TrackedCta } from "@/components/TrackedCta";
+import { QuickOrder } from "@/components/QuickOrder";
 import { TrendRankingMock } from "@/components/TrendRankingMock";
 import { PlaceRankingMock } from "@/components/PlaceRankingMock";
 import { isPriceAmount, type Product, type ProductSlug } from "@/lib/products";
@@ -39,7 +39,7 @@ export function ProductDetailBody({
   product: Product;
   showHeadline?: boolean;
 }) {
-  const { detail, accent } = product;
+  const { detail } = product;
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-14">
@@ -192,25 +192,8 @@ export function ProductDetailBody({
         </section>
       )}
 
-      {/* CTA — guests enter the funnel (/start); logged-in members go straight
-          to the orderable price list (deep-linked to the matching group). */}
-      <section className="mt-12 text-center">
-        <TrackedCta
-          href={
-            product.slug === "blogwrite"
-              ? "/tools/blog-writer"
-              : `/start?service=${product.slug}`
-          }
-          authedHref={
-            product.slug === "blogwrite" ? "/tools/blog-writer" : pricingHref(product.slug)
-          }
-          slug={product.slug}
-          className={`inline-block w-full rounded-xl py-4 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:w-auto sm:px-12 ${accent.button}`}
-        >
-          {product.cta}
-        </TrackedCta>
-        <p className="mt-3 text-xs text-slate-400">가입 후 더 자세한 진단과 견적을 받아볼 수 있습니다.</p>
-      </section>
+      {/* Order entry — rows of this product with an order button each */}
+      <QuickOrder product={product} />
     </div>
   );
 }

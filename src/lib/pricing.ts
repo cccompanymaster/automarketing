@@ -3,6 +3,8 @@
 // same catalog. All prices are reference values.
 // TODO(payment): wire each item to the real billing API (payments.ts).
 
+import type { ProductSlug } from "@/lib/products";
+
 export interface PricingItem {
   name: string;
   /** Display price, e.g. "30,000원 ~" or "별도 문의". */
@@ -397,3 +399,49 @@ export const PRICING: PricingGroup[] = [
     ],
   },
 ];
+
+// --- Per-product rows (service detail "바로 주문하기") -----------------------
+
+/**
+ * Which price rows belong to each product's detail page, as
+ * (group key, row names). Omit names to take the whole group. Products not
+ * listed here (e.g. experience, consulting) are quote-only.
+ */
+const PRODUCT_ROWS: Partial<Record<ProductSlug, { group: string; names?: string[] }[]>> = {
+  place: [
+    { group: "place" },
+    { group: "reward", names: ["일반 리워드 트래픽", "플레이스 일반 키워드 고품질 트래픽", "체류형 트래픽"] },
+  ],
+  "place-traffic": [
+    { group: "reward", names: ["일반 리워드 트래픽", "플레이스 일반 키워드 고품질 트래픽", "체류형 트래픽"] },
+  ],
+  kakaomap: [{ group: "kakaomap" }],
+  blog: [
+    {
+      group: "blog",
+      names: ["블로그 상위노출 보장형", "블로그 최적 배포", "블로그 준최적 배포", "블로그 실명 배포"],
+    },
+  ],
+  "blog-neighbor": [{ group: "blog", names: ["블로그 서로이웃 추가", "블로그 이웃 추가"] }],
+  "ai-influencer": [{ group: "ai" }],
+  shopping: [
+    { group: "reward", names: ["쇼핑 리워드", "쿠팡 가구매", "쿠팡 가구매 (택배대행 포함)", "쿠팡 트래픽"] },
+  ],
+  cafe: [{ group: "cafe" }],
+  instagram: [{ group: "sns", names: ["인스타 게시물 좋아요", "인스타 팔로워", "인스타 댓글·저장 등"] }],
+  youtube: [{ group: "sns", names: ["유튜브 조회수", "유튜브 구독자", "유튜브 좋아요·재생시간 등"] }],
+  daangn: [{ group: "daangn" }],
+  press: [{ group: "press" }],
+};
+
+/** A product's price rows, cheapest first. Pass live (sheet-merged) groups when available. */
+export function productPricingItems(slug: ProductSlug, groups: PricingGroup[] = PRICING): PricingItem[] {
+  const picks = PRODUCT_ROWS[slug];
+  if (!picks) return [];
+  const items = picks.flatMap(({ group, names }) => {
+    const g = groups.find((x) => x.key === group);
+    if (!g) return [];
+    return names ? g.items.filter((it) => names.includes(it.name)) : g.items;
+  });
+  return sortedItems({ key: slug, icon: "", title: "", description: "", items });
+}

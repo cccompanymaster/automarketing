@@ -10,7 +10,7 @@ import { GroupTabs } from "@/components/GroupTabs";
 import { JsonLd } from "@/components/JsonLd";
 import { serviceLd, breadcrumbLd, OG_BASE } from "@/lib/seo";
 import { TrackedCta } from "@/components/TrackedCta";
-import { ProductDetailBody, pricingHref, PRICING_ANCHOR } from "@/components/ProductDetailBody";
+import { ProductDetailBody, PRICING_ANCHOR } from "@/components/ProductDetailBody";
 import {
   getProduct,
   getGroup,
@@ -188,20 +188,13 @@ export default async function ServiceDetailPage({
                       {isPriceAmount(detail.fromPrice) && "부터 ~"}
                     </p>
                   )}
-                  {/* Above-the-fold CTA — the main CTA at the page bottom stays */}
+                  {/* Above-the-fold jump to the page's order section */}
                   <TrackedCta
-                    href={
-                      product.slug === "blogwrite"
-                        ? "/tools/blog-writer"
-                        : `/start?service=${product.slug}`
-                    }
-                    authedHref={
-                      product.slug === "blogwrite" ? "/tools/blog-writer" : pricingHref(product.slug)
-                    }
+                    href="#order"
                     slug={product.slug}
-                    className={`inline-flex min-h-11 items-center rounded-xl px-6 py-3 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${accent.button}`}
+                    className={`inline-flex min-h-12 items-center gap-2 rounded-xl px-7 py-3 text-base font-bold shadow-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${accent.button}`}
                   >
-                    {product.cta}
+                    바로 주문하기 <span aria-hidden="true">↓</span>
                   </TrackedCta>
                 </div>
               </div>

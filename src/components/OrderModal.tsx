@@ -10,14 +10,23 @@ import { useOrders } from "@/components/OrdersProvider";
 import { formatCash, formatKrw, krwToCash } from "@/lib/cash";
 import type { PricingItem } from "@/lib/pricing";
 
+export interface OrderDraft {
+  qty: number;
+  request: string;
+}
+
 export function OrderModal({
   item,
+  draft,
   onClose,
   onNeedCharge,
 }: {
   item: PricingItem | null;
+  /** Restores quantity/request when reopening after a top-up. */
+  draft?: OrderDraft | null;
   onClose: () => void;
-  onNeedCharge: () => void;
+  /** Called with the missing cash (and the draft) when the balance can't cover the order. */
+  onNeedCharge: (shortfallCash: number, draft: OrderDraft) => void;
 }) {
   const { balance, loading } = useWallet();
   const { placeOrder } = useOrders();
@@ -27,9 +36,9 @@ export function OrderModal({
   useEffect(() => {
     // Reset per-item state whenever a different item is opened.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setQty(1);
-    setRequest("");
-  }, [item]);
+    setQty(draft?.qty ?? 1);
+    setRequest(draft?.request ?? "");
+  }, [item, draft]);
 
   useEffect(() => {
     if (!item) return;
@@ -171,7 +180,7 @@ export function OrderModal({
             type="button"
             onClick={() => {
               onClose();
-              onNeedCharge();
+              onNeedCharge(totalCash - balance, { qty: quantity, request });
             }}
             className="mt-5 w-full rounded-xl bg-amber-500 py-3.5 text-sm font-semibold text-white transition hover:bg-amber-600"
           >

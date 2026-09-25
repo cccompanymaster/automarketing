@@ -31,7 +31,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 |---|---|
 | `/` | 스토리텔링 랜딩 (히어로 → 공감 → 다크 브릿지 → 고객여정 챕터 3 → 수치 → 서비스 그리드(그룹 2+단독) → 후기 → 프로세스 → CTA) |
 | `/start` | 신규/기존 분기 → 4단계 스토리 온보딩 → 가입/로그인. `?service=<slug>`로 상품 컨텍스트 유지(가입/로그인 후 해당 단가 앵커로 이동) |
-| `/services/[slug]` | 상품 상세 (스토리: 불편→해결→이럴땐이렇게 + 절차·비용·조건·준비자료). 15개 상품 slug + 그룹 `place-map`, `blog-pack`(탭, URL 해시 딥링크) |
+| `/services/[slug]` | 상품 상세 (스토리: 불편→해결→이럴땐이렇게 + 절차·비용·조건·준비자료 + `QuickOrder` 바로 주문(해당 상품 단가 행 → 주문창·충전, 하단 고정 바). 게스트는 `/start?service=&buy=`로 온보딩 생략 가입 후 주문창 자동 오픈). 15개 상품 slug + 그룹 `place-map`, `blog-pack`(탭, URL 해시 딥링크) |
 | `/pricing` | 공개 단가표(그룹 앵커 `#blog #reward #place #cafe #ai #sns #kakaomap #press`). 주문·충전은 로그인 시, 게스트는 /start로 유도 |
 | `/mypage` | 지갑·주문·컨펌요청(산출물 승인/수정요청). 미인증 시 `/start` 리다이렉트 |
 | `/admin` | 관리자 대시보드(이메일 allowlist) — 주문/충전/회원 + 산출물 업로드·컨펌 현황 |
@@ -43,7 +43,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 - `src/lib/analytics.ts` — `track(event, params)`. `dataLayer.push` + GA4 이벤트 전송, 개발 서버에서는 콘솔 폴백
 - `src/lib/products.ts` — 15개 상품 + 그룹 2종(place-map, blog-pack) 카탈로그, `LANDING_CARDS`
-- `src/lib/pricing.ts` — 주문 가능 단가표(그룹·행·amountKrw). 상세/스토리 가격과 반드시 동기화
+- `src/lib/pricing.ts` — 주문 가능 단가표(그룹·행·amountKrw). 상세/스토리 가격과 반드시 동기화. `productPricingItems(slug)`로 상품별 행(상세페이지 바로 주문)
 - `src/lib/productStories.ts` — 상품별 스토리(불편 3·해결 3·시나리오 3)
 - `src/lib/deliverables.ts` — 산출물 컨펌 도메인(관리자 업로드→고객 승인/수정요청)
 - `src/lib/successStories.ts` — 성공 사례 더미 (수치+업종+기간)
@@ -54,7 +54,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - `src/components/AuthProvider.tsx` — 클라이언트 인증 컨텍스트 (stub). `hydrated` 플래그로
   세션 복원 완료를 알림 — 인증 기반 리다이렉트는 반드시 `hydrated`를 기다릴 것
 - `src/app/robots.ts`, `src/app/sitemap.ts`, `src/app/not-found.tsx` — SEO/404
-- 컴포넌트: `Landing`, `ServiceCard`, `SuccessStory`, `AuthEntry`, `Onboarding`, `LoginForm`, `SignupForm`, `ConsentChecklist`, `ConsentGate`, `ProfileCard`, `SocialLoginButtons`, `LegalModal`, `SiteHeader`, `SiteFooter`, `TrackedCta`
+- 컴포넌트: `Landing`, `ServiceCard`, `SuccessStory`, `AuthEntry`, `Onboarding`, `LoginForm`, `SignupForm`, `ConsentChecklist`, `ConsentGate`, `ProfileCard`, `SocialLoginButtons`, `LegalModal`, `SiteHeader`, `SiteFooter`, `TrackedCta`, `QuickOrder`
 
 ## 전환 이벤트 (6종)
 

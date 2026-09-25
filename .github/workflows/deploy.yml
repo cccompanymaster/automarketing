@@ -75,6 +75,8 @@ jobs:
           # custom:naver provider). Until then its buttons stay hidden — they'd
           # hit a "provider is not enabled" error. See docs/SOCIAL_LOGIN.md.
           NEXT_PUBLIC_KAKAO_LOGIN_ENABLED: ${{ vars.NEXT_PUBLIC_KAKAO_LOGIN_ENABLED }}
+          # Kakao JavaScript key — KakaoTalk share on calculator pages (public value).
+          NEXT_PUBLIC_KAKAO_JS_KEY: ${{ vars.NEXT_PUBLIC_KAKAO_JS_KEY }}
           NEXT_PUBLIC_NAVER_LOGIN_ENABLED: ${{ vars.NEXT_PUBLIC_NAVER_LOGIN_ENABLED }}
           # AI blog writer proxy (optional). Empty = demo mode.
           NEXT_PUBLIC_BLOG_API_URL: ${{ vars.NEXT_PUBLIC_BLOG_API_URL }}

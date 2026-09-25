@@ -146,8 +146,8 @@ export function Formula({ lines, title = "적용 공식" }: { lines: string[]; t
     <div>
       <h3 className="text-sm font-bold text-slate-800">{title}</h3>
       <div className="mt-2 space-y-1 rounded-xl bg-slate-900 px-4 py-3 text-[13px] leading-relaxed text-emerald-100">
-        {lines.map((l) => (
-          <p key={l} className="num break-keep">
+        {lines.map((l, i) => (
+          <p key={`${i}-${l}`} className="num break-keep">
             {l}
           </p>
         ))}
@@ -223,8 +223,9 @@ export function Warnings({ items }: { items: string[] }) {
 export function CalcColumns({ inputs, result }: { inputs: React.ReactNode; result: React.ReactNode }) {
   return (
     <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
-      <div className="space-y-5">{inputs}</div>
-      <div className="space-y-5 lg:sticky lg:top-6">{result}</div>
+      {/* min-w-0: let wide tables scroll inside their box instead of widening the page */}
+      <div className="min-w-0 space-y-5">{inputs}</div>
+      <div className="min-w-0 space-y-5 lg:sticky lg:top-6">{result}</div>
     </div>
   );
 }

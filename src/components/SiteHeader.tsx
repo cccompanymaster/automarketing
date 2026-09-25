@@ -23,6 +23,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { href: "/", icon: "🏠", label: "홈" },
   { href: "/#services", icon: "🧩", label: "전체 서비스" },
+  { href: "/tools/", icon: "🧮", label: "무료 계산기" },
   { href: "/#reviews", icon: "💬", label: "고객후기" },
   { href: "/#faq", icon: "❓", label: "자주 묻는 질문" },
   { href: "/tools/blog-writer", icon: "📝", label: "AI 원고" },

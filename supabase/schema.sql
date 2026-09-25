@@ -556,3 +556,145 @@ grant execute on function public.admin_update_order_status(uuid, text) to authen
 -- 되고, "가장 최근 행 = 현재 잔액"이 모호해집니다. clock_timestamp()는 행마다 증가.
 alter table public.cash_transactions alter column created_at set default clock_timestamp();
 alter table public.orders alter column created_at set default clock_timestamp();
+
+-- ============================================================================
+-- ===== Free-calculator comment board =====================================
+-- Separate from all calculator inputs (those never leave the browser).
+-- Tables are closed to anon/authenticated; access only through the three
+-- security-definer RPCs below, which validate input, rate-limit by a hashed
+-- client IP (hash kept 1 day in a separate table, never on the comment) and
+-- store the delete password as a bcrypt hash.
+
+create table if not exists public.calc_comments (
+  id uuid primary key default gen_random_uuid(),
+  calc_slug text not null check (calc_slug ~ '^[a-z0-9-]{2,40}$'),
+  parent_id uuid references public.calc_comments(id) on delete cascade,
+  nickname text not null check (char_length(nickname) <= 20),
+  password_hash text not null,
+  body text not null check (char_length(body) <= 1000),
+  created_at timestamptz not null default clock_timestamp(),
+  deleted_at timestamptz
+);
+create index if not exists calc_comments_slug_idx on public.calc_comments (calc_slug, created_at);
+create index if not exists calc_comments_parent_idx on public.calc_comments (parent_id);
+alter table public.calc_comments enable row level security;
+revoke all on public.calc_comments from anon, authenticated;
+
+create table if not exists public.calc_comment_hits (
+  ip_hash text not null,
+  kind text not null,
+  created_at timestamptz not null default clock_timestamp()
+);
+create index if not exists calc_comment_hits_idx on public.calc_comment_hits (ip_hash, kind, created_at);
+alter table public.calc_comment_hits enable row level security;
+revoke all on public.calc_comment_hits from anon, authenticated;
+
+-- Hashed caller IP for rate limiting (raw IP is never stored).
+create or replace function public.calc_comment_caller()
+returns text language plpgsql stable security definer set search_path = '' as $$
+declare h json; ip text;
+begin
+  begin
+    h := current_setting('request.headers', true)::json;
+  exception when others then h := null;
+  end;
+  ip := coalesce(h->>'cf-connecting-ip', h->>'x-real-ip', btrim(split_part(h->>'x-forwarded-for', ',', 1)), 'unknown');
+  return encode(extensions.digest(ip || ':calc-comments', 'sha256'), 'hex');
+end $$;
+
+-- Throttle: raise when the caller exceeded `max_hits` of `kind` in `win`.
+create or replace function public.calc_comment_throttle(kind text, max_hits int, win interval)
+returns void language plpgsql volatile security definer set search_path = '' as $$
+declare who text := public.calc_comment_caller();
+begin
+  delete from public.calc_comment_hits where created_at < now() - interval '1 day';
+  if (select count(*) from public.calc_comment_hits c
+      where c.ip_hash = who and c.kind = calc_comment_throttle.kind and c.created_at > now() - win) >= max_hits then
+    raise exception 'rate_limited';
+  end if;
+  insert into public.calc_comment_hits (ip_hash, kind) values (who, calc_comment_throttle.kind);
+end $$;
+
+create or replace function public.calc_comment_list(p_slug text)
+returns table (id uuid, parent_id uuid, nickname text, body text, created_at timestamptz, deleted boolean)
+language sql stable security definer set search_path = '' as $$
+  select c.id, c.parent_id,
+         case when c.deleted_at is null then c.nickname else '' end,
+         case when c.deleted_at is null then c.body else '' end,
+         c.created_at,
+         c.deleted_at is not null
+  from public.calc_comments c
+  where c.calc_slug = p_slug
+    -- deleted comments stay only as placeholders for their live replies
+    and (c.deleted_at is null
+         or exists (select 1 from public.calc_comments r where r.parent_id = c.id and r.deleted_at is null))
+  order by c.created_at
+  limit 500;
+$$;
+
+create or replace function public.calc_comment_add(
+  p_slug text, p_parent uuid, p_nickname text, p_password text, p_body text,
+  p_honeypot text default '', p_elapsed_ms int default 0
+) returns uuid
+language plpgsql volatile security definer set search_path = '' as $$
+declare
+  v_nick text := btrim(coalesce(p_nickname, ''));
+  v_body text := btrim(coalesce(p_body, ''));
+  v_parent public.calc_comments%rowtype;
+  v_id uuid;
+begin
+  -- Bots: filled hidden field or submitted faster than a human could type.
+  if coalesce(p_honeypot, '') <> '' or coalesce(p_elapsed_ms, 0) < 3000 then
+    raise exception 'spam_detected';
+  end if;
+  if p_slug is null or p_slug !~ '^[a-z0-9-]{2,40}$' then raise exception 'invalid_slug'; end if;
+  if char_length(v_nick) < 1 or char_length(v_nick) > 20 or v_nick ~ '[[:cntrl:]<>]' then
+    raise exception 'invalid_nickname';
+  end if;
+  if char_length(coalesce(p_password, '')) < 4 or char_length(p_password) > 30 then
+    raise exception 'invalid_password';
+  end if;
+  if char_length(v_body) < 2 or char_length(v_body) > 1000 then raise exception 'invalid_body'; end if;
+  if (char_length(v_body) - char_length(replace(lower(v_body), 'http', ''))) / 4 > 2 then
+    raise exception 'too_many_links';
+  end if;
+  if p_parent is not null then
+    select * into v_parent from public.calc_comments where id = p_parent;
+    if not found or v_parent.calc_slug <> p_slug or v_parent.parent_id is not null or v_parent.deleted_at is not null then
+      raise exception 'invalid_parent';
+    end if;
+  end if;
+  if exists (select 1 from public.calc_comments c
+             where c.calc_slug = p_slug and c.body = v_body and c.created_at > now() - interval '1 hour') then
+    raise exception 'duplicate';
+  end if;
+  perform public.calc_comment_throttle('add', 5, interval '10 minutes');
+
+  insert into public.calc_comments (calc_slug, parent_id, nickname, password_hash, body)
+  values (p_slug, p_parent, v_nick, extensions.crypt(p_password, extensions.gen_salt('bf', 8)), v_body)
+  returning id into v_id;
+  return v_id;
+end $$;
+
+create or replace function public.calc_comment_delete(p_id uuid, p_password text)
+returns boolean
+language plpgsql volatile security definer set search_path = '' as $$
+declare v_hash text;
+begin
+  perform public.calc_comment_throttle('delete', 10, interval '10 minutes');
+  select password_hash into v_hash from public.calc_comments where id = p_id and deleted_at is null;
+  if v_hash is null or extensions.crypt(coalesce(p_password, ''), v_hash) <> v_hash then
+    return false;
+  end if;
+  update public.calc_comments set deleted_at = now(), body = '', nickname = '' where id = p_id;
+  return true;
+end $$;
+
+revoke all on function public.calc_comment_caller() from public, anon, authenticated;
+revoke all on function public.calc_comment_throttle(text, int, interval) from public, anon, authenticated;
+revoke all on function public.calc_comment_list(text) from public;
+revoke all on function public.calc_comment_add(text, uuid, text, text, text, text, int) from public;
+revoke all on function public.calc_comment_delete(uuid, text) from public;
+grant execute on function public.calc_comment_list(text) to anon, authenticated;
+grant execute on function public.calc_comment_add(text, uuid, text, text, text, text, int) to anon, authenticated;
+grant execute on function public.calc_comment_delete(uuid, text) to anon, authenticated;

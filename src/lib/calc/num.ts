@@ -42,7 +42,8 @@ export function roundWon(n: number): number {
 /** Truncate below `unit` (e.g. 10 → 원 단위 절사 to tens). */
 export function floorTo(n: number, unit: number): number {
   if (!isNum(n) || unit <= 0) return 0;
-  const r = Math.floor(n / unit) * unit;
+  // Guard float noise: 3,000,000 × 0.009 = 26,999.999… must stay 27,000.
+  const r = Math.floor(n / unit + 1e-9) * unit;
   return r === 0 ? 0 : r;
 }
 

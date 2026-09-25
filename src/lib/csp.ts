@@ -23,6 +23,8 @@ const DIRECTIVES: Record<string, string[]> = {
     "https://tagmanager.google.com",
     "https://connect.facebook.net",
     "https://cdn.portone.io",
+    // Kakao JS SDK (calculator share)
+    "https://t1.kakaocdn.net",
   ],
   "style-src": [
     "'self'",
@@ -59,6 +61,9 @@ const DIRECTIVES: Record<string, string[]> = {
     "https://*.googletagmanager.com",
     "https://stats.g.doubleclick.net",
     "https://www.facebook.com",
+    // Calculator image export re-fetches the webfont CSS to embed it.
+    "https://cdn.jsdelivr.net",
+    "https://*.kakao.com",
   ],
   "frame-src": [
     "https://www.googletagmanager.com",

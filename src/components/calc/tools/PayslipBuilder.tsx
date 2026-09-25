@@ -266,7 +266,7 @@ export function PayslipBuilder() {
   );
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start">
+    <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start">
       <div className="space-y-5 print:hidden">{inputs}</div>
       <div className="space-y-5">
         <div className="print:hidden">

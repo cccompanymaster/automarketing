@@ -13,6 +13,6 @@ export const COMPANY = {
   email: "cccompanymaster@gmail.com", // 대표 문의 이메일
   // 전자상거래법 제10조 표시 항목 — 비어 있으면 푸터에서 숨김.
   phone: "", // 대표 전화번호 (예: "010-0000-0000" 또는 "1600-0000")
-  mailOrderNumber: "", // 통신판매업 신고번호 (예: "제2026-인천연수구-0000호")
+  mailOrderNumber: "제2020-인천연수구-1872호", // 통신판매업 신고번호
   hostingProvider: "GitHub, Inc. (GitHub Pages)", // 호스팅 서비스 제공자
 } as const;

@@ -13,6 +13,9 @@ export function SiteFooter() {
     { label: "종목", value: COMPANY.businessItem },
     { label: "주소", value: COMPANY.address },
     { label: "이메일", value: COMPANY.email },
+    ...(COMPANY.phone ? [{ label: "전화", value: COMPANY.phone }] : []),
+    ...(COMPANY.mailOrderNumber ? [{ label: "통신판매업 신고번호", value: COMPANY.mailOrderNumber }] : []),
+    { label: "호스팅 서비스 제공자", value: COMPANY.hostingProvider },
   ];
 
   return (
@@ -51,7 +54,19 @@ export function SiteFooter() {
           {items.map((item) => (
             <div key={item.label} className="flex gap-2">
               <dt className="shrink-0 font-medium text-slate-400">{item.label}</dt>
-              <dd>{item.value}</dd>
+              <dd>
+                {item.value}
+                {item.label === "통신판매업 신고번호" && (
+                  <a
+                    href={`https://www.ftc.go.kr/bizCommPop.do?wrkr_no=${COMPANY.businessRegistrationNumber.replace(/-/g, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-1.5 underline underline-offset-2 hover:text-slate-700"
+                  >
+                    사업자정보 확인
+                  </a>
+                )}
+              </dd>
             </div>
           ))}
         </dl>

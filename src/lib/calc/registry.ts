@@ -60,3 +60,9 @@ export function getCalc(slug: string): CalcEntry {
 }
 
 export const CALC_HUB_PATH = "/tools/";
+
+/**
+ * Date the calculators' content / reference values were last reviewed —
+ * used as sitemap lastmod. Bump only when pages actually change.
+ */
+export const CALC_REVIEWED_AT = "2026-09-25";

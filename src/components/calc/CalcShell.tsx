@@ -19,11 +19,14 @@ export interface FaqItem {
 export function calcMetadata(slug: string): Metadata {
   const c = getCalc(slug);
   const title = `${c.title} — 자영업자 무료 계산기`;
+  // Unique lead (the summary) + what makes the page citable: dated reference
+  // values, formula shown, free without signup.
+  const description = `${c.summary} 계산식과 세부 내역까지 보여 주고, 기준값은 확인일과 출처를 함께 표시해요. 가입 없이 무료.`;
   return {
     title,
-    description: c.summary,
+    description,
     alternates: { canonical: c.path },
-    openGraph: { ...OG_BASE, title, description: c.summary, url: c.path },
+    openGraph: { ...OG_BASE, title, description, url: c.path },
   };
 }
 

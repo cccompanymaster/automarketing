@@ -3,7 +3,8 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { CALCULATORS, CALC_CATEGORIES, CALC_HUB_PATH } from "@/lib/calc/registry";
-import { OG_BASE } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { OG_BASE, absoluteUrl, breadcrumbLd } from "@/lib/seo";
 
 const TITLE = "자영업자 무료 계산기 26종";
 const DESCRIPTION =
@@ -19,6 +20,25 @@ export const metadata: Metadata = {
 export default function CalculatorHub() {
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbLd([
+            { name: "홈", path: "/" },
+            { name: "무료 계산기", path: CALC_HUB_PATH },
+          ]),
+          {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: TITLE,
+            itemListElement: CALCULATORS.map((c, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              name: c.title,
+              url: absoluteUrl(c.path),
+            })),
+          },
+        ]}
+      />
       <SiteHeader />
       <main className="flex-1 bg-slate-50">
         <div className="mx-auto max-w-5xl px-4 pb-16 pt-8 sm:px-5 sm:pt-12">

@@ -103,10 +103,32 @@ function StartFunnel() {
   );
 }
 
-export default function StartPage() {
-  // useSearchParams requires a Suspense boundary for static export.
+function StartShell() {
   return (
-    <Suspense fallback={null}>
+    <main className="flex min-h-screen flex-col bg-slate-50">
+      <div className="mx-auto w-full max-w-md px-5 py-8">
+        <Link href="/" className="mb-8 flex items-center gap-2 font-extrabold text-slate-900">
+          <span className="text-xl">🌱</span>
+          <span>{COMPANY.serviceName}</span>
+        </Link>
+        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100 sm:p-8">
+          <h1 className="text-xl font-extrabold text-slate-900">{COMPANY.serviceName} 무료 가입</h1>
+          <p className="mt-2 text-sm leading-relaxed text-slate-600">
+            가입은 무료예요. 네이버 플레이스·블로그·카카오맵·당근·인스타그램 마케팅 상품의 단가를 확인하고, 필요한 것만 캐시로
+            바로 주문할 수 있어요. 카카오·네이버 간편가입도 지원해요.
+          </p>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default function StartPage() {
+  // useSearchParams requires a Suspense boundary for static export. The
+  // fallback is what crawlers get (pre-hydration HTML), so it carries real
+  // content instead of an empty page.
+  return (
+    <Suspense fallback={<StartShell />}>
       <StartFunnel />
     </Suspense>
   );

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { PRODUCT_SLUGS, GROUP_KEYS } from "@/lib/products";
-import { CALCULATORS, CALC_HUB_PATH } from "@/lib/calc/registry";
+import { CALCULATORS, CALC_HUB_PATH, CALC_REVIEWED_AT } from "@/lib/calc/registry";
+import { PRIVACY, TERMS } from "@/lib/legal";
 
 // Emit a static sitemap.xml at build time (required by output: "export").
 export const dynamic = "force-static";
@@ -21,9 +22,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     })),
     { url: `${SITE_URL}/tools/blog-writer/`, priority: 0.7 },
-    { url: `${SITE_URL}${CALC_HUB_PATH}`, priority: 0.8 },
-    ...CALCULATORS.map((c) => ({ url: `${SITE_URL}${c.path}`, priority: 0.7 })),
-    { url: `${SITE_URL}/terms/`, priority: 0.2 },
-    { url: `${SITE_URL}/privacy/`, priority: 0.2 },
+    // lastmod only where we know the real change date (no fake freshness).
+    { url: `${SITE_URL}${CALC_HUB_PATH}`, priority: 0.8, lastModified: CALC_REVIEWED_AT },
+    ...CALCULATORS.map((c) => ({ url: `${SITE_URL}${c.path}`, priority: 0.7, lastModified: CALC_REVIEWED_AT })),
+    { url: `${SITE_URL}/terms/`, priority: 0.2, lastModified: TERMS.updatedAt },
+    { url: `${SITE_URL}/privacy/`, priority: 0.2, lastModified: PRIVACY.updatedAt },
   ];
 }

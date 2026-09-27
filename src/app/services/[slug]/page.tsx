@@ -119,6 +119,15 @@ export default async function ServiceDetailPage({
   if (product.slug === "refund") {
     return (
       <>
+        <JsonLd
+          data={[
+            breadcrumbLd([
+              { name: "홈", path: "/" },
+              { name: product.name, path: `/services/${slug}/` },
+            ]),
+            serviceLd(product, PRICING_ANCHOR[product.slug]),
+          ]}
+        />
         <SiteHeader />
         <RefundLanding />
         <SiteFooter />
@@ -128,6 +137,15 @@ export default async function ServiceDetailPage({
   if (product.slug === "press") {
     return (
       <>
+        <JsonLd
+          data={[
+            breadcrumbLd([
+              { name: "홈", path: "/" },
+              { name: product.name, path: `/services/${slug}/` },
+            ]),
+            serviceLd(product, PRICING_ANCHOR[product.slug]),
+          ]}
+        />
         <SiteHeader />
         <PressLanding />
         <SiteFooter />

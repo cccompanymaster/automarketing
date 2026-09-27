@@ -15,6 +15,7 @@ import { DeliverableModal } from "@/components/DeliverableModal";
 import { ConsentSettings } from "@/components/ConsentSettings";
 import { ProfileCard } from "@/components/ProfileCard";
 import { ChargeModal } from "@/components/ChargeModal";
+import { ChargeRequests } from "@/components/ChargeRequests";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PRODUCT_LIST } from "@/lib/products";
@@ -34,6 +35,8 @@ export default function MyPage() {
   const { orders } = useOrders();
   const { deliverables, pendingCount } = useDeliverables();
   const [chargeOpen, setChargeOpen] = useState(false);
+  // Bumped when the charge modal closes so the request list reloads.
+  const [chargeTick, setChargeTick] = useState(0);
   const [reviewTarget, setReviewTarget] = useState<Deliverable | null>(null);
   const isAdmin = isAdminUser(user);
 
@@ -77,6 +80,8 @@ export default function MyPage() {
                 충전하기
               </button>
             </div>
+
+            <ChargeRequests refreshKey={chargeTick} />
 
             {transactions.length > 0 && (
               <div className="mt-5 border-t border-slate-50 pt-4">
@@ -292,7 +297,13 @@ export default function MyPage() {
         </div>
       </main>
       <SiteFooter />
-      <ChargeModal open={chargeOpen} onClose={() => setChargeOpen(false)} />
+      <ChargeModal
+        open={chargeOpen}
+        onClose={() => {
+          setChargeOpen(false);
+          setChargeTick((t) => t + 1);
+        }}
+      />
       <DeliverableModal deliverable={reviewTarget} onClose={() => setReviewTarget(null)} />
     </>
   );

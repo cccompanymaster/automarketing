@@ -698,3 +698,10 @@ revoke all on function public.calc_comment_delete(uuid, text) from public;
 grant execute on function public.calc_comment_list(text) to anon, authenticated;
 grant execute on function public.calc_comment_add(text, uuid, text, text, text, text, int) to anon, authenticated;
 grant execute on function public.calc_comment_delete(uuid, text) to anon, authenticated;
+
+-- ============================================================================
+-- 무통장입금 캐시 충전 신청 (+ 현금영수증/세금계산서 요청) — applied as
+-- migration "bank_charge_requests". Customer: request_bank_charge / cancel_bank_charge
+-- (own rows readable via RLS). Admin (is_admin): admin_charge_requests,
+-- admin_confirm_bank_charge (credits via charge_cash, pending rows only),
+-- admin_cancel_bank_charge, admin_mark_receipt_issued.

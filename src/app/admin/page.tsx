@@ -5,6 +5,7 @@
 // data comes from admin-only RPCs that the server refuses to non-admins
 // (see lib/admin.ts). Demo placeholders are shown only in stub mode.
 
+import { AdminChargeRequests } from "@/components/AdminChargeRequests";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
@@ -169,6 +170,9 @@ export default function AdminPage() {
                   highlight
                 />
               </section>
+
+              {/* Bank-transfer top-ups: confirm deposits, track receipts */}
+              <AdminChargeRequests onChanged={() => void load()} />
 
               {/* Deliverable upload + confirmation status */}
               <DeliverablesPanel />

@@ -15,4 +15,10 @@ export const COMPANY = {
   phone: "", // 대표 전화번호 (예: "010-0000-0000" 또는 "1600-0000")
   mailOrderNumber: "제2020-인천연수구-1872호", // 통신판매업 신고번호
   hostingProvider: "GitHub, Inc. (GitHub Pages)", // 호스팅 서비스 제공자
+  // 무통장입금 충전 계좌 — 반드시 사업용(사업자 명의) 계좌만 사용.
+  bankAccount: {
+    bank: "IBK기업은행",
+    number: "010-6658-6482",
+    holder: "채희준(씨씨컴퍼니)",
+  },
 } as const;

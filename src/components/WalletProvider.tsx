@@ -110,6 +110,50 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     void refresh();
   }, [refresh]);
 
+  /**
+   * The webhook credits cash asynchronously; poll (≈15s) for the ledger row
+   * the webhook writes for this payment (memo "충전 (<paymentId>)").
+   */
+  const waitForCredit = useCallback(
+    async (paymentId: string): Promise<boolean> => {
+      if (!supabase) return true;
+      for (let i = 0; i < 10; i++) {
+        const { data } = await supabase
+          .from("cash_transactions")
+          .select("id")
+          .like("memo", `%${paymentId}%`)
+          .limit(1);
+        if (data && data.length) return true;
+        await new Promise((r) => setTimeout(r, 1500));
+      }
+      return false;
+    },
+    [supabase],
+  );
+
+  // Back from a mobile (redirect) checkout: ?paymentId=…[&code=…&message=…].
+  useEffect(() => {
+    if (!supabase || !user || !isPgConfigured) return;
+    const url = new URL(window.location.href);
+    const paymentId = url.searchParams.get("paymentId");
+    if (!paymentId) return;
+    const code = url.searchParams.get("code");
+    const message = url.searchParams.get("message");
+    for (const k of ["paymentId", "code", "message", "transactionType", "txId"]) url.searchParams.delete(k);
+    window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+    void (async () => {
+      const { toast } = await import("sonner");
+      if (code) {
+        toast.error(message ?? "결제가 취소되었습니다.");
+        return;
+      }
+      const ok = await waitForCredit(paymentId);
+      await refresh();
+      if (ok) toast.success("캐시가 충전되었습니다.");
+      else toast.error("결제는 완료됐지만 캐시 적립이 늦어지고 있어요. 잠시 후 새로고침해 주세요.");
+    })();
+  }, [supabase, user, refresh, waitForCredit]);
+
   const charge = useCallback(
     async (krw: number) => {
       if (!user) throw new Error("로그인이 필요합니다.");
@@ -126,7 +170,11 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           // re-sync the balance here (the webhook is the source of truth).
           const result = await requestCharge(krw, { userId: user.id });
           if (!result.ok) throw new Error(result.error ?? "충전에 실패했습니다.");
+          const credited = result.paymentId ? await waitForCredit(result.paymentId) : false;
           await refresh();
+          if (!credited) {
+            throw new Error("결제는 완료됐지만 캐시 적립이 늦어지고 있어요. 잠시 후 새로고침해 주세요.");
+          }
           return;
         }
 
@@ -155,7 +203,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       }
     },
-    [supabase, user, refresh],
+    [supabase, user, refresh, waitForCredit],
   );
 
   const spend = useCallback(

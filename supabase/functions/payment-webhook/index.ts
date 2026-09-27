@@ -40,14 +40,18 @@ Deno.serve(async (req: Request) => {
   const raw = await req.text();
 
   // 1) 웹훅 서명 검증 — 위조된 적립 요청 차단.
+  // V2 webhook body: { type: "Transaction.Paid" | ..., data: { paymentId, ... } }
   let payment: { paymentId: string };
   try {
-    const verified = await Webhook.verify(PORTONE_WEBHOOK_SECRET, raw, {
+    const verified = (await Webhook.verify(PORTONE_WEBHOOK_SECRET, raw, {
       "webhook-id": req.headers.get("webhook-id") ?? "",
       "webhook-signature": req.headers.get("webhook-signature") ?? "",
       "webhook-timestamp": req.headers.get("webhook-timestamp") ?? "",
-    });
-    payment = verified as { paymentId: string };
+    })) as { type?: string; data?: { paymentId?: string } };
+    const paymentId = verified?.data?.paymentId;
+    // Non-payment events (e.g. billing key) carry no paymentId — acknowledge.
+    if (!paymentId) return json({ ok: true, skipped: verified?.type ?? "no-payment" });
+    payment = { paymentId };
   } catch {
     return json({ error: "invalid signature" }, 401);
   }

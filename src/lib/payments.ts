@@ -101,6 +101,9 @@ export async function requestCharge(
         totalAmount: krw,
         currency: "CURRENCY_KRW",
         payMethod: "CARD",
+        // Mobile checkouts leave the page and come back here with
+        // ?paymentId=…(&code=… on failure); WalletProvider finishes up.
+        redirectUrl: window.location.href.split("#")[0],
         // Carried through to the webhook so the server credits the right user.
         customData: opts?.userId ? { userId: opts.userId } : undefined,
       });

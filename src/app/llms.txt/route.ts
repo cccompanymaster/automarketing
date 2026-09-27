@@ -5,6 +5,7 @@
 import { COMPANY } from "@/lib/company";
 import { PRODUCT_LIST } from "@/lib/products";
 import { CALCULATORS, CALC_CATEGORIES, CALC_REVIEWED_AT } from "@/lib/calc/registry";
+import { BLOG_PATH, getPublishedPosts } from "@/lib/blog";
 import {
   CARD_FEES,
   EMPLOYMENT_INSURANCE,
@@ -47,6 +48,8 @@ function body(): string {
     "",
     "## 계산기에 쓰는 기준값 (출처·확인일)",
     "",
+    `전체 표: [2026년 자영업자 기준값](${url("/tools/rates/")}) — 항목마다 출처·적용 기간·확인일·근거 수준을 표시한 데이터 페이지.`,
+    "",
     `- 최저임금: ${years.map((y) => `${y}년 시급 ${w[Number(y)].toLocaleString("ko-KR")}원`).join(", ")} — ${MINIMUM_WAGE.source} (확인 ${MINIMUM_WAGE.checkedAt})`,
     `- 국민연금: ${pct(NATIONAL_PENSION.value.total)} (근로자·사업주 각 ${pct(NATIONAL_PENSION.value.employee)}), 기준소득월액 ${NATIONAL_PENSION.value.baseMin.toLocaleString("ko-KR")}~${NATIONAL_PENSION.value.baseMax.toLocaleString("ko-KR")}원 (확인 ${NATIONAL_PENSION.checkedAt})`,
     `- 건강보험: ${pct(HEALTH_INSURANCE.value.total)} (각 ${pct(HEALTH_INSURANCE.value.employee)}), 장기요양: 건강보험료의 ${pct(LONG_TERM_CARE.value.ratioOfHealth)} (확인 ${HEALTH_INSURANCE.checkedAt})`,
@@ -54,6 +57,14 @@ function body(): string {
     `- 신용카드 우대수수료(영세·중소가맹점): ${CARD_FEES.value.tiers.map((t) => `${t.label} 신용 ${pct(t.credit)}·체크 ${pct(t.check)}`).join(" / ")} (적용 ${CARD_FEES.effective}, 확인 ${CARD_FEES.checkedAt})`,
     "- 배달앱 수수료는 플랫폼 약관·보도 기준 가정값이며 계산기 화면에서 직접 수정할 수 있습니다.",
     "",
+  );
+  const posts = getPublishedPosts();
+  if (posts.length) {
+    lines.push("## 사장님 블로그 (질문 하나 = 글 하나)", "");
+    for (const p of posts) lines.push(`- [${p.title}](${url(`${BLOG_PATH}${p.slug}/`)}): ${p.answer} (데이터 기준일 ${p.data_asof})`);
+    lines.push("");
+  }
+  lines.push(
     "## 마케팅 상품",
     "",
   );

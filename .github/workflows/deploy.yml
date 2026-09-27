@@ -34,6 +34,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Calculator unit tests + the blog publish gate (content/blog/*.md).
+      # A post that fails the gate blocks the deploy.
+      - name: Test (calculators + blog publish gate)
+        run: npm test
+
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@v5
@@ -118,3 +123,33 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+      # IndexNow (Bing · Naver · Yandex …): ping only pages whose sitemap
+      # lastmod is within the last 3 days, so routine deploys don't spam.
+      # Key file: public/5c7ddb58be728d20e6e504e9e0c242e0.txt. Google doesn't use IndexNow.
+      - name: IndexNow ping (recently changed pages)
+        if: vars.PAGES_CUSTOM_DOMAIN != ''
+        continue-on-error: true
+        env:
+          HOST: ${{ vars.PAGES_CUSTOM_DOMAIN }}
+          INDEXNOW_KEY: 5c7ddb58be728d20e6e504e9e0c242e0
+        run: |
+          sleep 20
+          since=$(date -u -d '3 days ago' +%F)
+          urls=$(curl -fsSL "https://$HOST/sitemap.xml" | python3 -c '
+          import re, sys
+          since = sys.argv[1]
+          for u in re.findall(r"<url>(.*?)</url>", sys.stdin.read(), re.S):
+              loc = re.search(r"<loc>(.*?)</loc>", u)
+              mod = re.search(r"<lastmod>(\d{4}-\d{2}-\d{2})", u)
+              if loc and mod and mod.group(1) >= since:
+                  print(loc.group(1).strip())
+          ' "$since")
+          if [ -z "$urls" ]; then echo "No recently changed pages."; exit 0; fi
+          echo "$urls"
+          body=$(printf '%s\n' "$urls" | jq -R . | jq -s --arg host "$HOST" --arg key "$INDEXNOW_KEY" \
+            '{host: $host, key: $key, keyLocation: ("https://" + $host + "/" + $key + ".txt"), urlList: .}')
+          for ep in https://api.indexnow.org/indexnow https://searchadvisor.naver.com/indexnow; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$ep" -H 'Content-Type: application/json; charset=utf-8' -d "$body")
+            echo "$ep → HTTP $code"
+          done

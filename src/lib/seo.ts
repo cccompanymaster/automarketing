@@ -48,6 +48,38 @@ export function parseKrw(text: string | undefined): number | null {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Json = Record<string, any>;
 
+/** Global Organization node id — every page references it, never redeclares. */
+export const ORG_ID = `${SITE_URL}/#organization`;
+
+/** Blog post node (BlogPosting). Built from the same frontmatter the page renders. */
+export function blogPostingLd(p: {
+  slug: string;
+  title: string;
+  description: string;
+  datePublished: string;
+  dateModified: string;
+  author: string;
+  question: string;
+}): Json {
+  const url = absoluteUrl(`/blog/${p.slug}/`);
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${url}#post`,
+    headline: p.title,
+    description: p.description,
+    url,
+    mainEntityOfPage: url,
+    datePublished: p.datePublished,
+    dateModified: p.dateModified,
+    inLanguage: "ko-KR",
+    about: p.question,
+    author: { "@type": "Organization", name: p.author, url: absoluteUrl("/blog/") },
+    publisher: { "@id": ORG_ID },
+    image: absoluteUrl(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/og.png`),
+  };
+}
+
 /** Publisher identity — reused by every other node via @id. */
 export function organizationLd(): Json {
   return {

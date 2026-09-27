@@ -36,6 +36,9 @@ export function SiteFooter() {
             <Link href="/tools/" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
               무료 계산기
             </Link>
+            <Link href="/blog/" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
+              블로그
+            </Link>
             <Link href="/#faq" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
               자주 묻는 질문
             </Link>

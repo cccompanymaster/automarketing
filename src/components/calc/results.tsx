@@ -198,6 +198,11 @@ export function Assumptions({
         </ul>
       )}
       {date && <p className="mt-2.5 font-semibold text-slate-600">기준값 확인일: {date}</p>}
+      <p className="mt-1.5">
+        <a href="/tools/rates/" className="font-semibold text-emerald-700 underline underline-offset-2 hover:text-emerald-900">
+          2026년 자영업자 기준값 전체 보기 (출처·확인일)
+        </a>
+      </p>
     </div>
   );
 }

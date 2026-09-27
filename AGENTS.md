@@ -38,6 +38,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 | `/tools/blog-writer` | AI 원고 작성 도구 (1건 1,000캐시) |
 | `/auth/callback` | 카카오·네이버 로그인 복귀 지점 → 가입 전 보던 페이지로 이동 (`docs/SOCIAL_LOGIN.md`) |
 | `/tools/`, `/delivery/`, `/tools/<slug>/` | 자영업자 무료 계산기 26종 허브·페이지 (`docs/CALCULATORS.md`). 계산은 `src/lib/calc/*` 순수 함수 + 테스트, 요율은 `src/lib/calc/rates/*`(출처·확인일·basis), 입력값은 서버 미전송, 댓글만 Supabase RPC |
+| `/tools/rates/` | 2026년 자영업자 기준값 데이터 페이지 (rates 설정에서 생성, Dataset LD) |
+| `/blog/`, `/blog/<slug>/`, `/feed.xml` | 사장님 블로그 — `content/blog/*.md` (frontmatter 단일 소스 → 화면·JSON-LD·RSS·사이트맵·llms.txt). 발행 게이트 = `npm test`. 운영 절차 `docs/CONTENT.md` |
+| `/llms.txt` | AI용 사이트 안내 (카탈로그·기준값·블로그에서 자동 생성) |
 | `/terms`, `/privacy` | 약관/방침 (단독 페이지 + `LegalModal` 모달 공용) |
 
 ## 주요 파일
@@ -75,5 +78,5 @@ Stub 지점은 `// TODO(backend):` 주석 표시. Supabase 키(NEXT_PUBLIC_SUPAB
 npm run dev    # 개발 서버
 npm run build  # 프로덕션 빌드 (검증 완료)
 npm run lint   # ESLint (clean)
-npm test       # vitest — 계산기 함수 테스트
+npm test       # vitest — 계산기 함수 테스트 + 블로그 발행 게이트
 ```

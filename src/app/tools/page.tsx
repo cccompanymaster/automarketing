@@ -51,6 +51,18 @@ export default function CalculatorHub() {
             </p>
           </header>
 
+          <p className="mt-4 text-sm text-slate-600">
+            계산에 쓰는 최저임금·4대보험·카드수수료 기준값은{" "}
+            <Link href="/tools/rates/" className="font-semibold text-emerald-700 underline underline-offset-2">
+              2026년 자영업자 기준값
+            </Link>
+            에, 자주 묻는 질문은{" "}
+            <Link href="/blog/" className="font-semibold text-emerald-700 underline underline-offset-2">
+              사장님 블로그
+            </Link>
+            에 정리돼 있어요.
+          </p>
+
           <nav aria-label="계산기 분류" className="mt-6 flex flex-wrap gap-2">
             {CALC_CATEGORIES.map((cat) => (
               <a

@@ -9,8 +9,8 @@
 | 4대보험 요율 2026 | 추정 (계산기 대응 질문) | data | published | /blog/four-insurance-rates-2026/ |
 | 배달앱 수수료 비교 | 추정 (계산기 대응 질문) | comparison | published | /blog/delivery-app-fees-2026/ |
 | 일용직 원천징수 계산법 | 추정 | question | backlog | |
-| 3.3% 프리랜서 세금 계산 | 추정 | question | backlog | |
-| 카드수수료 우대 구간 | 추정 | data | backlog | |
+| 3.3% 프리랜서 세금 계산 | 추정 (키워드 리스트 A) | question | published | /blog/freelancer-withholding-3-3/ |
+| 카드수수료 우대 구간 | 추정 (키워드 리스트 A) | data | published | /blog/card-fee-rates-2026/ |
 | 손익분기점 계산하는 법 | 추정 | glossary | backlog | |
 | 적정 임대료 비율 | 추정 | question | backlog | |
 | 근로계약서 필수 기재사항 | 추정 | question | backlog | |

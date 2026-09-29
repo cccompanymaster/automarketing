@@ -7,6 +7,8 @@
 | /blog/weekly-holiday-pay-2026/ | 주휴수당 조건 | question | 2026-09-27 | 2026-09-27 | 2026-09-25 | 2026-10-11 | 0 (기준선) | 0 | — | published |
 | /blog/four-insurance-rates-2026/ | 4대보험 요율 2026 | data | 2026-09-27 | 2026-09-27 | 2026-09-25 | 2026-10-11 | 0 (기준선) | 0 | — | published |
 | /blog/delivery-app-fees-2026/ | 배달앱 수수료 비교 | comparison | 2026-09-27 | 2026-09-27 | 2026-09-25 | 2026-10-11 | 0 (기준선) | 0 | — | published |
+| /blog/freelancer-withholding-3-3/ | 3.3% 원천징수 계산 | question | 2026-09-29 | 2026-09-29 | 2026-09-25 | 2026-10-13 | 0 (기준선) | 0 | — | published |
+| /blog/card-fee-rates-2026/ | 카드수수료 우대 구간 | data | 2026-09-29 | 2026-09-29 | 2026-09-25 | 2026-10-13 | 0 (기준선) | 0 | — | published |
 | /tools/rates/ | 2026 최저임금·4대보험 요율 | data | 2026-09-27 | 2026-09-25 | 2026-09-25 | 2026-10-11 | 0 (기준선) | 0 | — | published |
 
 ## 갱신 트리거 (하나라도 걸리면 refresh-needed)

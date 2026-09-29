@@ -90,6 +90,7 @@ export function organizationLd(): Json {
     legalName: COMPANY.companyName,
     url: SITE_URL,
     email: COMPANY.email,
+    ...(COMPANY.phone ? { telephone: COMPANY.phone } : {}),
     founder: { "@type": "Person", name: COMPANY.ceo },
     taxID: COMPANY.businessRegistrationNumber,
     address: {

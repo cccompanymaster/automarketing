@@ -12,7 +12,7 @@ export const COMPANY = {
   address: "인천광역시 연수구 인천타워대로 301, A동 16층 33호(송도동, 송도센텀하이브)", // 사업장 소재지
   email: "cccompanymaster@gmail.com", // 대표 문의 이메일
   // 전자상거래법 제10조 표시 항목 — 비어 있으면 푸터에서 숨김.
-  phone: "", // 대표 전화번호 (예: "010-0000-0000" 또는 "1600-0000")
+  phone: "0507-1933-6482", // 대표 전화번호
   mailOrderNumber: "제2020-인천연수구-1872호", // 통신판매업 신고번호
   hostingProvider: "GitHub, Inc. (GitHub Pages)", // 호스팅 서비스 제공자
   // 무통장입금 충전 계좌 — 반드시 사업용(사업자 명의) 계좌만 사용.

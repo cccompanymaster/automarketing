@@ -15,6 +15,15 @@ export const COMPANY = {
   phone: "0507-1933-6482", // 대표 전화번호
   mailOrderNumber: "제2020-인천연수구-1872호", // 통신판매업 신고번호
   hostingProvider: "GitHub, Inc. (GitHub Pages)", // 호스팅 서비스 제공자
+  /**
+   * Official channels. `sameAs: true` → listed in Organization JSON-LD
+   * (canonical URLs only — no URL shorteners); all are shown in the footer.
+   */
+  channels: [
+    { label: "네이버 블로그", url: "https://blog.naver.com/cccompanyad", sameAs: true },
+    // TODO: replace with the canonical place URL (map.naver.com/p/entry/place/<id>) and set sameAs: true.
+    { label: "네이버 플레이스", url: "https://naver.me/GQGzRmFw", sameAs: false },
+  ],
   // 무통장입금 충전 계좌 — 반드시 사업용(사업자 명의) 계좌만 사용.
   bankAccount: {
     bank: "IBK기업은행",

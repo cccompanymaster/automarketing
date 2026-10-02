@@ -74,6 +74,15 @@ export function SiteFooter() {
           ))}
         </dl>
 
+        <p className="mt-6 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500">
+          <span className="font-medium text-slate-400">공식 채널</span>
+          {COMPANY.channels.map((c) => (
+            <a key={c.url} href={c.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-800">
+              {c.label}
+            </a>
+          ))}
+        </p>
+
         <p className="mt-8 text-xs text-slate-400">
           © {new Date().getFullYear()} {COMPANY.companyName}. All rights reserved.
         </p>

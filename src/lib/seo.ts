@@ -100,6 +100,7 @@ export function organizationLd(): Json {
       streetAddress: COMPANY.address,
     },
     areaServed: { "@type": "Country", name: "대한민국" },
+    sameAs: COMPANY.channels.filter((c) => c.sameAs).map((c) => c.url),
     knowsAbout: [
       "네이버 플레이스 상위노출",
       "네이버 블로그 상위노출",

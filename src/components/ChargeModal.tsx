@@ -200,7 +200,10 @@ export function ChargeModal({
               ))}
             </dl>
             <p className="text-[11px] leading-relaxed text-slate-400">
-              입금자명이 신청 내용과 다르면 확인이 늦어질 수 있어요. 신청 내역과 취소는 마이페이지에서 볼 수 있어요.
+              입금자명이 신청 내용과 다르면 확인이 늦어질 수 있어요. 신청 내역과 취소는 마이페이지에서 볼 수 있어요.{" "}
+              <a href={COMPANY.kakaoChatUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-600 underline underline-offset-2">
+                입금 확인 문의 (카카오톡)
+              </a>
             </p>
             <button type="button" onClick={onClose} className="w-full rounded-xl bg-slate-900 py-3.5 text-sm font-semibold text-white hover:bg-slate-800">
               확인

@@ -105,6 +105,16 @@ export function SiteHeader() {
             </Link>
           ))}
 
+          <a
+            href={COMPANY.kakaoChatUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-10 items-center gap-3 rounded-xl px-2 text-slate-700 transition hover:bg-[#FEE500]/40"
+          >
+            <span className="w-6 shrink-0 text-center text-lg" aria-hidden="true">💬</span>
+            <span className="whitespace-nowrap text-sm font-semibold">카카오톡 상담</span>
+          </a>
+
           <div className="mx-2 my-1 h-px bg-slate-100" aria-hidden="true" />
 
           {isAuthenticated ? (
@@ -193,6 +203,16 @@ export function SiteHeader() {
                   {item.label}
                 </Link>
               ))}
+              <a
+                href={COMPANY.kakaoChatUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-[15px] font-semibold text-slate-700 transition hover:bg-[#FEE500]/40"
+              >
+                <span className="w-7 text-center text-xl" aria-hidden="true">💬</span>
+                카카오톡 상담
+              </a>
             </div>
 
             {isAuthenticated ? (

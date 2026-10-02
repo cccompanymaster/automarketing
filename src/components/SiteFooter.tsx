@@ -14,6 +14,7 @@ export function SiteFooter() {
     { label: "주소", value: COMPANY.address },
     { label: "이메일", value: COMPANY.email },
     ...(COMPANY.phone ? [{ label: "전화", value: COMPANY.phone }] : []),
+    { label: "상담", value: "카카오톡 채널 1:1 채팅" },
     ...(COMPANY.mailOrderNumber ? [{ label: "통신판매업 신고번호", value: COMPANY.mailOrderNumber }] : []),
     { label: "호스팅 서비스 제공자", value: COMPANY.hostingProvider },
   ];
@@ -58,7 +59,13 @@ export function SiteFooter() {
             <div key={item.label} className="flex gap-2">
               <dt className="shrink-0 font-medium text-slate-400">{item.label}</dt>
               <dd>
-                {item.value}
+                {item.label === "상담" ? (
+                  <a href={COMPANY.kakaoChatUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-800">
+                    {item.value}
+                  </a>
+                ) : (
+                  item.value
+                )}
                 {item.label === "통신판매업 신고번호" && (
                   <a
                     href={`https://www.ftc.go.kr/bizCommPop.do?wrkr_no=${COMPANY.businessRegistrationNumber.replace(/-/g, "")}`}

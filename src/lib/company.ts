@@ -21,8 +21,7 @@ export const COMPANY = {
    */
   channels: [
     { label: "네이버 블로그", url: "https://blog.naver.com/cccompanyad", sameAs: true },
-    // TODO: replace with the canonical place URL (map.naver.com/p/entry/place/<id>) and set sameAs: true.
-    { label: "네이버 플레이스", url: "https://naver.me/GQGzRmFw", sameAs: false },
+    { label: "네이버 플레이스", url: "https://map.naver.com/p/entry/place/1845759313", sameAs: true },
     { label: "카카오톡 채널", url: "https://pf.kakao.com/_RjRSxj", sameAs: true },
   ],
   /** 1:1 상담 (카카오톡 채널 채팅). */

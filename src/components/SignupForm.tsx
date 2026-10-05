@@ -4,6 +4,8 @@
 // Fires `signup_start` on mount and `signup_complete` on success, then routes
 // to /mypage. Provides a switch to the login view (same screen, no URL change).
 
+import { ExtraProfileFields, type ExtraProfileValue } from "@/components/ExtraProfileFields";
+import { normalizePhone } from "@/lib/profile";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -39,14 +41,15 @@ export function SignupForm({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [extra, setExtra] = useState<ExtraProfileValue>({ phone: "", gender: "", ageRange: "" });
   // Consents are split per PIPA: required ones gate signup, optional ones are
   // recorded but never block it (제22조 — 선택 동의 거부 시 서비스 제한 금지).
   const [agree, setAgree] = useState<ConsentValue>(NO_CONSENT);
   const [submitting, setSubmitting] = useState(false);
   const [confirmSent, setConfirmSent] = useState(false);
-  const [fieldError, setFieldError] = useState<{ field: "email" | "password"; message: string } | null>(null);
+  const [fieldError, setFieldError] = useState<{ field: "email" | "password" | "phone"; message: string } | null>(null);
 
-  const failField = (field: "email" | "password", message: string) => {
+  const failField = (field: "email" | "password" | "phone", message: string) => {
     setFieldError({ field, message });
     toast.error(message);
     document.getElementById(`signup-${field}`)?.focus();
@@ -93,10 +96,15 @@ export function SignupForm({
       failField("password", `비밀번호는 ${PASSWORD_MIN_LENGTH}자 이상 입력해 주세요.`);
       return;
     }
+    const phone = normalizePhone(extra.phone);
+    if (!phone) {
+      failField("phone", "휴대폰 번호를 정확히 입력해 주세요. (예: 010-1234-5678)");
+      return;
+    }
     if (!guardConsent()) return;
     setSubmitting(true);
     try {
-      await signupWithEmail(email, password, name || undefined, consents());
+      await signupWithEmail(email, password, name || undefined, consents(), { ...extra, phone });
       finish();
     } catch (err) {
       if (err instanceof EmailConfirmationRequiredError) {
@@ -234,6 +242,13 @@ export function SignupForm({
             </p>
           )}
         </div>
+
+        <ExtraProfileFields
+          idPrefix="signup"
+          value={extra}
+          onChange={setExtra}
+          phoneError={fieldError?.field === "phone" ? fieldError.message : undefined}
+        />
 
         {/* Consents — required and optional are separated (PIPA 제22조) */}
         <ConsentChecklist value={agree} onChange={setAgree} />

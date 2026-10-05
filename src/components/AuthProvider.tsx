@@ -5,6 +5,7 @@
 // localStorage stub so the app stays fully usable with no backend.
 // TODO(backend): enable Supabase by setting env keys (no code change needed).
 
+import { EMPTY_PROFILE, saveProfile, type MemberProfile } from "@/lib/profile";
 import {
   createContext,
   useCallback,
@@ -53,6 +54,7 @@ interface AuthContextValue {
     password: string,
     name?: string,
     consents?: ConsentRecord,
+    profile?: Partial<MemberProfile>,
   ) => Promise<User>;
   /** Redirects to the provider (real mode); returns a fake session in stub mode. */
   loginWithSocial: (provider: SocialProvider) => Promise<User>;
@@ -184,6 +186,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password: string,
       name?: string,
       consents?: ConsentRecord,
+      profile?: Partial<MemberProfile>,
     ): Promise<User> => {
       if (supabase) {
         // Consents ride along in user_metadata so they survive email
@@ -192,7 +195,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { name, consents } },
+          options: { data: { name, consents, ...(profile ? { profile: { ...EMPTY_PROFILE, name: name ?? "", ...profile } } : {}) } },
         });
         if (error) throw new Error(koreanAuthError(error.message));
         // An existing account comes back as a user with no identities.
@@ -218,6 +221,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       const next: User = { id: email, email, name, provider: "email" };
       persistStub(next);
+      if (profile) await saveProfile({ ...EMPTY_PROFILE, name: name ?? "", ...profile });
       // Stub mode: keep the consent snapshot alongside the local session.
       if (consents) {
         try {
@@ -238,7 +242,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { error } = await supabase.auth.signInWithOAuth({
           // Custom providers ("custom:naver") aren't in supabase-js's Provider union.
           provider: SOCIAL_PROVIDERS[provider].supabaseId as "kakao",
-          options: { redirectTo: `${siteRoot()}/auth/callback/` },
+          options: {
+            redirectTo: `${siteRoot()}/auth/callback/`,
+            // Kakao: ask for the same extra items the signup form collects
+            // (휴대폰 필수, 성별·연령대 선택) — must match the 동의항목 review.
+            ...(provider === "kakao" ? { scopes: "phone_number gender age_range" } : {}),
+          },
         });
         if (error) throw new Error(koreanAuthError(error.message));
         // OAuth redirects away; the returned value is unused.

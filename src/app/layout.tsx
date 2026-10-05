@@ -6,6 +6,7 @@ import { WalletProvider } from "@/components/WalletProvider";
 import { OrdersProvider } from "@/components/OrdersProvider";
 import { DeliverablesProvider } from "@/components/DeliverablesProvider";
 import { ConsentGate } from "@/components/ConsentGate";
+import { ProfileGate } from "@/components/ProfileGate";
 import { GtmScript, GtmNoScript } from "@/components/GtmScript";
 import { CONTENT_SECURITY_POLICY } from "@/lib/csp";
 import { OG_BASE } from "@/lib/seo";
@@ -90,6 +91,7 @@ export default function RootLayout({
             </OrdersProvider>
           </WalletProvider>
           <ConsentGate />
+          <ProfileGate />
         </AuthProvider>
         <Toaster position="top-center" richColors />
       </body>

@@ -45,6 +45,34 @@ export function ageRangeLabel(range: string): string {
 
 const STUB_KEY = "selfmarketing.profile";
 
+/**
+ * Normalize a Korean mobile number to "010-1234-5678". Accepts provider
+ * formats like "+82 10-1234-5678" (Kakao) or "01012345678". Returns "" when
+ * it isn't a valid mobile number.
+ */
+export function normalizePhone(raw: string): string {
+  let d = raw.replace(/[^\d+]/g, "");
+  if (d.startsWith("+82")) d = "0" + d.slice(3);
+  d = d.replace(/\D/g, "");
+  if (!/^01[016789]\d{7,8}$/.test(d)) return "";
+  return d.length === 10 ? `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}` : `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`;
+}
+
+/** Kakao sends "30~39" / "60~"; we store Naver-style "30-39" / "60-". */
+export function normalizeAgeRange(raw: string): string {
+  const m = /^(\d+)\s*[~-]\s*(\d*)$/.exec(raw.trim());
+  if (!m) return raw;
+  const lo = Number(m[1]);
+  if (lo >= 60) return "60-";
+  const band = AGE_RANGES.find((r) => r.startsWith(`${Math.floor(lo / 10) * 10}-`));
+  return band ?? raw;
+}
+
+/** A member must have a reachable mobile number (주문·작업 안내 연락). */
+export function hasRequiredProfile(p: MemberProfile): boolean {
+  return normalizePhone(p.phone) !== "";
+}
+
 const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 
 /** Build a profile from Supabase user_metadata (edits first, then provider claims). */
@@ -66,10 +94,10 @@ export function profileFromMetadata(meta: Record<string, unknown> | undefined): 
 
   const fromProvider: MemberProfile = {
     name: pick("name", "full_name", "nickname"),
-    phone: pick("phone_number", "phone", "mobile"),
+    phone: normalizePhone(pick("phone_number", "phone", "mobile")),
     birthYear: pick("birthyear") || (bdYear && bdYear !== "0000" ? bdYear : ""),
     birthday: pick("birthday") || (bdMonth && bdDay ? `${bdMonth}-${bdDay}` : ""),
-    ageRange: pick("age_range", "age"),
+    ageRange: normalizeAgeRange(pick("age_range", "age")),
     gender: gender === "female" || gender === "male" ? gender : "",
   };
 

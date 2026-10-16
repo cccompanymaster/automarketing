@@ -8,7 +8,8 @@
 // - 카드 결제: PortOne checkout via the wallet (-> payments.ts); offered once a
 //   PG channel is configured. In local stub mode it's the test charge.
 
-import { useCallback, useEffect, useState } from "react";
+import { useDialogFocus } from "@/components/useDialogFocus";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useWallet } from "@/components/WalletProvider";
 import { useAuth } from "@/components/AuthProvider";
@@ -85,6 +86,8 @@ export function ChargeModal({
   // Requests still waiting for the owner to confirm the deposit — shown so a
   // customer who already transferred doesn't file a second request.
   const [pendingRequests, setPendingRequests] = useState<ChargeRequest[]>([]);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(panelRef, open);
 
   const onClose = useCallback(
     () => onCloseProp(requested ? "bank_requested" : "dismissed"),
@@ -108,7 +111,9 @@ export function ChargeModal({
     }
     setDepositor((d) => d || user?.name || "");
     setTax((t) => (t.email ? t : { ...t, email: user?.email ?? "" }));
-  }, [open, user]);
+    // Only on open / account switch — never on a re-emitted session.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, user?.id]);
 
   useEffect(() => {
     if (!open) return;
@@ -168,6 +173,7 @@ export function ChargeModal({
       onClick={onClose}
     >
       <div
+        ref={panelRef}
         className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -255,6 +261,7 @@ export function ChargeModal({
                   key={p}
                   type="button"
                   onClick={() => setAmount(p)}
+                  aria-pressed={amount === p}
                   className={`rounded-xl border py-3 text-sm font-semibold transition ${
                     amount === p
                       ? "border-emerald-500 bg-emerald-50 text-emerald-700"
@@ -278,7 +285,7 @@ export function ChargeModal({
                 max={MAX_CHARGE_KRW}
                 step={1000}
                 value={amount}
-                onChange={(e) => setAmount(Number(e.target.value))}
+                onChange={(e) => setAmount(Math.floor(Number(e.target.value) || 0))}
                 className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-right text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
               />
             </div>

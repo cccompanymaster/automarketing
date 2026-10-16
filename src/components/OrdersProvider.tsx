@@ -63,6 +63,16 @@ function newId(): string {
     : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+/** Korean, customer-facing message for a failed place_order call. */
+export function orderErrorMessage(err: { message?: string; code?: string }): string {
+  const m = err.message ?? "";
+  if (m.includes("캐시가 부족")) return "캐시가 부족해요. 충전 후 다시 주문해 주세요.";
+  if (/JWT|not authenticated|401/i.test(m)) return "로그인이 만료됐어요. 다시 로그인한 뒤 주문해 주세요.";
+  if (err.code === "network" || /Failed to fetch|NetworkError|network/i.test(m))
+    return "연결이 불안정해요. 주문이 이미 처리됐을 수 있으니 마이페이지 주문 내역을 확인한 뒤 다시 시도해 주세요.";
+  return "주문을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.";
+}
+
 export function OrdersProvider({ children }: { children: ReactNode }) {
   const supabase = getSupabase();
   const { user } = useAuth();
@@ -78,10 +88,12 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     if (supabase) {
       setLoading(true);
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from("orders")
           .select("id,product_name,amount_cash,qty,status,created_at")
           .order("created_at", { ascending: false });
+        // Keep the last list on a failed load rather than showing "no orders".
+        if (error) return;
         const rows: Order[] = (data ?? []).map((r) => ({
           id: r.id as string,
           productName: (r.product_name as string) ?? "",
@@ -109,14 +121,22 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       if (!user) throw new Error("로그인이 필요합니다.");
       const request = input.request?.trim() || undefined;
       if (supabase) {
-        const { error } = await supabase.rpc("place_order", {
-          p_product_name: input.productName,
-          p_amount: input.amountCash,
-          p_qty: input.qty,
-          p_request: request ?? null,
-        });
-        if (error) throw new Error(error.message);
-        await Promise.all([refresh(), refreshWallet()]);
+        let error: { message?: string; code?: string } | null = null;
+        try {
+          ({ error } = await supabase.rpc("place_order", {
+            p_product_name: input.productName,
+            p_amount: input.amountCash,
+            p_qty: input.qty,
+            p_request: request ?? null,
+          }));
+        } catch (e) {
+          error = { message: e instanceof Error ? e.message : String(e), code: "network" };
+        } finally {
+          // Re-sync either way: on a failure the shown balance may be stale,
+          // and a dropped connection may still have committed the order.
+          await Promise.all([refresh(), refreshWallet()]).catch(() => {});
+        }
+        if (error) throw new Error(orderErrorMessage(error));
         return;
       }
       // Stub: spend locally, then keep the order alongside the session.

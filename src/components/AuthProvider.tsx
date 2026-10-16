@@ -105,6 +105,12 @@ function siteRoot(): string {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function sameUser(a: User | null, b: User | null): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return a.id === b.id && a.email === b.email && a.name === b.name && a.provider === b.provider;
+}
+
 function mapSupabaseUser(u: SupabaseUser): User {
   const provider = socialProviderFromSupabase(u.app_metadata?.provider as string) ?? "email";
   return {
@@ -131,7 +137,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setHydrated(true);
       });
       const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-        setUser(session ? mapSupabaseUser(session.user) : null);
+        const next = session ? mapSupabaseUser(session.user) : null;
+        // supabase-js re-emits SIGNED_IN when the tab regains focus; keep the
+        // same object so components keyed on `user` don't reset (e.g. the
+        // bank-transfer guide in ChargeModal vanishing mid-transfer).
+        setUser((prev) => (sameUser(prev, next) ? prev : next));
       });
       return () => {
         active = false;
@@ -195,7 +205,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { name, consents, ...(profile ? { profile: { ...EMPTY_PROFILE, name: name ?? "", ...profile } } : {}) } },
+          options: {
+            data: { name, consents, ...(profile ? { profile: { ...EMPTY_PROFILE, name: name ?? "", ...profile } } : {}) },
+            // The confirmation link lands on the callback page, which forwards
+            // to the destination stashed by the signup form (e.g. the product).
+            emailRedirectTo: `${siteRoot()}/auth/callback/`,
+          },
         });
         if (error) throw new Error(koreanAuthError(error.message));
         // An existing account comes back as a user with no identities.

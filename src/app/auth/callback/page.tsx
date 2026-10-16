@@ -22,7 +22,12 @@ function providerError(): string | null {
   const code = params.get("error");
   if (!code) return null;
   if (code === "access_denied") return "로그인을 취소하셨어요.";
-  return params.get("error_description") ?? "로그인 중 문제가 생겼어요.";
+  const detail = params.get("error_description") ?? "";
+  // Keep provider/Supabase English details out of the UI (console only).
+  if (detail) console.warn("[auth callback]", code, detail);
+  if (/email/i.test(detail)) return "이메일 제공에 동의해야 가입할 수 있어요. 다시 시도하면서 이메일 항목에 동의해 주세요.";
+  if (/expired|invalid/i.test(detail)) return "인증 링크가 만료됐거나 이미 사용됐어요.";
+  return "로그인 중 문제가 생겼어요.";
 }
 
 export default function AuthCallbackPage() {

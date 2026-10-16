@@ -10,7 +10,8 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/components/AuthProvider";
 import { AuthEntry } from "@/components/AuthEntry";
 import { Onboarding } from "@/components/Onboarding";
 import { SignupForm } from "@/components/SignupForm";
@@ -35,6 +36,14 @@ function StartFunnel() {
       ? `/services/${service.slug}/?${BUY_PARAM}=${encodeURIComponent(buy)}`
       : pricingHref(service.slug)
     : undefined;
+
+  // Already signed in (e.g. Back after signup, or an old bookmark) → don't
+  // greet a member with "처음 이용하시나요?"; send them where they were going.
+  const router = useRouter();
+  const { isAuthenticated, hydrated } = useAuth();
+  useEffect(() => {
+    if (hydrated && isAuthenticated) router.replace(afterHref ?? "/mypage");
+  }, [hydrated, isAuthenticated, afterHref, router]);
 
   // Long forms on mobile: snap back to the top whenever the stage changes,
   // and move keyboard focus onto the new step so it isn't dropped on BODY.

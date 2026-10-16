@@ -29,6 +29,8 @@ interface WalletContextValue {
   spend: (amountCash: number, memo: string) => Promise<void>;
   /** Re-read the balance/ledger (e.g. after a server-side deduction). */
   refresh: () => Promise<void>;
+  /** True when the last balance load failed (values shown are the last known). */
+  loadError: boolean;
 }
 
 const WalletContext = createContext<WalletContextValue | null>(null);
@@ -70,6 +72,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [balance, setBalance] = useState(0);
   const [transactions, setTransactions] = useState<CashTxn[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   const refresh = useCallback(async () => {
     if (!user) {
@@ -80,10 +83,23 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     if (supabase) {
       setLoading(true);
       try {
-        const { data } = await supabase
-          .from("cash_transactions")
-          .select("id,type,amount,balance_after,memo,created_at")
-          .order("created_at", { ascending: false });
+        let data: Record<string, unknown>[] | null = null;
+        let error: unknown = null;
+        try {
+          ({ data, error } = await supabase
+            .from("cash_transactions")
+            .select("id,type,amount,balance_after,memo,created_at")
+            .order("created_at", { ascending: false }));
+        } catch (e) {
+          error = e; // network drop
+        }
+        // A failed load must not show a member's balance as 0 (and push them
+        // to charge again) — keep the last known values and flag the error.
+        if (error) {
+          setLoadError(true);
+          return;
+        }
+        setLoadError(false);
         const txns: CashTxn[] = (data ?? []).map((r) => ({
           id: r.id as string,
           type: r.type as CashTxn["type"],
@@ -116,7 +132,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     if (!supabase || !user) return;
     let last = Date.now();
     const onReturn = () => {
-      if (document.visibilityState !== "visible" || Date.now() - last < 15_000) return;
+      if (document.visibilityState !== "visible" || Date.now() - last < 2_000) return;
       last = Date.now();
       void refresh();
     };
@@ -266,8 +282,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo<WalletContextValue>(
-    () => ({ balance, transactions, loading, charge, spend, refresh }),
-    [balance, transactions, loading, charge, spend, refresh],
+    () => ({ balance, transactions, loading, loadError, charge, spend, refresh }),
+    [balance, transactions, loading, loadError, charge, spend, refresh],
   );
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;

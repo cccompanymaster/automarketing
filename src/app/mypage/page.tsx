@@ -31,7 +31,7 @@ import { isAdminUser } from "@/lib/admin";
 export default function MyPage() {
   const router = useRouter();
   const { user, isAuthenticated, hydrated } = useAuth();
-  const { balance, transactions } = useWallet();
+  const { balance, transactions, loading: walletLoading, loadError, refresh: refreshWallet } = useWallet();
   const { orders } = useOrders();
   const { deliverables, pendingCount } = useDeliverables();
   const [chargeOpen, setChargeOpen] = useState(false);
@@ -67,10 +67,15 @@ export default function MyPage() {
               <div>
                 <h2 className="text-base font-bold text-slate-900">내 캐시</h2>
                 <p className="mt-1 text-3xl font-extrabold text-emerald-600">
-                  {balance.toLocaleString("ko-KR")}
+                  {(loadError || walletLoading) && balance === 0 && transactions.length === 0 ? "—" : balance.toLocaleString("ko-KR")}
                   <span className="ml-1 text-sm font-semibold text-slate-400">캐시</span>
                 </p>
                 <p className="mt-1 text-xs text-slate-400">1원 = 1캐시</p>
+                {loadError && (
+                  <button type="button" onClick={() => void refreshWallet()} className="mt-1 text-xs font-semibold text-rose-600 underline underline-offset-2">
+                    잔액을 불러오지 못했어요 · 다시 시도
+                  </button>
+                )}
               </div>
               <button
                 type="button"

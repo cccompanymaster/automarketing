@@ -3,7 +3,8 @@
 // Order a pricing item with cash (1원 = 1캐시). Handles per-unit quantity,
 // shows balance, and blocks when the balance is insufficient.
 
-import { useEffect, useState } from "react";
+import { useDialogFocus } from "@/components/useDialogFocus";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useWallet } from "@/components/WalletProvider";
 import { useOrders } from "@/components/OrdersProvider";
@@ -28,10 +29,14 @@ export function OrderModal({
   /** Called with the missing cash (and the draft) when the balance can't cover the order. */
   onNeedCharge: (shortfallCash: number, draft: OrderDraft) => void;
 }) {
-  const { balance, loading } = useWallet();
+  const { balance, loading, loadError, refresh: refreshWallet } = useWallet();
   const { placeOrder } = useOrders();
   const [qty, setQty] = useState(1);
   const [request, setRequest] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(panelRef, Boolean(item));
 
   useEffect(() => {
     // Reset per-item state whenever a different item is opened.
@@ -59,6 +64,11 @@ export function OrderModal({
   const enough = balance >= totalCash;
 
   const handleOrder = async () => {
+    // Guard against double taps: the RPC deducts cash, so a second call would
+    // place (and charge) a second order.
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+    setSubmitting(true);
     try {
       // One call: cash is deducted and the order (with the request note) is
       // recorded together, so a paid order can't go missing.
@@ -73,6 +83,9 @@ export function OrderModal({
     } catch (e) {
       const msg = e instanceof Error ? e.message : "주문에 실패했습니다.";
       toast.error(msg);
+    } finally {
+      submittingRef.current = false;
+      setSubmitting(false);
     }
   };
 
@@ -85,7 +98,8 @@ export function OrderModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl"
+        ref={panelRef}
+        className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">
@@ -166,14 +180,22 @@ export function OrderModal({
           </div>
         </div>
 
-        {enough ? (
+        {loadError ? (
+          <button
+            type="button"
+            onClick={() => void refreshWallet()}
+            className="mt-5 w-full rounded-xl border border-slate-200 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            잔액을 불러오지 못했어요 · 다시 시도
+          </button>
+        ) : enough ? (
           <button
             type="button"
             onClick={handleOrder}
-            disabled={loading}
+            disabled={loading || submitting}
             className="mt-5 w-full rounded-xl bg-emerald-600 py-3.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
           >
-            {loading ? "처리 중…" : `${formatCash(totalCash)} 결제하기`}
+            {loading || submitting ? "결제 중…" : `${formatCash(totalCash)} 결제하기`}
           </button>
         ) : (
           <button

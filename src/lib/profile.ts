@@ -113,8 +113,11 @@ export function profileFromMetadata(meta: Record<string, unknown> | undefined): 
 export async function fetchProfile(): Promise<MemberProfile> {
   const supabase = getSupabase();
   if (supabase) {
-    const { data } = await supabase.auth.getUser();
-    return profileFromMetadata(data.user?.user_metadata);
+    const { data, error } = await supabase.auth.getUser();
+    // Never return an empty profile on a failed load — callers would treat a
+    // member who has a phone number as one who doesn't (and could save blanks).
+    if (error || !data.user) throw new Error("내 정보를 불러오지 못했어요.");
+    return profileFromMetadata(data.user.user_metadata);
   }
   try {
     const raw = localStorage.getItem(STUB_KEY);

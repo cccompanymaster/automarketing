@@ -4,6 +4,8 @@
 // Fires `signup_start` on mount and `signup_complete` on success, then routes
 // to /mypage. Provides a switch to the login view (same screen, no URL change).
 
+import { isSupabaseConfigured } from "@/lib/supabase";
+import { stashOAuthReturn } from "@/lib/socialAuth";
 import { ExtraProfileFields, type ExtraProfileValue } from "@/components/ExtraProfileFields";
 import { normalizePhone } from "@/lib/profile";
 import { useEffect, useState } from "react";
@@ -103,6 +105,9 @@ export function SignupForm({
     }
     if (!guardConsent()) return;
     setSubmitting(true);
+    // If Supabase requires email confirmation, the link opens /auth/callback/
+    // — park the destination (e.g. the product's order window) for it.
+    if (isSupabaseConfigured) stashOAuthReturn({ intent: "signup", next: afterHref });
     try {
       await signupWithEmail(email, password, name || undefined, consents(), { ...extra, phone });
       finish();

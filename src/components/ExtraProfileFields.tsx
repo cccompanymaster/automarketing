@@ -18,7 +18,9 @@ const INPUT =
 
 /** Format digits as 010-1234-5678 while typing. */
 export function formatPhoneTyping(raw: string): string {
-  const d = raw.replace(/\D/g, "").slice(0, 11);
+  // "+82 10 1234 5678" (pasted / provider format) → 010…
+  const intl = raw.trim().replace(/^\+\s*82\s*-?\s*0?/, "0");
+  const d = intl.replace(/\D/g, "").slice(0, 11);
   if (d.length < 4) return d;
   if (d.length < 8) return `${d.slice(0, 3)}-${d.slice(3)}`;
   return d.length === 10 ? `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}` : `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`;

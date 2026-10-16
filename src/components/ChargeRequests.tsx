@@ -25,11 +25,16 @@ const STATUS_STYLE: Record<ChargeRequest["status"], string> = {
 /** `refreshKey` changes (e.g. when the charge modal closes) trigger a reload. */
 export function ChargeRequests({ refreshKey }: { refreshKey: number }) {
   const [rows, setRows] = useState<ChargeRequest[]>([]);
+  const [failed, setFailed] = useState(false);
 
   const load = useCallback(() => {
     listMyChargeRequests()
-      .then(setRows)
-      .catch(() => setRows([]));
+      .then((r) => {
+        setRows(r);
+        setFailed(false);
+      })
+      // Keep what we had (incl. the account guide) and offer a retry.
+      .catch(() => setFailed(true));
   }, []);
 
   useEffect(() => {
@@ -47,7 +52,13 @@ export function ChargeRequests({ refreshKey }: { refreshKey: number }) {
     };
   }, [load]);
 
-  if (rows.length === 0) return null;
+  if (rows.length === 0) {
+    return failed ? (
+      <button type="button" onClick={load} className="mt-4 text-xs font-semibold text-rose-600 underline underline-offset-2">
+        충전 신청 내역을 불러오지 못했어요 · 다시 시도
+      </button>
+    ) : null;
+  }
   const hasPending = rows.some((r) => r.status === "pending");
   const acct = COMPANY.bankAccount;
 

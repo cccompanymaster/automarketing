@@ -8,7 +8,7 @@
 // - 카드 결제: PortOne checkout via the wallet (-> payments.ts); offered once a
 //   PG channel is configured. In local stub mode it's the test charge.
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useWallet } from "@/components/WalletProvider";
 import { useAuth } from "@/components/AuthProvider";
@@ -16,7 +16,9 @@ import { isPgConfigured } from "@/lib/payments";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { COMPANY } from "@/lib/company";
 import {
+  listMyChargeRequests,
   requestBankCharge,
+  type ChargeRequest,
   validateBankCharge,
   type CashReceiptInfo,
   type ReceiptType,
@@ -54,13 +56,16 @@ async function copy(text: string, label: string) {
   }
 }
 
+/** How the modal was closed — lets an interrupted order decide what to do next. */
+export type ChargeOutcome = "charged" | "bank_requested" | "dismissed";
+
 export function ChargeModal({
   open,
-  onClose,
+  onClose: onCloseProp,
   shortfallCash,
 }: {
   open: boolean;
-  onClose: () => void;
+  onClose: (outcome: ChargeOutcome) => void;
   /** Cash missing for an order in progress — preselects an amount that covers it. */
   shortfallCash?: number;
 }) {
@@ -77,6 +82,14 @@ export function ChargeModal({
   const [tax, setTax] = useState<TaxInvoiceInfo>({ bizNo: "", company: "", ceo: "", email: "", bizType: "", bizItem: "" });
   const [submitting, setSubmitting] = useState(false);
   const [requested, setRequested] = useState<{ amount: number; depositor: string } | null>(null);
+  // Requests still waiting for the owner to confirm the deposit — shown so a
+  // customer who already transferred doesn't file a second request.
+  const [pendingRequests, setPendingRequests] = useState<ChargeRequest[]>([]);
+
+  const onClose = useCallback(
+    () => onCloseProp(requested ? "bank_requested" : "dismissed"),
+    [onCloseProp, requested],
+  );
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- preset when (re)opened
@@ -87,6 +100,12 @@ export function ChargeModal({
     if (!open) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- fresh form each time it opens
     setRequested(null);
+    setPendingRequests([]);
+    if (isSupabaseConfigured && user) {
+      listMyChargeRequests()
+        .then((rows) => setPendingRequests(rows.filter((r) => r.status === "pending")))
+        .catch(() => {});
+    }
     setDepositor((d) => d || user?.name || "");
     setTax((t) => (t.email ? t : { ...t, email: user?.email ?? "" }));
   }, [open, user]);
@@ -114,7 +133,7 @@ export function ChargeModal({
     try {
       await charge(amount);
       toast.success(`${formatCash(krwToCash(amount))} 충전되었습니다.`);
-      onClose();
+      onCloseProp("charged");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "충전에 실패했습니다.");
     }
@@ -268,6 +287,26 @@ export function ChargeModal({
               <span className="text-slate-500">충전 후 받는 캐시</span>
               <span className="font-extrabold text-emerald-600">{formatCash(krwToCash(amount || 0))}</span>
             </div>
+
+            {method === "bank" && pendingRequests.length > 0 && (
+              <div role="status" className="mt-4 rounded-xl bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900 ring-1 ring-amber-100">
+                <p className="font-bold">입금 확인 중인 신청이 있어요</p>
+                <ul className="mt-1 space-y-0.5">
+                  {pendingRequests.map((r) => (
+                    <li key={r.id}>
+                      {formatKrw(r.amount)} · 입금자 {r.depositor} ·{" "}
+                      {new Date(r.createdAt).toLocaleString("ko-KR", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-1.5">
+                  이미 입금하셨다면 새로 신청하지 않아도 돼요. 입금이 확인되면 캐시가 자동으로 들어와요.{" "}
+                  <a href={COMPANY.kakaoChatUrl} target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-2">
+                    빠른 확인 요청 (카카오톡)
+                  </a>
+                </p>
+              </div>
+            )}
 
             {method === "bank" ? (
               <div className="mt-4 space-y-4">

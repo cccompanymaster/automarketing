@@ -110,6 +110,24 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     void refresh();
   }, [refresh]);
 
+  // Deposits are confirmed by the owner on another device, so re-sync when
+  // the customer comes back to the tab (throttled) — no manual reload needed.
+  useEffect(() => {
+    if (!supabase || !user) return;
+    let last = Date.now();
+    const onReturn = () => {
+      if (document.visibilityState !== "visible" || Date.now() - last < 15_000) return;
+      last = Date.now();
+      void refresh();
+    };
+    window.addEventListener("focus", onReturn);
+    document.addEventListener("visibilitychange", onReturn);
+    return () => {
+      window.removeEventListener("focus", onReturn);
+      document.removeEventListener("visibilitychange", onReturn);
+    };
+  }, [supabase, user, refresh]);
+
   /**
    * The webhook credits cash asynchronously; poll (≈15s) for the ledger row
    * the webhook writes for this payment (memo "충전 (<paymentId>)").

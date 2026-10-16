@@ -36,6 +36,17 @@ export function ChargeRequests({ refreshKey }: { refreshKey: number }) {
     load();
   }, [load, refreshKey]);
 
+  // Status changes when the owner confirms the deposit — refresh on return.
+  useEffect(() => {
+    const onReturn = () => document.visibilityState === "visible" && load();
+    window.addEventListener("focus", onReturn);
+    document.addEventListener("visibilitychange", onReturn);
+    return () => {
+      window.removeEventListener("focus", onReturn);
+      document.removeEventListener("visibilitychange", onReturn);
+    };
+  }, [load]);
+
   if (rows.length === 0) return null;
   const hasPending = rows.some((r) => r.status === "pending");
   const acct = COMPANY.bankAccount;

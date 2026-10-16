@@ -16,6 +16,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
 import { OrderModal, type OrderDraft } from "@/components/OrderModal";
 import { ChargeModal } from "@/components/ChargeModal";
@@ -235,11 +236,16 @@ export function QuickOrder({ product }: { product: Product }) {
       <ChargeModal
         open={chargeOpen}
         shortfallCash={shortfall}
-        onClose={() => {
+        onClose={(outcome) => {
           setChargeOpen(false);
-          if (pending) {
+          // Card top-up credits immediately → resume the order. A bank-transfer
+          // request credits only after the owner confirms the deposit, so
+          // reopening "캐시가 부족합니다" now would look like the charge failed.
+          if (pending && outcome === "charged") {
             setDraft(pending.draft);
             setOrderItem(pending.item);
+          } else if (outcome === "bank_requested") {
+            toast.info("입금이 확인되면 캐시가 들어와요. 그때 이 페이지에서 다시 주문해 주세요.", { duration: 8000 });
           }
           setPending(null);
         }}

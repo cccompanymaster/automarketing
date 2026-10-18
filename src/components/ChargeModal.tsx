@@ -8,7 +8,7 @@
 // - 카드 결제: PortOne checkout via the wallet (-> payments.ts); offered once a
 //   PG channel is configured. In local stub mode it's the test charge.
 
-import { useDialogFocus } from "@/components/useDialogFocus";
+import { useModal } from "@/components/useModal";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useWallet } from "@/components/WalletProvider";
@@ -87,7 +87,6 @@ export function ChargeModal({
   // customer who already transferred doesn't file a second request.
   const [pendingRequests, setPendingRequests] = useState<ChargeRequest[]>([]);
   const panelRef = useRef<HTMLDivElement>(null);
-  useDialogFocus(panelRef, open);
 
   const onClose = useCallback(
     () => onCloseProp(requested ? "bank_requested" : "dismissed"),
@@ -115,16 +114,7 @@ export function ChargeModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, user?.id]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [open, onClose]);
+  useModal(panelRef, open, onClose);
 
   if (!open) return null;
 

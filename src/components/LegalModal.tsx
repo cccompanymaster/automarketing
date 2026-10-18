@@ -4,7 +4,8 @@
 // The same content is also reachable at /terms and /privacy.
 // Traps focus while open, closes on Escape, and restores focus on close.
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useModal } from "@/components/useModal";
 import { LEGAL_DOCS, type LegalDocKey } from "@/lib/legal";
 import { LegalContent } from "@/components/LegalContent";
 
@@ -14,53 +15,11 @@ interface LegalModalProps {
   onClose: () => void;
 }
 
-const FOCUSABLE =
-  'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
 export function LegalModal({ open, docKey, onClose }: LegalModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  // Escape to close, Tab focus trap, body scroll lock, focus restore.
-  useEffect(() => {
-    if (!open) return;
-
-    const previouslyFocused = document.activeElement as HTMLElement | null;
-    // Move focus into the dialog (close button is the first focusable).
-    dialogRef.current
-      ?.querySelector<HTMLElement>(FOCUSABLE)
-      ?.focus();
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-        return;
-      }
-      if (e.key !== "Tab" || !dialogRef.current) return;
-
-      const focusables = Array.from(
-        dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE),
-      );
-      if (focusables.length === 0) return;
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-      previouslyFocused?.focus();
-    };
-  }, [open, onClose]);
+  useModal(dialogRef, open && Boolean(docKey), onClose);
 
   if (!open || !docKey) return null;
 

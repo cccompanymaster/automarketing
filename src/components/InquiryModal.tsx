@@ -3,7 +3,8 @@
 // Inquiry form modal (컨설팅/견적형 상품). Submits to the sheet+email webhook
 // when configured, otherwise falls back to the visitor's mail client.
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useModal } from "@/components/useModal";
 import { toast } from "sonner";
 import { submitInquiry, isInquiryWebhookConfigured } from "@/lib/inquiry";
 import { track } from "@/lib/analytics";
@@ -29,14 +30,9 @@ export function InquiryModal({
     if (!open) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reset per open
     setDone(false);
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [open, onClose]);
+  }, [open]);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useModal(panelRef, open, onClose);
 
   if (!open) return null;
 
@@ -77,6 +73,7 @@ export function InquiryModal({
       onClick={onClose}
     >
       <div
+        ref={panelRef}
         className="w-full max-w-md rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >

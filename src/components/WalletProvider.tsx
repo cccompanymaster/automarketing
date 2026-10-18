@@ -66,6 +66,15 @@ function newId(): string {
     : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+/** Stub mode: append one ledger row and persist. */
+function appendStubTxn(userId: string, w: StoredWallet, type: CashTxn["type"], amount: number, memo: string): StoredWallet {
+  const balanceAfter = w.balance + amount;
+  const txn: CashTxn = { id: newId(), type, amount, balanceAfter, memo, createdAt: new Date().toISOString() };
+  const next: StoredWallet = { balance: balanceAfter, transactions: [txn, ...w.transactions].slice(0, 100) };
+  saveStub(userId, next);
+  return next;
+}
+
 export function WalletProvider({ children }: { children: ReactNode }) {
   const supabase = getSupabase();
   const { user } = useAuth();
@@ -73,6 +82,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [transactions, setTransactions] = useState<CashTxn[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const applyStub = (w: StoredWallet) => {
+    setBalance(w.balance);
+    setTransactions(w.transactions);
+  };
 
   const refresh = useCallback(async () => {
     if (!user) {
@@ -217,22 +230,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
         // Stub credit (local only — no real money, no server authority)
         const w = loadStub(user.id);
-        const nextBalance = w.balance + result.cashCredited;
-        const txn: CashTxn = {
-          id: newId(),
-          type: "charge",
-          amount: result.cashCredited,
-          balanceAfter: nextBalance,
-          memo: result.method,
-          createdAt: new Date().toISOString(),
-        };
-        const next: StoredWallet = {
-          balance: nextBalance,
-          transactions: [txn, ...w.transactions].slice(0, 100),
-        };
-        saveStub(user.id, next);
-        setBalance(next.balance);
-        setTransactions(next.transactions);
+        applyStub(appendStubTxn(user.id, w, "charge", result.cashCredited, result.method));
       } finally {
         setLoading(false);
       }
@@ -258,22 +256,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
         const w = loadStub(user.id);
         if (w.balance < amountCash) throw new Error("캐시가 부족합니다.");
-        const nextBalance = w.balance - amountCash;
-        const txn: CashTxn = {
-          id: newId(),
-          type: "use",
-          amount: -amountCash,
-          balanceAfter: nextBalance,
-          memo,
-          createdAt: new Date().toISOString(),
-        };
-        const next: StoredWallet = {
-          balance: nextBalance,
-          transactions: [txn, ...w.transactions].slice(0, 100),
-        };
-        saveStub(user.id, next);
-        setBalance(next.balance);
-        setTransactions(next.transactions);
+        applyStub(appendStubTxn(user.id, w, "use", -amountCash, memo));
       } finally {
         setLoading(false);
       }

@@ -33,6 +33,3 @@ export interface Order {
   createdAt: string; // ISO
 }
 
-export function orderStatusLabel(status: OrderStatus): string {
-  return ORDER_STATUS_LABEL[status];
-}

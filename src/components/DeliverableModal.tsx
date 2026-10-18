@@ -3,7 +3,8 @@
 // Review modal for a deliverable: shows the uploaded content; while pending
 // the member can approve it or request a revision with feedback.
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useModal } from "@/components/useModal";
 import { toast } from "sonner";
 import { useDeliverables } from "@/components/DeliverablesProvider";
 import {
@@ -31,16 +32,8 @@ export function DeliverableModal({
     setAsking(false);
   }, [deliverable]);
 
-  useEffect(() => {
-    if (!deliverable) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [deliverable, onClose]);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useModal(panelRef, Boolean(deliverable), onClose);
 
   if (!deliverable) return null;
   const d = deliverable;
@@ -85,6 +78,7 @@ export function DeliverableModal({
       onClick={onClose}
     >
       <div
+        ref={panelRef}
         className="flex max-h-[90vh] w-full max-w-lg flex-col rounded-t-2xl bg-white shadow-xl sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >

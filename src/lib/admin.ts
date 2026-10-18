@@ -8,7 +8,6 @@
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import { socialProviderFromSupabase } from "@/lib/socialAuth";
 import type { User } from "@/components/AuthProvider";
-import type { CashTxnType } from "@/lib/cash";
 import type { OrderStatus } from "@/lib/orders";
 
 /** Parsed admin email allowlist (lowercased). */
@@ -77,13 +76,6 @@ export interface AdminOverview {
   recentCharges: AdminCharge[];
   members: AdminMember[];
 }
-
-export const TXN_TYPE_LABEL: Record<CashTxnType, string> = {
-  charge: "충전",
-  use: "사용",
-  refund: "환불",
-  bonus: "보너스",
-};
 
 /** Fetch the admin overview (real data via admin_overview RPC; demo in stub mode). */
 export async function getAdminOverview(): Promise<AdminOverview> {

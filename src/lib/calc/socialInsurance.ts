@@ -28,8 +28,6 @@ import { INSURANCE_ROUNDING } from "./rates/laborTax";
 
 export type InsuranceKey = "pension" | "health" | "longTermCare" | "employment" | "industrial";
 
-export const INSURANCE_KEYS: InsuranceKey[] = ["pension", "health", "longTermCare", "employment", "industrial"];
-
 export const INSURANCE_LABELS: Record<InsuranceKey, string> = {
   pension: "국민연금",
   health: "건강보험",

@@ -3,7 +3,7 @@
 // Order a pricing item with cash (1원 = 1캐시). Handles per-unit quantity,
 // shows balance, and blocks when the balance is insufficient.
 
-import { useDialogFocus } from "@/components/useDialogFocus";
+import { useModal } from "@/components/useModal";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useWallet } from "@/components/WalletProvider";
@@ -36,7 +36,7 @@ export function OrderModal({
   const [submitting, setSubmitting] = useState(false);
   const submittingRef = useRef(false);
   const panelRef = useRef<HTMLDivElement>(null);
-  useDialogFocus(panelRef, Boolean(item));
+  useModal(panelRef, Boolean(item), onClose);
 
   useEffect(() => {
     // Reset per-item state whenever a different item is opened.
@@ -44,17 +44,6 @@ export function OrderModal({
     setQty(draft?.qty ?? 1);
     setRequest(draft?.request ?? "");
   }, [item, draft]);
-
-  useEffect(() => {
-    if (!item) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [item, onClose]);
 
   if (!item || item.amountKrw == null) return null;
 

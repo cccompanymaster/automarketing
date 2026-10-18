@@ -582,10 +582,6 @@ export function delivery(input: DeliveryInput): CalcResult<DeliveryResult> {
   );
 }
 
-/** Labels for the sales-tier select (re-exported for pages). */
-export const salesTierLabel = (k: SalesTier) => SALES_TIERS.find((t) => t.key === k)?.label ?? k;
-export const revenueTierLabel = (k: RevenueTier) => REVENUE_TIERS.find((t) => t.key === k)?.label ?? k;
-
 /** Parse a tier key coming from a URL / select; unknown → fallback. */
 export function parseSalesTier(v: string | null | undefined, fallback: SalesTier = "mid35to50"): SalesTier {
   return SALES_TIERS.some((t) => t.key === v) ? (v as SalesTier) : fallback;

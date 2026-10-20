@@ -7,7 +7,7 @@
 
 import Link from "next/link";
 import type { ServiceCardData } from "@/lib/products";
-import type { ProductSlug } from "@/lib/products";
+import { isPriceAmount, type ProductSlug } from "@/lib/products";
 import { track } from "@/lib/analytics";
 import { BrandLogo } from "@/components/BrandLogo";
 
@@ -26,11 +26,14 @@ export function ServiceCard({
   featured = false,
   wide = false,
   ribbon,
+  hero = false,
 }: {
   card: ServiceCardData;
   featured?: boolean;
   /** Full-row banner layout (horizontal on sm+), used by the closing card. */
   wide?: boolean;
+  /** Bento lead tile (2×2 on desktop): larger type + oversized icon mark. */
+  hero?: boolean;
   /** Corner ribbon label (e.g. "인기 묶음 ⭐"); omit for no ribbon. */
   ribbon?: string;
 }) {
@@ -77,6 +80,16 @@ export function ServiceCard({
         </span>
       )}
 
+      {/* Bento lead tile: oversized icon as a quiet background mark */}
+      {hero && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-8 -right-4 hidden rotate-12 select-none text-[10rem] leading-none opacity-[0.12] transition-transform duration-500 group-hover:rotate-6 group-hover:scale-105 lg:block"
+        >
+          {card.icon}
+        </span>
+      )}
+
       {/* Decorative glow that wakes up on hover */}
       <span
         aria-hidden="true"
@@ -103,7 +116,7 @@ export function ServiceCard({
         )}
         <h3
           className={`font-extrabold leading-snug text-slate-900 ${
-            featured ? "text-xl sm:text-2xl" : "text-lg"
+            hero ? "text-2xl sm:text-3xl" : featured ? "text-xl sm:text-2xl" : "text-lg"
           }`}
         >
           {card.name}
@@ -111,7 +124,7 @@ export function ServiceCard({
       </div>
 
       <p
-        className={`mt-4 flex-1 leading-relaxed text-slate-600 ${
+        className={`mt-4 leading-relaxed text-slate-600 ${hero && card.includes ? "" : "flex-1"} ${
           featured ? "text-[15px]" : "text-sm"
         }`}
       >
@@ -121,6 +134,24 @@ export function ServiceCard({
           </span>
         ))}
       </p>
+
+      {/* Lead tile fills its extra height with what the bundle contains */}
+      {hero && card.includes && (
+        <ul className="relative mt-6 flex-1 space-y-2">
+          {card.includes.map((it) => (
+            <li key={it.href}>
+              <Link
+                href={it.href}
+                onClick={() => track("cta_click", { product_slug: card.trackId as ProductSlug })}
+                className="flex items-center justify-between gap-3 rounded-2xl bg-white/80 px-4 py-3 text-sm ring-1 ring-slate-100 transition hover:bg-white hover:ring-slate-200"
+              >
+                <span className="font-bold text-slate-800">{it.name}</span>
+                {it.price && <span className="num shrink-0 text-xs font-semibold text-slate-500">{it.price}{isPriceAmount(it.price) && " 부터"}</span>}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
 
       {card.price && <CardPrice price={card.price} className="mt-4" />}
 

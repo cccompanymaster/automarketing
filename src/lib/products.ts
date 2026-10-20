@@ -770,6 +770,8 @@ export interface ServiceCardData {
   trackId: string;
   /** "Starting at" price line, e.g. { amount: "30원", from: true }. */
   price?: { amount: string; from: boolean };
+  /** Group cards only: member products (tab deep links), listed on the bento lead tile. */
+  includes?: { name: string; href: string; price?: string }[];
 }
 
 /** True when a fromPrice is an amount ("1,000원") rather than text ("건별 견적"). */
@@ -819,6 +821,11 @@ function groupCard(g: ProductGroup): ServiceCardData {
     accent: g.accent,
     trackId: g.key,
     price: groupPrice(g),
+    includes: groupMembers(g).map((p) => ({
+      name: p.name,
+      href: `/services/${g.key}#${p.slug}`,
+      price: p.detail.fromPrice,
+    })),
   };
 }
 

@@ -705,3 +705,35 @@ grant execute on function public.calc_comment_delete(uuid, text) to anon, authen
 -- (own rows readable via RLS). Admin (is_admin): admin_charge_requests,
 -- admin_confirm_bank_charge (credits via charge_cash, pending rows only),
 -- admin_cancel_bank_charge, admin_mark_receipt_issued.
+
+-- ============================================================================
+-- 충전 신청 → 사장님 이메일 알림 (Edge Function notify-admin, verify_jwt=false).
+-- notified_at is the function's "sent once" claim. Rows that existed before the
+-- alert went live were stamped with created_at.
+create extension if not exists pg_net;
+
+alter table public.charge_requests add column if not exists notified_at timestamptz;
+
+-- Fire-and-forget via pg_net; any failure here must never block the
+-- customer's request, hence the exception handler.
+create or replace function public.notify_charge_request()
+returns trigger language plpgsql security definer set search_path = '' as $$
+begin
+  begin
+    perform net.http_post(
+      url := 'https://weytdwzwviamqrtzrjmg.supabase.co/functions/v1/notify-admin',
+      body := jsonb_build_object('id', new.id),
+      headers := '{"Content-Type": "application/json"}'::jsonb
+    );
+  exception when others then
+    null;
+  end;
+  return new;
+end $$;
+
+revoke all on function public.notify_charge_request() from public, anon, authenticated;
+
+drop trigger if exists charge_requests_notify on public.charge_requests;
+create trigger charge_requests_notify
+  after insert on public.charge_requests
+  for each row execute function public.notify_charge_request();

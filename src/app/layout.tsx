@@ -8,6 +8,7 @@ import { DeliverablesProvider } from "@/components/DeliverablesProvider";
 import { ConsentGate } from "@/components/ConsentGate";
 import { ProfileGate } from "@/components/ProfileGate";
 import { GtmScript, GtmNoScript } from "@/components/GtmScript";
+import { ChatWidget } from "@/components/ChatWidget";
 import { CONTENT_SECURITY_POLICY } from "@/lib/csp";
 import { OG_BASE } from "@/lib/seo";
 
@@ -100,6 +101,7 @@ export default function RootLayout({
           <ConsentGate />
           <ProfileGate />
         </AuthProvider>
+        <ChatWidget />
         <Toaster position="top-center" richColors />
       </body>
     </html>

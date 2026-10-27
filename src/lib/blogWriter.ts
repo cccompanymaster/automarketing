@@ -1,10 +1,10 @@
 // AI blog-writing domain. Mirrors the 가제트-style flow: 주제 설정 → 아웃라인 → 완성.
 //
-// Static-export safe: the Claude API key must NOT live in the client. When a
-// server proxy is configured (NEXT_PUBLIC_BLOG_API_URL, e.g. a Supabase Edge
-// Function that calls Claude), generation goes through it. Otherwise a local
-// demo generator produces sample drafts so the UI works without a backend.
-// TODO(backend): deploy supabase/functions/blog-writer and set the API URL.
+// Static-export safe: model keys never live in the client. Generation goes
+// through the blog-writer Edge Function (Ollama, or Claude as a fallback) —
+// NEXT_PUBLIC_BLOG_API_URL, else <SUPABASE_URL>/functions/v1/blog-writer.
+// When that server has no model configured (503 not_configured) or there is
+// no backend at all, a local demo generator produces free sample drafts.
 
 import { getSupabase } from "@/lib/supabase";
 
@@ -30,12 +30,34 @@ export interface BlogInput {
   useWeb?: boolean;
   /** 이미지 생성. */
   useImage?: boolean;
+  /** 업종 (INDUSTRIES key) — picks the per-industry writing routine. */
+  industry?: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_BLOG_API_URL;
+/** 업종별 원고 루틴 (server: INDUSTRY_GUIDES in the blog-writer function). */
+export const INDUSTRIES: { key: string; label: string }[] = [
+  { key: "", label: "선택 안 함" },
+  { key: "restaurant", label: "음식점" },
+  { key: "cafe", label: "카페·디저트" },
+  { key: "beauty", label: "뷰티 (헤어·네일·피부)" },
+  { key: "medical", label: "병원·의원" },
+  { key: "academy", label: "학원·교육" },
+  { key: "fitness", label: "헬스·필라테스" },
+  { key: "shopping", label: "쇼핑몰·제품" },
+  { key: "lodging", label: "숙박·펜션" },
+  { key: "service", label: "생활 서비스 (이사·청소·인테리어)" },
+];
 
-/** True when a real generation backend is wired up. */
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const API_URL =
+  process.env.NEXT_PUBLIC_BLOG_API_URL ||
+  (SUPABASE_URL ? `${SUPABASE_URL.replace(/\/$/, "")}/functions/v1/blog-writer` : undefined);
+
+/** True when a generation backend exists (it may still answer "not configured"). */
 export const isBlogApiConfigured = Boolean(API_URL);
+
+/** Server is up but has no model configured — fall back to the free demo. */
+class NotConfigured extends Error {}
 
 type Mode = "titles" | "outline" | "article";
 
@@ -55,9 +77,10 @@ async function callApi<T>(mode: Mode, payload: object): Promise<T> {
     },
     body: JSON.stringify({ mode, input: payload }),
   });
+  if (res.status === 503 || res.status === 404) throw new NotConfigured();
   if (!res.ok) {
-    const msg = await res.text().catch(() => "");
-    throw new Error(msg || `생성 요청 실패 (${res.status})`);
+    const body = (await res.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(body?.error || `생성 요청 실패 (${res.status})`);
   }
   return (await res.json()) as T;
 }
@@ -66,31 +89,48 @@ const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // --- Public API -----------------------------------------------------------
 
-export async function generateTitles(input: BlogInput): Promise<string[]> {
+/** Runs the server call, or the demo generator when no model is available. */
+async function viaApi<T>(server: () => Promise<T>, demo: () => T, delay: number): Promise<{ value: T; demo: boolean }> {
   if (isBlogApiConfigured) {
-    const { titles } = await callApi<{ titles: string[] }>("titles", input);
-    return titles;
+    try {
+      return { value: await server(), demo: false };
+    } catch (e) {
+      if (!(e instanceof NotConfigured)) throw e;
+    }
   }
-  await wait(600);
-  return stubTitles(input);
+  await wait(delay);
+  return { value: demo(), demo: true };
+}
+
+export async function generateTitles(input: BlogInput): Promise<string[]> {
+  const r = await viaApi(
+    async () => (await callApi<{ titles: string[] }>("titles", input)).titles,
+    () => stubTitles(input),
+    600,
+  );
+  return r.value;
 }
 
 export async function generateOutline(input: BlogInput): Promise<string[]> {
-  if (isBlogApiConfigured) {
-    const { outline } = await callApi<{ outline: string[] }>("outline", input);
-    return outline;
-  }
-  await wait(700);
-  return stubOutline(input);
+  const r = await viaApi(
+    async () => (await callApi<{ outline: string[] }>("outline", input)).outline,
+    () => stubOutline(input),
+    700,
+  );
+  return r.value;
 }
 
-export async function generateArticle(input: BlogInput, outline: string[]): Promise<string> {
-  if (isBlogApiConfigured) {
-    const { article } = await callApi<{ article: string }>("article", { ...input, outline });
-    return article;
-  }
-  await wait(1100);
-  return stubArticle(input, outline);
+/**
+ * Full article. `demo: true` means a free sample was produced (no model on the
+ * server) — nothing was charged. Real articles are charged server-side.
+ */
+export async function generateArticle(input: BlogInput, outline: string[]): Promise<{ text: string; demo: boolean }> {
+  const r = await viaApi(
+    async () => (await callApi<{ article: string }>("article", { ...input, outline })).article,
+    () => stubArticle(input, outline),
+    1100,
+  );
+  return { text: r.value, demo: r.demo };
 }
 
 // --- Demo (sample) generator — used until the API is configured ------------

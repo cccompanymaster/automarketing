@@ -12,14 +12,15 @@ import { formatCash } from "@/lib/cash";
 import {
   BLOG_TONES,
   BLOG_WRITE_COST,
+  INDUSTRIES,
   MAX_KEYWORDS,
   type BlogInput,
   type BlogTone,
   generateArticle,
   generateOutline,
   generateTitles,
-  isBlogApiConfigured,
 } from "@/lib/blogWriter";
+import { isSupabaseConfigured } from "@/lib/supabase";
 
 const STEPS = [
   { no: 1, label: "주제 설정" },
@@ -39,6 +40,9 @@ export function BlogWriter() {
   const [tone, setTone] = useState<BlogTone>("~해요");
   const [useWeb, setUseWeb] = useState(true);
   const [useImage, setUseImage] = useState(false);
+  const [industry, setIndustry] = useState("");
+  // Set once the server says no model is configured (free sample drafts).
+  const [demo, setDemo] = useState(false);
 
   const [titleIdeas, setTitleIdeas] = useState<string[]>([]);
   const [outline, setOutline] = useState<string[]>([]);
@@ -55,6 +59,7 @@ export function BlogWriter() {
     tone,
     useWeb,
     useImage,
+    industry: industry || undefined,
   });
 
   const addKeyword = (raw: string) => {
@@ -121,19 +126,23 @@ export function BlogWriter() {
     }
     setBusy("article");
     try {
-      const text = await generateArticle(input(), outline);
-      if (isBlogApiConfigured) {
-        // Real backend deducts the cost server-side (auth + balance enforced in
-        // the Edge Function); just re-sync the balance here. Avoids the client
-        // being trusted to charge — and prevents a double charge.
+      const { text, demo: isDemo } = await generateArticle(input(), outline);
+      setDemo(isDemo);
+      if (!isDemo) {
+        // The server deducted the cost (auth + balance enforced in the Edge
+        // Function); just re-sync. The client never charges itself here.
         await refresh();
-      } else {
-        // Demo mode: no server, so the local stub wallet performs the deduction.
+      } else if (!isSupabaseConfigured) {
+        // Local stub wallet only (no backend): simulate the deduction.
         await spend(BLOG_WRITE_COST, `블로그 원고 - ${title.trim() || topic.trim()}`);
       }
       setArticle(text);
       setStep(3);
-      toast.success(`원고가 생성되었어요. ${formatCash(BLOG_WRITE_COST)} 차감.`);
+      toast.success(
+        isDemo && isSupabaseConfigured
+          ? "예시 원고를 만들었어요. (AI 연결 준비 중이라 무료)"
+          : `원고가 생성되었어요. ${formatCash(BLOG_WRITE_COST)} 차감.`,
+      );
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "원고 생성에 실패했어요.");
     } finally {
@@ -284,6 +293,21 @@ export function BlogWriter() {
               )}
             </Field>
 
+            <Field label="업종">
+              <select
+                value={industry}
+                onChange={(e) => setIndustry(e.target.value)}
+                className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-base outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              >
+                {INDUSTRIES.map((it) => (
+                  <option key={it.key} value={it.key}>
+                    {it.label}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1.5 text-xs text-slate-400">업종을 고르면 그 업종에 맞는 구성과 금지 표현(예: 병원 의료광고 규정)을 지켜서 써요.</p>
+            </Field>
+
             <Field label="말투">
               <div className="grid grid-cols-2 gap-2">
                 {BLOG_TONES.map((t) => (
@@ -364,9 +388,9 @@ export function BlogWriter() {
         {/* Right — result panel */}
         <section className="lg:col-span-7">
           <div className="flex min-h-[28rem] flex-col rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-            {!isBlogApiConfigured && (
+            {demo && (
               <div className="mb-4 rounded-lg bg-amber-50 px-3 py-2 text-center text-xs text-amber-700">
-                현재 <b>데모(샘플)</b> 모드입니다. 생성 API 연결 시 실제 AI 원고로 자동 전환됩니다.
+                AI 연결 준비 중이라 <b>예시 원고</b>가 나와요. 캐시는 차감되지 않았어요.
               </div>
             )}
 

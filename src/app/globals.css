@@ -403,6 +403,11 @@
   body.has-right-wing {
     padding-right: 18rem; /* w-72 */
   }
+  /* Keep the chat launcher/panel clear of the right wing. */
+  body.has-right-wing .chat-fab,
+  body.has-right-wing .chat-panel {
+    right: 19.5rem;
+  }
 }
 /* Members never see the guest landing: an inline <head> script flags a
    stored session before paint so the landing doesn't flash. */

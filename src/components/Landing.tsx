@@ -1,7 +1,8 @@
 // Landing page — storytelling composition (noahgroup-style narrative):
 // hero → empathy (owner's pains) → bridge (why we exist) → journey chapters
 // (get found → get sales → build trust & save) → proof numbers → full service
-// grid → channels → reviews → 3-step process → closing CTA.
+// grid → channels → reviews → FAQ → free calculators → 3-step process →
+// closing CTA.
 // Header/footer are provided by the page layout.
 
 import Link from "next/link";
@@ -51,39 +52,6 @@ export function Landing() {
         <ServicesGrid cards={LANDING_CARDS} />
       </section>
 
-      {/* Free calculators — no signup, a reason to come back */}
-      <section id="calculators" className="mx-auto max-w-6xl px-5 pb-16 sm:pb-20">
-        <div className="rounded-3xl bg-slate-900 px-6 py-8 sm:px-10 sm:py-10">
-          <p className="text-sm font-bold tracking-widest text-emerald-400">가입 없이 무료</p>
-          <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl">사장님 계산기 {CALCULATORS.length}종</h2>
-          <p className="mt-2 text-sm text-slate-300 sm:text-base">
-            배달앱 수수료부터 주휴수당·급여명세서·손익분기점까지, 매일 고민하는 숫자를 바로 계산해 보세요.
-          </p>
-          <ul className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {["delivery", "delivery-price", "hourly-wage", "payslip", "labor-contract", "breakeven"].map((slug) => {
-              const c = CALCULATORS.find((x) => x.slug === slug)!;
-              return (
-                <li key={slug}>
-                  <Link
-                    href={c.path}
-                    className="flex min-h-12 items-center gap-2 rounded-xl bg-white/10 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
-                  >
-                    <span aria-hidden="true">{c.icon}</span>
-                    {c.title}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-          <Link
-            href="/tools/"
-            className="mt-6 inline-flex min-h-12 items-center rounded-xl bg-emerald-500 px-6 text-sm font-bold text-white transition hover:bg-emerald-400"
-          >
-            전체 계산기 보기 →
-          </Link>
-        </div>
-      </section>
-
       {/* Supported channels */}
       <Channels />
 
@@ -124,6 +92,39 @@ export function Landing() {
         </Reveal>
         <div className="mt-10">
           <FaqAccordion items={SITE_FAQS} />
+        </div>
+      </section>
+
+      {/* Free calculators — no signup, a reason to come back */}
+      <section id="calculators" className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
+        <div className="rounded-3xl bg-slate-900 px-6 py-8 sm:px-10 sm:py-10">
+          <p className="text-sm font-bold tracking-widest text-emerald-400">가입 없이 무료</p>
+          <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl">사장님 계산기 {CALCULATORS.length}종</h2>
+          <p className="mt-2 text-sm text-slate-300 sm:text-base">
+            배달앱 수수료부터 주휴수당·급여명세서·손익분기점까지, 매일 고민하는 숫자를 바로 계산해 보세요.
+          </p>
+          <ul className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {["delivery", "delivery-price", "hourly-wage", "payslip", "labor-contract", "breakeven"].map((slug) => {
+              const c = CALCULATORS.find((x) => x.slug === slug)!;
+              return (
+                <li key={slug}>
+                  <Link
+                    href={c.path}
+                    className="flex min-h-12 items-center gap-2 rounded-xl bg-white/10 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
+                  >
+                    <span aria-hidden="true">{c.icon}</span>
+                    {c.title}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+          <Link
+            href="/tools/"
+            className="mt-6 inline-flex min-h-12 items-center rounded-xl bg-emerald-500 px-6 text-sm font-bold text-white transition hover:bg-emerald-400"
+          >
+            전체 계산기 보기 →
+          </Link>
         </div>
       </section>
 

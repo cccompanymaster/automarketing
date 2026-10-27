@@ -81,6 +81,13 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
         <GtmScript />
+        {/* Flag a stored login before paint (see HomeSwitch / globals.css). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i)||"";if(/^sb-.+-auth-token$/.test(k)||k==="selfmarketing.auth.user"){document.documentElement.classList.add("is-member");break}}}catch(e){}',
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-white text-slate-900">
         <GtmNoScript />

@@ -12,7 +12,7 @@ import { useWallet } from "@/components/WalletProvider";
 import { useOrders } from "@/components/OrdersProvider";
 import { useDeliverables } from "@/components/DeliverablesProvider";
 import { DeliverableModal } from "@/components/DeliverableModal";
-import { ConsentSettings } from "@/components/ConsentSettings";
+import { ActivePrograms } from "@/components/ActivePrograms";
 import { ProfileCard } from "@/components/ProfileCard";
 import { ChargeModal } from "@/components/ChargeModal";
 import { ChargeRequests } from "@/components/ChargeRequests";
@@ -57,6 +57,11 @@ export default function MyPage() {
           <p className="mt-2 text-sm text-slate-500">
             {user?.name ? `${user.name}님, ` : ""}환영합니다. ({user?.email})
           </p>
+
+          {/* Programs in progress come first */}
+          <div className="mt-8">
+            <ActivePrograms confirmHref="#confirm" />
+          </div>
 
           {/* Cash wallet */}
           <section
@@ -152,9 +157,7 @@ export default function MyPage() {
             </span>
           </Link>
 
-          {/* Optional-consent management (제3자 제공 철회 창구) */}
           <ProfileCard />
-          <ConsentSettings />
 
           {isAdmin && (
             <Link
@@ -175,7 +178,7 @@ export default function MyPage() {
 
           {/* Deliverables waiting for my confirmation */}
           {deliverables.length > 0 && (
-            <section className="mt-10">
+            <section id="confirm" className="mt-10 scroll-mt-20">
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-bold text-slate-900">컨펌 요청</h2>
                 {pendingCount > 0 && (
@@ -225,7 +228,7 @@ export default function MyPage() {
           )}
 
           {/* My orders */}
-          <section className="mt-10">
+          <section id="orders" className="mt-10 scroll-mt-20">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-slate-900">내 주문</h2>
               <Link

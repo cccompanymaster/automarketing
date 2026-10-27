@@ -1,15 +1,20 @@
 "use client";
 
 // Left "wing" navigation (replaces the old top bar entirely).
-// - Desktop (lg+): a floating vertical dock pinned to the left edge, icons at
-//   rest, labels unfold to the right on hover (wing style).
-// - Mobile: a floating top-left button opens a slide-in drawer from the left.
+// - Desktop (lg+): a full-height sidebar on the left edge with large labels.
+// - Mobile: a floating top-right button opens a slide-in drawer.
+// Members also get the right wing dashboard (cash · programs · status).
 // Kept as `SiteHeader` so every page keeps working unchanged.
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
+import { useWallet } from "@/components/WalletProvider";
+import { useOrders } from "@/components/OrdersProvider";
+import { useDeliverables } from "@/components/DeliverablesProvider";
+import { RightWing } from "@/components/RightWing";
+import { isActiveOrder } from "@/lib/orders";
 import { isAdminUser } from "@/lib/admin";
 import { COMPANY } from "@/lib/company";
 
@@ -35,6 +40,10 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const isAdmin = isAdminUser(user);
+  const { balance } = useWallet();
+  const { orders } = useOrders();
+  const { pendingCount } = useDeliverables();
+  const activeCount = orders.filter(isActiveOrder).length;
 
   // Close the drawer on route change and lock scroll while open.
   useEffect(() => {
@@ -60,88 +69,93 @@ export function SiteHeader() {
     };
   }, [open]);
 
-  // Members-only items — the full rate card lives behind signup.
-  const authItems: NavItem[] = isAuthenticated
-    ? [
-        { href: "/pricing", icon: "💰", label: "상품·요금" },
-        { href: "/mypage", icon: "👤", label: "마이페이지" },
-        ...(isAdmin ? [{ href: "/admin", icon: "🛠️", label: "관리자" }] : []),
-      ]
-    : [];
+  // Members-only items, listed first — the full rate card lives behind signup.
+  const authItems: NavItem[] = [
+    { href: "/pricing", icon: "💰", label: "상품 주문" },
+    { href: "/mypage", icon: "👤", label: "마이페이지" },
+    ...(isAdmin ? [{ href: "/admin", icon: "🛠️", label: "관리자" }] : []),
+  ];
+  // Members land on their own home (programs + products), so the landing's
+  // story anchors are guest-only.
+  const navItems = isAuthenticated
+    ? NAV_ITEMS.filter((it) => !["/#reviews", "/#faq", "/#services"].includes(it.href)).map((it) =>
+        it.href === "/" ? { ...it, label: "내 홈" } : it,
+      )
+    : NAV_ITEMS;
 
   return (
     <>
-      {/* ===== Desktop: floating left wing dock ===== */}
+      {/* ===== Desktop: full-height left wing ===== */}
       <nav
         aria-label="주 메뉴"
-        className="fixed left-4 top-1/2 z-40 hidden -translate-y-1/2 lg:block"
+        className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col overflow-y-auto border-r border-slate-100 bg-white px-3 py-5 lg:flex"
       >
-        <div className="flex w-52 flex-col gap-1 rounded-2xl border border-slate-100 bg-white/95 p-2 shadow-xl backdrop-blur">
-          {/* Brand */}
-          <Link
-            href="/"
-            className="flex h-10 items-center gap-3 rounded-xl px-2 font-extrabold text-slate-900 transition hover:bg-emerald-50"
-          >
-            <span className="shrink-0 text-xl" aria-hidden="true">🌱</span>
-            <span className="whitespace-nowrap text-sm">
-              {COMPANY.serviceName}
-            </span>
-          </Link>
+        {/* Brand */}
+        <Link
+          href="/"
+          className="flex h-14 items-center gap-3 rounded-xl px-3 font-extrabold text-slate-900 transition hover:bg-emerald-50"
+        >
+          <span className="shrink-0 text-2xl" aria-hidden="true">🌱</span>
+          <span className="whitespace-nowrap text-xl">{COMPANY.serviceName}</span>
+        </Link>
 
-          <div className="mx-2 my-1 h-px bg-slate-100" aria-hidden="true" />
+        <div className="mx-3 my-3 h-px bg-slate-100" aria-hidden="true" />
 
-          {[...NAV_ITEMS, ...authItems].map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex h-10 items-center gap-3 rounded-xl px-2 text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
-            >
-              <span className="w-6 shrink-0 text-center text-lg" aria-hidden="true">
-                {item.icon}
-              </span>
-              <span className="whitespace-nowrap text-sm font-semibold">
-                {item.label}
-              </span>
-            </Link>
-          ))}
+        <div className="flex flex-1 flex-col gap-1">
+          {[...(isAuthenticated ? authItems : []), ...navItems].map((item) => {
+            const current = item.href === pathname || (item.href !== "/" && pathname.startsWith(item.href));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={current ? "page" : undefined}
+                className={`flex min-h-12 items-center gap-3 rounded-xl px-3 text-[17px] font-semibold transition ${
+                  current ? "bg-emerald-50 text-emerald-800" : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                }`}
+              >
+                <span className="w-7 shrink-0 text-center text-xl" aria-hidden="true">
+                  {item.icon}
+                </span>
+                <span className="whitespace-nowrap">{item.label}</span>
+              </Link>
+            );
+          })}
 
           <a
             href={COMPANY.kakaoChatUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-10 items-center gap-3 rounded-xl px-2 text-slate-700 transition hover:bg-[#FEE500]/40"
+            className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-[17px] font-semibold text-slate-700 transition hover:bg-[#FEE500]/40"
           >
-            <span className="w-6 shrink-0 text-center text-lg" aria-hidden="true">💬</span>
-            <span className="whitespace-nowrap text-sm font-semibold">카카오톡 상담</span>
+            <span className="w-7 shrink-0 text-center text-xl" aria-hidden="true">💬</span>
+            <span className="whitespace-nowrap">카카오톡 상담</span>
           </a>
-
-          <div className="mx-2 my-1 h-px bg-slate-100" aria-hidden="true" />
-
-          {isAuthenticated ? (
-            <button
-              type="button"
-              onClick={logout}
-              title={user?.email}
-              className="flex h-10 items-center gap-3 rounded-xl px-2 text-slate-400 transition hover:bg-slate-50 hover:text-slate-700"
-            >
-              <span className="w-6 shrink-0 text-center text-lg" aria-hidden="true">🚪</span>
-              <span className="whitespace-nowrap text-sm font-semibold">
-                로그아웃
-              </span>
-            </button>
-          ) : (
-            <Link
-              href="/start"
-              className="flex h-11 items-center gap-3 rounded-xl bg-emerald-700 px-2 text-white transition hover:bg-emerald-800"
-            >
-              <span className="w-6 shrink-0 text-center text-lg" aria-hidden="true">🚀</span>
-              <span className="whitespace-nowrap text-sm font-bold">
-                시작하기
-              </span>
-            </Link>
-          )}
         </div>
+
+        <div className="mx-3 my-3 h-px bg-slate-100" aria-hidden="true" />
+
+        {isAuthenticated ? (
+          <button
+            type="button"
+            onClick={logout}
+            title={user?.email}
+            className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-base font-semibold text-slate-400 transition hover:bg-slate-50 hover:text-slate-700"
+          >
+            <span className="w-7 shrink-0 text-center text-xl" aria-hidden="true">🚪</span>
+            <span className="whitespace-nowrap">로그아웃</span>
+          </button>
+        ) : (
+          <Link
+            href="/start"
+            className="flex min-h-14 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-3 text-lg font-bold text-white transition hover:bg-emerald-800"
+          >
+            <span aria-hidden="true">🚀</span>
+            시작하기
+          </Link>
+        )}
       </nav>
+
+      <RightWing />
 
       {/* ===== Mobile: floating menu button =====
           Top-RIGHT: every page's heading and back link sit top-left, so a
@@ -191,13 +205,34 @@ export function SiteHeader() {
               </button>
             </div>
 
-            <div className="mt-6 flex flex-1 flex-col gap-1 overflow-y-auto">
-              {[...NAV_ITEMS, ...authItems].map((item) => (
+            {isAuthenticated && (
+              <Link
+                href="/mypage"
+                onClick={() => setOpen(false)}
+                className="mt-5 grid grid-cols-3 gap-2 rounded-2xl bg-emerald-50 p-3 text-center"
+              >
+                <span>
+                  <span className="block text-[11px] font-semibold text-emerald-800">내 캐시</span>
+                  <span className="block text-base font-extrabold text-slate-900">{balance.toLocaleString("ko-KR")}</span>
+                </span>
+                <span>
+                  <span className="block text-[11px] font-semibold text-emerald-800">진행중</span>
+                  <span className="block text-base font-extrabold text-slate-900">{activeCount}건</span>
+                </span>
+                <span className={pendingCount > 0 ? "rounded-xl bg-amber-200" : ""}>
+                  <span className="block text-[11px] font-semibold text-emerald-800">컨펌 대기</span>
+                  <span className="block text-base font-extrabold text-slate-900">{pendingCount}건</span>
+                </span>
+              </Link>
+            )}
+
+            <div className="mt-4 flex flex-1 flex-col gap-1 overflow-y-auto">
+              {[...(isAuthenticated ? authItems : []), ...navItems].map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-[15px] font-semibold text-slate-700 transition hover:bg-slate-50"
+                  className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-[17px] font-semibold text-slate-700 transition hover:bg-slate-50"
                 >
                   <span className="w-7 text-center text-xl" aria-hidden="true">{item.icon}</span>
                   {item.label}
@@ -208,7 +243,7 @@ export function SiteHeader() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
-                className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-[15px] font-semibold text-slate-700 transition hover:bg-[#FEE500]/40"
+                className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-[17px] font-semibold text-slate-700 transition hover:bg-[#FEE500]/40"
               >
                 <span className="w-7 text-center text-xl" aria-hidden="true">💬</span>
                 카카오톡 상담

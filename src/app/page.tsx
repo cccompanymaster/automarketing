@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Landing } from "@/components/Landing";
+import { HomeSwitch } from "@/components/HomeSwitch";
 import { JsonLd } from "@/components/JsonLd";
 import { organizationLd, webSiteLd, faqLd, OG_BASE } from "@/lib/seo";
 import { SITE_FAQS } from "@/lib/faq";
@@ -16,7 +17,9 @@ export default function HomePage() {
     <>
       <JsonLd data={[organizationLd(), webSiteLd(), faqLd(SITE_FAQS)]} />
       <SiteHeader />
-      <Landing />
+      <HomeSwitch>
+        <Landing />
+      </HomeSwitch>
       <SiteFooter />
     </>
   );

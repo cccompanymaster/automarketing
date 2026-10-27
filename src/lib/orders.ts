@@ -33,3 +33,15 @@ export interface Order {
   createdAt: string; // ISO
 }
 
+/** Orders still being worked on (shown as "진행 중인 프로그램"). */
+export function isActiveOrder(o: Order): boolean {
+  return o.status === "received" || o.status === "in_progress";
+}
+
+/** Rough progress for the status bar: 접수 → 진행중 → 완료. */
+export const ORDER_PROGRESS: Record<OrderStatus, number> = {
+  received: 25,
+  in_progress: 65,
+  done: 100,
+  canceled: 0,
+};

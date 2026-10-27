@@ -395,8 +395,19 @@
    to <body> while mounted; funnel pages without the wing stay full-width). */
 @media (min-width: 1024px) {
   body.has-wing {
-    padding-left: 15rem; /* wing w-52 (13rem) + left-4 + breathing room */
+    padding-left: 16rem; /* full-height wing w-64 */
   }
+}
+/* Members' right wing dashboard (RightWing adds .has-right-wing, xl+ only). */
+@media (min-width: 1280px) {
+  body.has-right-wing {
+    padding-right: 18rem; /* w-72 */
+  }
+}
+/* Members never see the guest landing: an inline <head> script flags a
+   stored session before paint so the landing doesn't flash. */
+html.is-member [data-guest-only] {
+  display: none !important;
 }
 
 /* ===== Storytelling landing: scroll-triggered reveals ===== */

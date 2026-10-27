@@ -65,25 +65,25 @@ export function ConsentChecklist({
           });
         }}
         aria-pressed={allChecked}
-        className={`flex w-full items-center gap-3 px-4 py-4 text-left transition ${
-          allChecked ? "bg-emerald-700 text-white" : "bg-slate-50 hover:bg-slate-100"
+        className={`flex w-full items-center gap-4 px-5 py-6 text-left transition ${
+          allChecked ? "bg-emerald-700 text-white" : "bg-emerald-50 hover:bg-emerald-100"
         }`}
       >
         <span
           aria-hidden="true"
-          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-black transition ${
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg font-black transition ${
             allChecked
               ? "bg-white text-emerald-700"
-              : "border-2 border-slate-300 bg-white text-transparent"
+              : "border-[3px] border-emerald-600 bg-white text-transparent"
           }`}
         >
           ✓
         </span>
         <span className="flex-1">
-          <span className={`block text-[15px] font-bold ${allChecked ? "text-white" : "text-slate-800"}`}>
+          <span className={`block text-xl font-extrabold ${allChecked ? "text-white" : "text-slate-900"}`}>
             전체 동의하기
           </span>
-          <span className={`block text-xs ${allChecked ? "text-emerald-50" : "text-slate-400"}`}>
+          <span className={`mt-0.5 block text-sm ${allChecked ? "text-emerald-50" : "text-slate-500"}`}>
             필수·선택 항목에 모두 동의합니다
           </span>
         </span>
@@ -121,6 +121,24 @@ export function ConsentChecklist({
           </div>
         ))}
       </div>
+
+      {/* Declining marketing is allowed, but say what it costs: no coupon alerts. */}
+      {!value.marketing && (value.terms || value.privacy) && (
+        <div role="status" className="mx-4 mb-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900 ring-1 ring-amber-200">
+          <p className="font-bold">🔕 쿠폰·할인 혜택 알림을 받을 수 없어요</p>
+          <p className="mt-1 text-[13px] leading-relaxed">
+            마케팅 수신에 동의하지 않으면 쿠폰 지급, 충전 보너스, 할인 이벤트 소식을 푸시·문자·이메일로 보내 드릴 수
+            없어요.
+          </p>
+          <button
+            type="button"
+            onClick={() => onChange({ ...value, marketing: true })}
+            className="mt-2.5 inline-flex min-h-10 items-center rounded-lg bg-amber-400 px-4 text-sm font-bold text-slate-900 transition hover:bg-amber-300"
+          >
+            혜택 알림 받기
+          </button>
+        </div>
+      )}
 
       <p className="border-t border-slate-100 px-4 pb-4 pt-3 text-[11px] leading-relaxed text-slate-400">
         선택 항목에 동의하지 않아도 회원가입과 모든 서비스 이용에 제한이 없어요. 동의 후에도

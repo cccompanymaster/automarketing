@@ -13,7 +13,7 @@
 //    on the client.
 // TODO(payment): deploy supabase/functions/payment-webhook + set PortOne keys.
 
-import { krwToCash } from "./cash";
+import { cashForPayment } from "./cash";
 
 const STORE_ID = process.env.NEXT_PUBLIC_PORTONE_STORE_ID;
 const CHANNEL_KEY = process.env.NEXT_PUBLIC_PORTONE_CHANNEL_KEY;
@@ -82,7 +82,8 @@ function newPaymentId(): string {
 }
 
 /**
- * Request a cash top-up for the given KRW amount.
+ * Request a cash top-up for the given KRW amount (VAT included); the credited
+ * cash is the supply value, cashForPayment(krw).
  * - PG mode: opens PortOne checkout; on success the server webhook credits cash.
  * - Stub mode: resolves as a successful "test" charge (no real money).
  */
@@ -116,7 +117,7 @@ export async function requestCharge(
           error: response.message ?? "결제가 취소되었습니다.",
         };
       }
-      return { ok: true, cashCredited: krwToCash(krw), method: "카드", paymentId: response?.paymentId };
+      return { ok: true, cashCredited: cashForPayment(krw), method: "카드", paymentId: response?.paymentId };
     } catch (e) {
       return {
         ok: false,
@@ -128,5 +129,5 @@ export async function requestCharge(
   }
 
   // STUB: test top-up. Credited locally by the wallet; no real money moves.
-  return { ok: true, cashCredited: krwToCash(krw), method: "테스트 충전" };
+  return { ok: true, cashCredited: cashForPayment(krw), method: "테스트 충전" };
 }

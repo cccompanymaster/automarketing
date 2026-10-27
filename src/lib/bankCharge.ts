@@ -27,7 +27,10 @@ export interface TaxInvoiceInfo {
 
 export interface ChargeRequest {
   id: string;
+  /** Deposit amount, VAT included (the receipt / tax-invoice basis). */
   amount: number;
+  /** Cash credited on confirmation (supply value). */
+  cashAmount: number;
   depositor: string;
   receiptType: ReceiptType;
   receiptInfo: Partial<CashReceiptInfo & TaxInvoiceInfo>;
@@ -60,8 +63,8 @@ export function validateBankCharge(input: {
   cash?: CashReceiptInfo;
   tax?: TaxInvoiceInfo;
 }): string | null {
-  if (!Number.isInteger(input.amount) || input.amount < 1000 || input.amount > 10_000_000)
-    return "충전 금액은 1,000원 ~ 10,000,000원 사이로 입력해 주세요.";
+  if (!Number.isInteger(input.amount) || input.amount < 1_100 || input.amount > 11_000_000)
+    return "충전 캐시는 1,000 ~ 10,000,000 사이로 입력해 주세요.";
   const dep = input.depositor.trim();
   if (!dep) return "입금자명을 입력해 주세요.";
   if (dep.length > 30) return "입금자명은 30자 이내로 입력해 주세요.";
@@ -127,6 +130,7 @@ export async function requestBankCharge(input: {
 type Row = {
   id: string;
   amount: number;
+  cash_amount: number | null;
   depositor: string;
   receipt_type: ReceiptType;
   receipt_info: ChargeRequest["receiptInfo"];
@@ -142,13 +146,14 @@ export async function listMyChargeRequests(): Promise<ChargeRequest[]> {
   if (!sb) return [];
   const { data, error } = await sb
     .from("charge_requests")
-    .select("id,amount,depositor,receipt_type,receipt_info,status,receipt_issued,admin_memo,created_at,processed_at")
+    .select("id,amount,cash_amount,depositor,receipt_type,receipt_info,status,receipt_issued,admin_memo,created_at,processed_at")
     .order("created_at", { ascending: false })
     .limit(20);
   if (error) throw new Error("충전 신청 내역을 불러오지 못했어요.");
   return ((data ?? []) as Row[]).map((r) => ({
     id: r.id,
     amount: r.amount,
+    cashAmount: r.cash_amount ?? Math.floor((r.amount * 10) / 11),
     depositor: r.depositor,
     receiptType: r.receipt_type,
     receiptInfo: r.receipt_info ?? {},

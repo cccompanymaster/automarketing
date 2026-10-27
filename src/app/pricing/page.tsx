@@ -106,7 +106,7 @@ export default function PricingPage() {
             <div>
               <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">상품 · 요금</h1>
               <p className="mt-2 text-sm text-slate-500">
-                채널별로 정리했어요. <b className="text-slate-600">1원 = 1캐시</b>로 필요한 만큼만
+                채널별로 정리했어요. <b className="text-slate-600">1캐시 = 1원(부가세 별도)</b>로 필요한 만큼만
                 주문할 수 있고, 표시 금액은 부가세 별도입니다.
               </p>
             </div>

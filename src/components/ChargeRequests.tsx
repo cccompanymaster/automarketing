@@ -86,6 +86,7 @@ export function ChargeRequests({ refreshKey }: { refreshKey: number }) {
           <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-sm">
             <div className="min-w-0">
               <span className="font-semibold text-slate-700">{formatKrw(r.amount)}</span>
+              <span className="ml-1 text-xs text-slate-400">→ {r.cashAmount.toLocaleString("ko-KR")}캐시</span>
               <span className="ml-2 text-xs text-slate-400">
                 입금자 {r.depositor} · {RECEIPT_LABEL[r.receiptType]}
                 {r.receiptType !== "none" && r.status === "confirmed" && (r.receiptIssued ? " 발행 완료" : " 발행 예정")}

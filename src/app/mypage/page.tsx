@@ -75,7 +75,7 @@ export default function MyPage() {
                   {(loadError || walletLoading) && balance === 0 && transactions.length === 0 ? "—" : balance.toLocaleString("ko-KR")}
                   <span className="ml-1 text-sm font-semibold text-slate-400">캐시</span>
                 </p>
-                <p className="mt-1 text-xs text-slate-400">1원 = 1캐시</p>
+                <p className="mt-1 text-xs text-slate-400">1캐시 = 1원 (부가세 별도) · 충전 시 부가세 10%가 더해져요</p>
                 {loadError && (
                   <button type="button" onClick={() => void refreshWallet()} className="mt-1 text-xs font-semibold text-rose-600 underline underline-offset-2">
                     잔액을 불러오지 못했어요 · 다시 시도

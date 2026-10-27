@@ -737,3 +737,13 @@ drop trigger if exists charge_requests_notify on public.charge_requests;
 create trigger charge_requests_notify
   after insert on public.charge_requests
   for each row execute function public.notify_charge_request();
+
+-- ============================================================================
+-- 충전 부가세 분리 (migrations "charge_requests_cash_amount", "charge_vat_split").
+-- Top-ups are paid VAT-inclusive; cash is credited at the supply value.
+-- charge_requests.amount = deposit (VAT incl., receipt basis),
+-- charge_requests.cash_amount = floor(amount × 10 / 11) credited on confirm.
+-- request_bank_charge accepts 1,100 ~ 11,000,000원 and stores cash_amount;
+-- admin_confirm_bank_charge credits cash_amount; admin_charge_requests
+-- returns "cashAmount". payment-webhook credits floor(paid × 10 / 11).
+alter table public.charge_requests add column if not exists cash_amount bigint;

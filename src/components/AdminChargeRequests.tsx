@@ -108,6 +108,9 @@ export function AdminChargeRequests({ onChanged }: { onChanged?: () => void }) {
                   <td className="px-3 py-3 text-xs text-slate-600">{r.userEmail}</td>
                   <td className="px-3 py-3">
                     <p className="font-bold tabular-nums text-slate-800">{formatKrw(r.amount)}</p>
+                    <p className="text-[11px] tabular-nums text-slate-400">
+                      적립 {(r.cashAmount ?? Math.floor((r.amount * 10) / 11)).toLocaleString("ko-KR")}캐시
+                    </p>
                     <p className="text-xs text-slate-500">입금자 {r.depositor}</p>
                   </td>
                   <td className="px-3 py-3">
@@ -139,7 +142,7 @@ export function AdminChargeRequests({ onChanged }: { onChanged?: () => void }) {
                           type="button"
                           disabled={busy === r.id}
                           onClick={() => {
-                            if (window.confirm(`${r.depositor}님 ${formatKrw(r.amount)} 입금을 확인했나요? 확인하면 캐시가 바로 적립돼요.`))
+                            if (window.confirm(`${r.depositor}님 ${formatKrw(r.amount)} 입금을 확인했나요? 확인하면 ${(r.cashAmount ?? Math.floor((r.amount * 10) / 11)).toLocaleString("ko-KR")}캐시(부가세 제외)가 바로 적립돼요.`))
                               void act(r.id, () => adminConfirmBankCharge(r.id), "입금 확인 — 캐시를 적립했어요.");
                           }}
                           className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-60"

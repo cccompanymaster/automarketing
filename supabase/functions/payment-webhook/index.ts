@@ -21,8 +21,9 @@ const PORTONE_WEBHOOK_SECRET = Deno.env.get("PORTONE_WEBHOOK_SECRET");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-// 1원 = 1캐시.
-const cashFor = (krw: number) => Math.round(krw);
+// Payments are VAT-inclusive; cash is credited at the supply value
+// (must match cashForPayment in src/lib/cash.ts and the bank-charge RPCs).
+const cashFor = (krw: number) => Math.floor((krw * 10) / 11);
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {

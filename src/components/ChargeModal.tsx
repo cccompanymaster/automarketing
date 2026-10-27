@@ -1,6 +1,7 @@
 "use client";
 
-// Cash top-up modal. Amount presets + custom input, 1원 = 1캐시.
+// Cash top-up modal. The member picks the cash to receive; the payment adds
+// 10% VAT on top (cash 100,000 → pay 110,000원). Product prices stay as-is.
 // Methods:
 // - 무통장입금: files a charge request (+ 현금영수증/세금계산서 request) and shows
 //   the business account; an admin confirms the deposit and the server credits
@@ -26,23 +27,21 @@ import {
   type TaxInvoiceInfo,
 } from "@/lib/bankCharge";
 import {
-  CHARGE_PRESETS_KRW,
-  MAX_CHARGE_KRW,
-  MIN_CHARGE_KRW,
+  CHARGE_PRESETS_CASH,
+  MAX_CHARGE_CASH,
+  MIN_CHARGE_CASH,
   formatCash,
   formatKrw,
-  cashToKrw,
-  krwToCash,
+  paymentForCash,
 } from "@/lib/cash";
 
 type Method = "bank" | "card";
 
-/** Smallest preset covering the shortfall, else the shortfall rounded up to 10,000원. */
+/** Smallest preset covering the shortfall, else the shortfall rounded up to 10,000 cash. */
 function amountFor(shortfallCash: number): number {
-  const need = cashToKrw(shortfallCash);
-  const preset = CHARGE_PRESETS_KRW.find((p) => p >= need);
+  const preset = CHARGE_PRESETS_CASH.find((p) => p >= shortfallCash);
   if (preset) return preset;
-  return Math.min(MAX_CHARGE_KRW, Math.ceil(need / 10_000) * 10_000);
+  return Math.min(MAX_CHARGE_CASH, Math.ceil(shortfallCash / 10_000) * 10_000);
 }
 
 const INPUT =
@@ -74,7 +73,8 @@ export function ChargeModal({
   const { user } = useAuth();
   const methods: Method[] = !isSupabaseConfigured ? ["card"] : isPgConfigured ? ["card", "bank"] : ["bank"];
   const [method, setMethod] = useState<Method>(methods[0]);
-  const [amount, setAmount] = useState<number>(CHARGE_PRESETS_KRW[0]);
+  // Cash to receive (VAT excluded); `pay` below is what the member pays.
+  const [amount, setAmount] = useState<number>(CHARGE_PRESETS_CASH[0]);
 
   // 무통장입금 form
   const [depositor, setDepositor] = useState("");
@@ -82,7 +82,7 @@ export function ChargeModal({
   const [cash, setCash] = useState<CashReceiptInfo>({ purpose: "income", number: "" });
   const [tax, setTax] = useState<TaxInvoiceInfo>({ bizNo: "", company: "", ceo: "", email: "", bizType: "", bizItem: "" });
   const [submitting, setSubmitting] = useState(false);
-  const [requested, setRequested] = useState<{ amount: number; depositor: string } | null>(null);
+  const [requested, setRequested] = useState<{ pay: number; cash: number; depositor: string } | null>(null);
   // Requests still waiting for the owner to confirm the deposit — shown so a
   // customer who already transferred doesn't file a second request.
   const [pendingRequests, setPendingRequests] = useState<ChargeRequest[]>([]);
@@ -118,16 +118,17 @@ export function ChargeModal({
 
   if (!open) return null;
 
-  const valid = amount >= MIN_CHARGE_KRW && amount <= MAX_CHARGE_KRW;
+  const valid = amount >= MIN_CHARGE_CASH && amount <= MAX_CHARGE_CASH && amount % 10 === 0;
+  const pay = paymentForCash(amount || 0);
 
   const handleCard = async () => {
     if (!valid) {
-      toast.error(`충전 금액은 ${formatKrw(MIN_CHARGE_KRW)} ~ ${formatKrw(MAX_CHARGE_KRW)} 사이여야 합니다.`);
+      toast.error(`충전 캐시는 ${formatCash(MIN_CHARGE_CASH)} ~ ${formatCash(MAX_CHARGE_CASH)} 사이여야 합니다.`);
       return;
     }
     try {
-      await charge(amount);
-      toast.success(`${formatCash(krwToCash(amount))} 충전되었습니다.`);
+      await charge(pay);
+      toast.success(`${formatCash(amount)} 충전되었습니다.`);
       onCloseProp("charged");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "충전에 실패했습니다.");
@@ -135,7 +136,7 @@ export function ChargeModal({
   };
 
   const handleBank = async () => {
-    const input = { amount, depositor, receiptType, cash, tax };
+    const input = { amount: pay, depositor, receiptType, cash, tax };
     const problem = validateBankCharge(input);
     if (problem) {
       toast.error(problem);
@@ -144,7 +145,7 @@ export function ChargeModal({
     setSubmitting(true);
     try {
       await requestBankCharge(input);
-      setRequested({ amount, depositor: depositor.trim() });
+      setRequested({ pay, cash: amount, depositor: depositor.trim() });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "신청하지 못했어요.");
     } finally {
@@ -178,7 +179,7 @@ export function ChargeModal({
             ✕
           </button>
         </div>
-        <p className="mt-1 text-xs text-slate-400">1원 = 1캐시</p>
+        <p className="mt-1 text-xs text-slate-400">1캐시 = 1원 (부가세 별도) · 결제 금액에 부가세 10%가 더해져요</p>
 
         {/* ===== 무통장입금: request done → transfer guide ===== */}
         {requested ? (
@@ -194,7 +195,8 @@ export function ChargeModal({
                 { k: "은행", v: acct.bank },
                 { k: "계좌번호", v: acct.number, copy: acct.number.replace(/\D/g, "") },
                 { k: "예금주", v: acct.holder },
-                { k: "입금액", v: formatKrw(requested.amount), copy: String(requested.amount) },
+                { k: "입금액 (부가세 포함)", v: formatKrw(requested.pay), copy: String(requested.pay) },
+                { k: "적립될 캐시", v: formatCash(requested.cash) },
                 { k: "입금자명", v: requested.depositor },
               ].map((row) => (
                 <div key={row.k} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
@@ -246,44 +248,55 @@ export function ChargeModal({
             )}
 
             <div className="mt-5 grid grid-cols-3 gap-2">
-              {CHARGE_PRESETS_KRW.map((p) => (
+              {CHARGE_PRESETS_CASH.map((p) => (
                 <button
                   key={p}
                   type="button"
                   onClick={() => setAmount(p)}
                   aria-pressed={amount === p}
-                  className={`rounded-xl border py-3 text-sm font-semibold transition ${
+                  className={`rounded-xl border py-2.5 text-sm font-semibold transition ${
                     amount === p
                       ? "border-emerald-500 bg-emerald-50 text-emerald-700"
                       : "border-slate-200 text-slate-600 hover:bg-slate-50"
                   }`}
                 >
-                  {(p / 10000).toLocaleString("ko-KR")}만
+                  {(p / 10000).toLocaleString("ko-KR")}만 캐시
+                  <span className="block text-[11px] font-medium text-slate-400">{formatKrw(paymentForCash(p))}</span>
                 </button>
               ))}
             </div>
 
             <div className="mt-3">
               <label htmlFor="charge-amount" className="block text-xs font-medium text-slate-500">
-                직접 입력 (원)
+                직접 입력 (받을 캐시)
               </label>
               <input
                 id="charge-amount"
                 type="number"
                 inputMode="numeric"
-                min={MIN_CHARGE_KRW}
-                max={MAX_CHARGE_KRW}
+                min={MIN_CHARGE_CASH}
+                max={MAX_CHARGE_CASH}
                 step={1000}
                 value={amount}
-                onChange={(e) => setAmount(Math.floor(Number(e.target.value) || 0))}
+                onChange={(e) => setAmount(Math.floor((Number(e.target.value) || 0) / 10) * 10)}
                 className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-right text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
               />
             </div>
 
-            <div className="mt-4 flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 text-sm">
-              <span className="text-slate-500">충전 후 받는 캐시</span>
-              <span className="font-extrabold text-emerald-600">{formatCash(krwToCash(amount || 0))}</span>
-            </div>
+            <dl className="mt-4 space-y-1.5 rounded-xl bg-slate-50 px-4 py-3 text-sm">
+              <div className="flex items-center justify-between">
+                <dt className="text-slate-500">받는 캐시</dt>
+                <dd className="font-extrabold text-emerald-600">{formatCash(amount || 0)}</dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-slate-500">부가세 (10%)</dt>
+                <dd className="font-semibold text-slate-600">{formatKrw(pay - (amount || 0))}</dd>
+              </div>
+              <div className="flex items-center justify-between border-t border-slate-200 pt-1.5">
+                <dt className="font-semibold text-slate-700">결제 금액</dt>
+                <dd className="text-base font-extrabold text-slate-900">{formatKrw(pay)}</dd>
+              </div>
+            </dl>
 
             {method === "bank" && pendingRequests.length > 0 && (
               <div role="status" className="mt-4 rounded-xl bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900 ring-1 ring-amber-100">
@@ -411,7 +424,7 @@ export function ChargeModal({
                   disabled={submitting || !valid}
                   className="w-full rounded-xl bg-emerald-600 py-3.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
                 >
-                  {submitting ? "신청 중…" : `${formatKrw(amount || 0)} 무통장입금 신청`}
+                  {submitting ? "신청 중…" : `${formatKrw(pay)} 무통장입금 신청`}
                 </button>
                 <p className="text-center text-[11px] text-slate-400">
                   입금 계좌: {acct.bank} {acct.number} ({acct.holder})
@@ -425,7 +438,7 @@ export function ChargeModal({
                   disabled={loading || !valid}
                   className="mt-5 w-full rounded-xl bg-emerald-600 py-3.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
                 >
-                  {loading ? "처리 중…" : `${formatKrw(amount || 0)} 충전하기`}
+                  {loading ? "처리 중…" : `${formatKrw(pay)} 결제하고 충전하기`}
                 </button>
                 {!isSupabaseConfigured && (
                   <p className="mt-3 text-center text-[11px] text-slate-400">

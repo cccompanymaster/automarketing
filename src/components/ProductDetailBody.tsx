@@ -15,9 +15,9 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 // group just open the full list.
 export const PRICING_ANCHOR: Partial<Record<ProductSlug, string>> = {
   place: "place",
+  shopping: "commerce",
   blog: "blog",
   "blog-neighbor": "blog",
-  "place-traffic": "reward",
   cafe: "cafe",
   "ai-influencer": "ai",
   press: "press",
@@ -134,6 +134,35 @@ export function ProductDetailBody({
                 ))}
               </div>
             </section>
+
+            {/* ④ 사장님께 드리는 글 (long-form notes) */}
+            {story.letters?.map((letter) => (
+              <section
+                key={letter.title}
+                className="mb-12 rounded-3xl border border-emerald-100 bg-emerald-50/40 p-6 sm:p-9"
+              >
+                <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">{letter.title}</h2>
+                <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-slate-700">
+                  {letter.body.map((para, i) =>
+                    Array.isArray(para) ? (
+                      <ul key={i} className="space-y-2.5 rounded-2xl bg-white p-5 ring-1 ring-emerald-100">
+                        {para.map((li) => (
+                          <li key={li} className="flex items-start gap-3">
+                            <span className="mt-0.5 shrink-0 font-bold text-emerald-600" aria-hidden="true">
+                              ✓
+                            </span>
+                            <span>{li}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p key={i}>{para}</p>
+                    ),
+                  )}
+                </div>
+                {letter.sign && <p className="mt-6 text-right text-sm font-bold text-emerald-800">{letter.sign}</p>}
+              </section>
+            ))}
           </>
         );
       })()}

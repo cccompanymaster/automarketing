@@ -32,7 +32,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 | `/` | 스토리텔링 랜딩 (히어로 → 공감 → 다크 브릿지 → 고객여정 챕터 3 → 수치 → 서비스 그리드(그룹 2+단독) → 후기 → 프로세스 → CTA) |
 | `/start` | 신규/기존 분기 → 4단계 스토리 온보딩 → 가입/로그인. `?service=<slug>`로 상품 컨텍스트 유지(가입/로그인 후 해당 단가 앵커로 이동) |
 | `/services/[slug]` | 상품 상세 (스토리: 불편→해결→이럴땐이렇게 + 절차·비용·조건·준비자료 + `QuickOrder` 바로 주문(해당 상품 단가 행 → 주문창·충전, 하단 고정 바). 게스트는 `/start?service=&buy=`로 온보딩 생략 가입 후 주문창 자동 오픈). 15개 상품 slug + 그룹 `place-map`, `blog-pack`(탭, URL 해시 딥링크) |
-| `/pricing` | 공개 단가표(그룹 앵커 `#blog #reward #place #cafe #ai #sns #kakaomap #press`). 주문·충전은 로그인 시, 게스트는 /start로 유도 |
+| `/pricing` | 공개 단가표(그룹 앵커 `#blog #place #commerce #cafe #ai #sns #kakaomap #daangn #press`). 주문·충전은 로그인 시, 게스트는 /start로 유도 |
 | `/mypage` | 지갑·주문·컨펌요청(산출물 승인/수정요청). 미인증 시 `/start` 리다이렉트 |
 | `/admin` | 관리자 대시보드(이메일 allowlist) — 주문/충전/회원 + 산출물 업로드·컨펌 현황 |
 | `/tools/blog-writer` | AI 원고 작성 도구 (1건 1,000캐시) |

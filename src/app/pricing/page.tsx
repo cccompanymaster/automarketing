@@ -334,7 +334,7 @@ export default function PricingPage() {
           <div className="mt-8 rounded-2xl bg-emerald-700 px-6 py-7 text-center">
             <h2 className="text-lg font-bold text-white">키워드 단가·견적이 궁금하신가요?</h2>
             <p className="mt-1.5 text-sm text-emerald-50">
-              상위노출 보장형·쿠팡 트래픽 등 견적형 상품은 키워드 문의 후 24시간 내 회신드립니다.
+              카페 공식 제휴·C사 트래픽 등 견적형 상품은 키워드 문의 후 24시간 내 회신드립니다.
             </p>
             <button
               type="button"

@@ -6,7 +6,7 @@
 //
 // Sheet columns (header row required, order-insensitive):
 //   group | name | price | unit | amountKrw | note | inquiry | hide
-// - group: PRICING group key (blog/reward/place/cafe/ai/sns/kakaomap/daangn/press)
+// - group: PRICING group key (blog/place/commerce/cafe/ai/sns/kakaomap/daangn/press)
 // - price: display string ("1,500원"); amountKrw: orderable KRW number (empty = not orderable)
 // - inquiry/hide: 1/true to flag
 // Setup guide: docs/SHEET_INTEGRATION.md

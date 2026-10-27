@@ -41,14 +41,18 @@ export function OrderModal({
   useEffect(() => {
     // Reset per-item state whenever a different item is opened.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setQty(draft?.qty ?? 1);
+    setQty(draft?.qty ?? item?.minQty ?? 1);
     setRequest(draft?.request ?? "");
   }, [item, draft]);
 
   if (!item || item.amountKrw == null) return null;
 
   const hasUnit = Boolean(item.unit);
-  const quantity = hasUnit ? Math.max(1, qty) : 1;
+  const minQty = item.minQty ?? 1;
+  const step = item.step ?? 1;
+  // Clamp to the minimum and round up to the item's ordering step.
+  const fitQty = (n: number) => Math.max(minQty, Math.ceil(n / step) * step);
+  const quantity = hasUnit ? fitQty(qty) : 1;
   const totalCash = krwToCash(item.amountKrw * quantity);
   const enough = balance >= totalCash;
 
@@ -111,11 +115,17 @@ export function OrderModal({
           <div className="mt-5">
             <label htmlFor="order-qty" className="block text-xs font-medium text-slate-500">
               수량 ({item.unit})
+              {(minQty > 1 || step > 1) && (
+                <span className="ml-1 text-slate-400">
+                  · 최소 {minQty.toLocaleString("ko-KR")}
+                  {step > 1 && `, ${step.toLocaleString("ko-KR")} 단위`}
+                </span>
+              )}
             </label>
             <div className="mt-1.5 flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setQty((q) => Math.max(1, q - 1))}
+                onClick={() => setQty((q) => fitQty(fitQty(q) - step))}
                 className="h-10 w-10 rounded-xl border border-slate-200 text-lg font-bold text-slate-500 hover:bg-slate-50"
                 aria-label="수량 감소"
               >
@@ -124,14 +134,16 @@ export function OrderModal({
               <input
                 id="order-qty"
                 type="number"
-                min={1}
+                min={minQty}
+                step={step}
                 value={qty}
-                onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))}
+                onChange={(e) => setQty(Number(e.target.value) || minQty)}
+                onBlur={() => setQty(quantity)}
                 className="h-10 flex-1 rounded-xl border border-slate-200 px-3 text-center text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
               />
               <button
                 type="button"
-                onClick={() => setQty((q) => q + 1)}
+                onClick={() => setQty((q) => fitQty(q) + step)}
                 className="h-10 w-10 rounded-xl border border-slate-200 text-lg font-bold text-slate-500 hover:bg-slate-50"
                 aria-label="수량 증가"
               >

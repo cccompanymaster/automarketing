@@ -20,6 +20,10 @@ export interface PricingItem {
    * price (quantity chosen at order time). Absent => quote/inquiry only.
    */
   amountKrw?: number;
+  /** Smallest orderable quantity in `unit`s (default 1). */
+  minQty?: number;
+  /** Quantity step in `unit`s, e.g. 100 for "일 100타 단위" (default 1). */
+  step?: number;
 }
 
 export interface PricingGroup {
@@ -78,34 +82,83 @@ export const PRICING: PricingGroup[] = [
     key: "blog",
     icon: "✍️",
     title: "블로그",
-    description: "상위노출 보장형부터 실명 배포·원고 작성까지.",
+    description: "상위노출 보장형부터 최적·준최적 배포, 원고 작성, 이웃 늘리기까지.",
     items: [
       {
-        name: "블로그 상위노출 보장형",
-        price: "키워드별 견적",
-        inquiry: true,
-        note: "키워드 문의 필수 · 키워드별 단가 상이 · 24시간 내 견적 회신",
+        name: "블로그 상위노출 24시간 보장",
+        price: "60,000원 ~",
+        amountKrw: 60_000,
+        note: "통합검색 1페이지 노출 보장형 · 키워드 난이도에 따라 추가 금액 안내 · 진행 불가 키워드는 전액 환불",
+      },
+      {
+        name: "블로그 상위노출 25일 보장",
+        price: "150,000원 ~",
+        amountKrw: 150_000,
+        note: "통합검색 1페이지 노출 보장형 · 키워드 난이도에 따라 추가 금액 안내 · 진행 불가 키워드는 전액 환불",
       },
       {
         name: "블로그 최적 배포",
-        price: "30,000원 ~",
-        note: "키워드에 따라 단가 상이",
+        price: "19,900원",
+        unit: "1건",
+        amountKrw: 19_900,
+        note: "병원·법률·금융 카테고리는 아래 전용 상품으로 주문해 주세요",
       },
-      { name: "블로그 준최적 배포", price: "20,000원", amountKrw: 20_000 },
-      { name: "블로그 실명 배포", price: "1,000원", amountKrw: 1_000 },
+      {
+        name: "블로그 최적 배포 (병원·법률·금융)",
+        price: "39,900원",
+        unit: "1건",
+        amountKrw: 39_900,
+      },
+      {
+        name: "공식 인플루언서 블로그 배포 (준최적)",
+        price: "49,900원",
+        unit: "1건",
+        amountKrw: 49_900,
+        note: "네이버 공식 인플루언서 블로그 · 일부 카테고리는 단가가 다를 수 있어요 (주문 후 안내)",
+      },
+      {
+        name: "공식 인플루언서 블로그 배포 (최적)",
+        price: "99,900원",
+        unit: "1건",
+        amountKrw: 99_900,
+        note: "네이버 공식 인플루언서 블로그 · 일부 카테고리는 단가가 다를 수 있어요 (주문 후 안내)",
+      },
+      {
+        name: "플레이스용 준최적 블로그 배포",
+        price: "3,000원 ~",
+        unit: "1건",
+        amountKrw: 3_000,
+        note: "플레이스 상위노출과 함께 쓰는 배포용",
+      },
+      {
+        name: "고품질 준최적 블로그 배포",
+        price: "10,000원",
+        unit: "1건",
+        amountKrw: 10_000,
+        note: "준최적 4단계 이상 블로그",
+      },
+      {
+        name: "신로직 준최적 블로그 배포",
+        price: "25,000원",
+        unit: "1건",
+        amountKrw: 25_000,
+        note: "이웃 1,000명 이상 · 일 방문자 1,000명 이상 블로그",
+      },
+      { name: "블로그 실명 배포", price: "1,200원", unit: "1건", amountKrw: 1_200 },
       {
         name: "블로그용 원고 작성",
-        price: "1,000원",
+        price: "500원",
         unit: "1건",
-        amountKrw: 1_000,
-        note: "발행용 원고 제작",
+        amountKrw: 500,
+        note: "업종별 맞춤 발행용 원고",
       },
       {
         name: "블로그 서로이웃 추가",
-        price: "20,000원",
-        unit: "100명",
-        amountKrw: 20_000,
-        note: "국내 실사용자 기반 · 블로그 주소만으로 진행 (비밀번호 불필요)",
+        price: "100원",
+        unit: "1명",
+        amountKrw: 100,
+        minQty: 50,
+        note: "최소 50명부터 · 계정 정보 공유 필수 · 클린 IP로 진행, 어뷰징 없음",
       },
       {
         name: "블로그 이웃 추가",
@@ -117,52 +170,39 @@ export const PRICING: PricingGroup[] = [
     ],
   },
   {
-    key: "reward",
-    icon: "📈",
-    title: "리워드 트래픽",
-    description: "플레이스·검색 노출을 끌어올리는 트래픽 상품.",
-    items: [
-      {
-        name: "플레이스 일반 키워드 고품질 트래픽",
-        price: "50원",
-        unit: "1타당",
-        amountKrw: 50,
-      },
-      { name: "일반 리워드 트래픽", price: "30원", unit: "1타당", amountKrw: 30 },
-      { name: "체류형 트래픽", price: "100원", unit: "1타당", amountKrw: 100 },
-      {
-        name: "쇼핑 리워드",
-        price: "준비 중",
-        note: "단가 협의 예정",
-      },
-      {
-        name: "쿠팡 가구매",
-        price: "1,500원",
-        unit: "1건",
-        amountKrw: 1_500,
-        note: "실구매 리워드 진행 · 증빙처리 가능!",
-      },
-      {
-        name: "쿠팡 가구매 (택배대행 포함)",
-        price: "2,000원",
-        unit: "1건",
-        amountKrw: 2_000,
-        note: "실제 택배 발송 대행까지 포함 · 증빙처리 가능!",
-      },
-      {
-        name: "쿠팡 트래픽",
-        price: "별도 문의",
-        inquiry: true,
-      },
-    ],
-  },
-  {
     key: "place",
     icon: "📍",
-    title: "플레이스",
-    description: "리뷰·메타데이터 세팅으로 지역 노출을 강화합니다.",
+    title: "플레이스 상위노출",
+    description: "리워드 3종을 상황에 맞게 섞고, 리뷰·SEO 세팅으로 기본기를 채웁니다.",
     items: [
-      { name: "플레이스 영수증 리뷰", price: "1,000원", amountKrw: 1_000 },
+      {
+        name: "일반형 리워드",
+        price: "25원",
+        unit: "1타",
+        amountKrw: 25,
+        minQty: 100,
+        step: 100,
+        note: "일 100타 단위 · 1페이지 목표 시 키워드 검색량의 3배 수량 권장",
+      },
+      {
+        name: "압축형 미션 리워드",
+        price: "55원",
+        unit: "1타",
+        amountKrw: 55,
+        minQty: 100,
+        step: 100,
+        note: "길찾기 등 실제 방문 의도 미션 수행 · 마케팅방주 자체 개발 · 일 100타 단위",
+      },
+      {
+        name: "고순도 체류형 트래픽",
+        price: "99원",
+        unit: "1타",
+        amountKrw: 99,
+        minQty: 100,
+        step: 100,
+        note: "인원별 참여 제한으로 순도를 높인 트래픽 · 일 100타 단위",
+      },
+      { name: "플레이스 영수증 리뷰", price: "1,000원", unit: "1건", amountKrw: 1_000 },
       {
         name: "플레이스 메타데이터 기반 SEO 전문 세팅",
         price: "50,000원",
@@ -172,24 +212,69 @@ export const PRICING: PricingGroup[] = [
     ],
   },
   {
+    key: "commerce",
+    icon: "🛒",
+    title: "커머스 상위노출",
+    description: "네이버 쇼핑·C사 상품 순위를 끌어올리는 리워드·트래픽 상품.",
+    items: [
+      {
+        name: "쇼핑 리워드",
+        price: "준비 중",
+        note: "단가 협의 예정",
+      },
+      {
+        name: "C사 가구매",
+        price: "1,500원",
+        unit: "1건",
+        amountKrw: 1_500,
+        note: "실구매 리워드 진행 · 증빙처리 가능!",
+      },
+      {
+        name: "C사 가구매 (택배대행 포함)",
+        price: "2,000원",
+        unit: "1건",
+        amountKrw: 2_000,
+        note: "실제 택배 발송 대행까지 포함 · 증빙처리 가능!",
+      },
+      {
+        name: "C사 상위노출 트래픽",
+        price: "별도 문의",
+        inquiry: true,
+      },
+    ],
+  },
+  {
     key: "cafe",
     icon: "💬",
     title: "카페 홍보",
-    description: "지역 맘카페·커뮤니티 카페 침투 홍보. 실사용 계정으로 자연스럽게 게시합니다.",
+    description: "지역 맘카페·커뮤니티 카페에 배포형·노출용 게시글을 발행합니다.",
     items: [
       {
-        name: "카페 침투 게시글 (후기형)",
-        price: "30,000원 ~",
+        name: "카페 배포형 게시글 발행",
+        price: "10,000원",
         unit: "1건",
-        amountKrw: 30_000,
-        note: "기본 등급 카페 기준 · 대형·상위 등급 카페는 견적 후 차액 안내",
+        amountKrw: 10_000,
+        note: "여러 카페에 널리 배포하는 기본 상품 · 원고가 없으면 원고 작성 대행을 함께 주문해 주세요",
       },
-      { name: "카페 댓글 작성", price: "2,000원", unit: "1건", amountKrw: 2_000 },
       {
-        name: "지역 맘카페 집중 홍보 패키지",
+        name: "카페 노출용 게시글 발행",
+        price: "20,000원",
+        unit: "1건",
+        amountKrw: 20_000,
+        note: "검색 노출을 노리는 게시글 · 원고가 없으면 원고 작성 대행을 함께 주문해 주세요",
+      },
+      {
+        name: "카페 원고 작성 대행",
+        price: "5,000원",
+        unit: "1건",
+        amountKrw: 5_000,
+        note: "게시글 발행용 원고를 대신 써 드려요",
+      },
+      {
+        name: "카페 공식 제휴 마케팅",
         price: "카페별 견적",
         inquiry: true,
-        note: "지역·카페 회원수·게시 난이도에 따라 산정",
+        note: "카페 배너 · 브랜드명 계정 활용 등",
       },
     ],
   },
@@ -408,25 +493,29 @@ export const PRICING: PricingGroup[] = [
  * listed here (e.g. experience, consulting) are quote-only.
  */
 const PRODUCT_ROWS: Partial<Record<ProductSlug, { group: string; names?: string[] }[]>> = {
-  place: [
-    { group: "place" },
-    { group: "reward", names: ["일반 리워드 트래픽", "플레이스 일반 키워드 고품질 트래픽", "체류형 트래픽"] },
-  ],
-  "place-traffic": [
-    { group: "reward", names: ["일반 리워드 트래픽", "플레이스 일반 키워드 고품질 트래픽", "체류형 트래픽"] },
-  ],
+  place: [{ group: "place" }],
   kakaomap: [{ group: "kakaomap" }],
   blog: [
     {
       group: "blog",
-      names: ["블로그 상위노출 보장형", "블로그 최적 배포", "블로그 준최적 배포", "블로그 실명 배포"],
+      names: [
+        "블로그 상위노출 24시간 보장",
+        "블로그 상위노출 25일 보장",
+        "블로그 최적 배포",
+        "블로그 최적 배포 (병원·법률·금융)",
+        "공식 인플루언서 블로그 배포 (준최적)",
+        "공식 인플루언서 블로그 배포 (최적)",
+        "플레이스용 준최적 블로그 배포",
+        "고품질 준최적 블로그 배포",
+        "신로직 준최적 블로그 배포",
+        "블로그 실명 배포",
+        "블로그용 원고 작성",
+      ],
     },
   ],
   "blog-neighbor": [{ group: "blog", names: ["블로그 서로이웃 추가", "블로그 이웃 추가"] }],
   "ai-influencer": [{ group: "ai" }],
-  shopping: [
-    { group: "reward", names: ["쇼핑 리워드", "쿠팡 가구매", "쿠팡 가구매 (택배대행 포함)", "쿠팡 트래픽"] },
-  ],
+  shopping: [{ group: "commerce" }],
   cafe: [{ group: "cafe" }],
   instagram: [{ group: "sns", names: ["인스타 게시물 좋아요", "인스타 팔로워", "인스타 댓글·저장 등"] }],
   youtube: [{ group: "sns", names: ["유튜브 조회수", "유튜브 구독자", "유튜브 좋아요·재생시간 등"] }],

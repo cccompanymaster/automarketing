@@ -131,7 +131,7 @@ const CHAPTERS: Chapter[] = [
     desc: "요즘 손님들, 열에 아홉은 지도부터 켜요. 네이버 플레이스랑 카카오맵에서 우리 매장이 위쪽에 보이게 — 무료 진단부터 트래픽까지 한 번에 챙겨드릴게요.",
     links: [
       { label: "플레이스·지도 상위노출", href: "/services/place-map" },
-      { label: "리워드 트래픽", href: "/services/place-map#place-traffic" },
+      { label: "카카오맵 평판 굳히기", href: "/services/place-map#kakaomap" },
       { label: "당근 단골 만들기", href: "/services/daangn" },
     ],
     emoji: "📍",

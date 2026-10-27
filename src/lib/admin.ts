@@ -175,7 +175,7 @@ const DEMO_OVERVIEW: AdminOverview = {
     {
       id: "ord_demo_03",
       userEmail: "cafe3@example.com",
-      productName: "일반 리워드 트래픽 ×1,000",
+      productName: "일반형 리워드 ×1,000",
       amountCash: 30_000,
       qty: 1,
       request: null,

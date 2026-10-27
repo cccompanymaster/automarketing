@@ -17,7 +17,6 @@ export type ProductSlug =
   | "cafe"
   | "daangn"
   | "ai-influencer"
-  | "place-traffic"
   | "refund"
   | "consulting";
 
@@ -74,9 +73,9 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     slug: "place",
     icon: "📍",
     brand: "naver",
-    name: "플레이스 1등 먹기",
-    summary: ["지역 검색에서 우리 매장을 상위에 노출하고", "매장을 방문하는 고객 수를 늘립니다."],
-    cta: "플레이스 진단 받기",
+    name: "플레이스 상위노출",
+    summary: ["리워드 3종을 상황에 맞게 섞어", "대행사 견적의 3분의 1 수준으로 1페이지에 올립니다."],
+    cta: "플레이스 상위노출 시작하기",
     accent: {
       chip: "bg-emerald-50 text-emerald-700",
       iconBg: "bg-emerald-100",
@@ -85,24 +84,30 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       gradient: "from-emerald-50 to-white",
     },
     detail: {
-      headline: "지역 검색 상위 노출로 매장 방문 고객을 늘리세요",
-      subhead: "내 업종·지역에서 어떤 키워드로 노출되는지 진단하고, 상위 노출 전략을 제안해 드립니다.",
-      fromPrice: "30원",
+      headline: "플레이스 상위노출, 이제 대행사 견적의 3분의 1로",
+      subhead: "일반형·압축형 미션·고순도 리워드를 키워드 경쟁도에 맞게 섞고, 필요할 때만 블로그 배포를 더합니다. 단가는 전부 공개돼 있어요.",
+      fromPrice: "25원",
       benefits: [
-        "지역 키워드 상위 노출로 신규 방문 고객 증가",
-        "리뷰·예약·문의 전환까지 이어지는 동선 설계",
-        "경쟁 매장 대비 노출 위치 비교 진단 제공",
+        "실제 유저 기반 리워드라 순위 하락·저품질 걱정 없이 진행",
+        "일반형 25원 · 압축형 미션 55원 · 고순도 99원 — 키워드 상황에 맞게 선택",
+        "영수증 리뷰·메타데이터 SEO 세팅으로 노출의 기본기까지",
       ],
       steps: [
-        { title: "1. 무료 진단 신청", desc: "매장 정보와 주요 지역 키워드를 입력하면 현재 노출 상태를 분석합니다." },
-        { title: "2. 전략 리포트 수령", desc: "상위 노출을 위한 키워드·콘텐츠·운영 가이드를 받습니다." },
-        { title: "3. 캠페인 진행", desc: "제안에 동의하면 광고를 집행하고 노출 변화를 추적합니다." },
+        { title: "1. 키워드·검색량 확인", desc: "노출할 키워드와 월 검색량을 확인해 리워드 수량(검색량의 2~3배)을 정합니다." },
+        { title: "2. 리워드 조합 선택", desc: "경쟁도에 따라 일반형·압축형 미션·고순도를 골라 일 100타 단위로 주문합니다." },
+        { title: "3. 진행·순위 확인", desc: "일별로 진행하며 순위 변화를 확인하고, 필요하면 블로그 배포를 더합니다." },
       ],
-      costRange: "월 15만 원 ~ 50만 원",
-      costNote: "지역·업종·경쟁 강도에 따라 달라지며, 진단 후 정확한 범위를 안내합니다.",
+      costRange: "일반형 1타 25원 / 압축형 미션 1타 55원 / 고순도 1타 99원 (일 100타 단위)",
+      costNote: "1페이지 목표라면 키워드 월 검색량의 3배 수량을 권장해요. 영수증 리뷰 1,000원, SEO 세팅 50,000원은 별도입니다.",
       conditions: [
-        "진단은 무료이며, 캠페인 집행 전 비용에 동의한 경우에만 과금됩니다.",
-        "최소 운영 기간 및 해지 조건은 계약 시 명시됩니다.",
+        "작업은 일 100타 단위로 분산해 자연스럽게 진행됩니다.",
+        "작업 시작 전에는 전액 환불이 가능합니다.",
+        "순위는 키워드 경쟁도와 네이버 정책에 따라 달라질 수 있습니다.",
+      ],
+      materials: [
+        "네이버 플레이스 주소",
+        "노출할 키워드 (예: ○○동 맛집)",
+        "알고 있다면 키워드 월 검색량",
       ],
     },
   },
@@ -110,10 +115,9 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     slug: "shopping",
     icon: "🛍️",
     brand: "naver",
-    name: "쇼핑 1등 먹기",
-    summary: ["쇼핑 검색 상위에 상품을 노출해", "판매량을 빠르게 끌어올립니다."],
-    cta: "쇼핑 광고 신청하기",
-    priceTag: { amount: "월 30만 원", from: true },
+    name: "커머스 상위노출",
+    summary: ["네이버 쇼핑·C사 상품 순위를", "실구매 리워드로 끌어올립니다."],
+    cta: "커머스 상위노출 신청하기",
     accent: {
       chip: "bg-orange-50 text-orange-700",
       iconBg: "bg-orange-100",
@@ -122,23 +126,24 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       gradient: "from-orange-50 to-white",
     },
     detail: {
-      headline: "쇼핑 검색 상위 노출로 판매량을 극대화하세요",
-      subhead: "전환이 잘 되는 키워드를 찾아 광고비 대비 매출(ROAS)을 끌어올립니다.",
+      headline: "커머스 상위노출로 상품 순위를 끌어올리세요",
+      subhead: "실구매 리워드와 트래픽으로 네이버 쇼핑·C사 상품 순위를 올립니다. 건당 단가로 필요한 만큼만 진행해요.",
+      fromPrice: "1,500원",
       benefits: [
-        "구매 의도가 높은 쇼핑 키워드 집중 공략",
-        "광고비 대비 매출(ROAS) 기준의 운영 최적화",
-        "상품별 노출·클릭·전환 리포트 제공",
+        "실구매 리워드로 구매 지표를 쌓아 상품 순위 상승",
+        "택배 발송 대행 옵션으로 증빙까지 처리",
+        "상품·키워드별 맞춤 트래픽은 별도 견적",
       ],
       steps: [
-        { title: "1. 상품·목표 입력", desc: "판매 상품과 목표 매출을 입력하면 적합한 키워드를 제안합니다." },
-        { title: "2. 광고 세팅", desc: "키워드·입찰가·예산을 설정하고 캠페인을 준비합니다." },
-        { title: "3. 운영·최적화", desc: "성과 데이터를 기반으로 입찰가와 키워드를 지속 조정합니다." },
+        { title: "1. 상품·키워드 전달", desc: "순위를 올릴 상품 링크와 목표 키워드를 알려 주세요." },
+        { title: "2. 수량 설계", desc: "경쟁 상품과 목표 순위에 맞춰 일별 진행 수량을 정합니다." },
+        { title: "3. 진행·순위 확인", desc: "일별로 분산 진행하고 순위 변화를 확인합니다." },
       ],
-      costRange: "월 30만 원 ~ 100만 원",
-      costNote: "상품 수와 목표 매출에 따라 달라지며, 신청 후 맞춤 견적을 제공합니다.",
+      costRange: "C사 가구매 1건 1,500원 / 택배대행 포함 1건 2,000원 / 트래픽 별도 견적",
+      costNote: "상품·키워드 경쟁도에 따라 권장 수량이 달라지며, 신청 후 함께 설계해 드려요.",
       conditions: [
-        "광고비는 사용한 만큼 과금되며, 예산 상한을 직접 설정할 수 있습니다.",
-        "운영 수수료 및 정산 주기는 신청 단계에서 안내됩니다.",
+        "작업 시작 전에는 전액 환불이 가능합니다.",
+        "순위는 플랫폼 정책과 경쟁 상황에 따라 달라질 수 있습니다.",
       ],
     },
   },
@@ -158,8 +163,8 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     },
     detail: {
       headline: "블로그 상위 노출로 브랜드 신뢰도를 키우세요",
-      subhead: "검색 사용자가 가장 먼저 보는 자리에 신뢰감 있는 콘텐츠를 노출합니다.",
-      fromPrice: "1,000원",
+      subhead: "실명 배포부터 준최적·최적·공식 인플루언서 배포, 통합검색 1페이지 노출 보장형까지 목적에 맞게 고르세요.",
+      fromPrice: "500원",
       benefits: [
         "정보성 콘텐츠로 검색 신뢰도와 브랜드 인지도 강화",
         "리뷰·후기 자동화로 꾸준한 콘텐츠 발행",
@@ -170,8 +175,8 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
         { title: "2. 콘텐츠 발행", desc: "기획·작성·발행을 진행하고 검색 노출을 준비합니다." },
         { title: "3. 순위 관리", desc: "노출 순위를 모니터링하며 콘텐츠를 보완합니다." },
       ],
-      costRange: "건당 10만 원 ~ / 월 패키지 40만 원 ~",
-      costNote: "콘텐츠 수량과 키워드 난이도에 따라 달라집니다.",
+      costRange: "원고 500원 / 실명 배포 1,200원 / 준최적 3,000원~ / 최적 19,900원 / 상위노출 보장 60,000원~",
+      costNote: "병원·법률·금융 카테고리 최적 배포는 39,900원, 공식 인플루언서 배포는 49,900원(준최적)·99,900원(최적)입니다.",
       conditions: [
         "콘텐츠 소유권과 발행 채널은 사전에 협의합니다.",
         "상위 노출은 검색 환경에 따라 변동될 수 있어 보장 조건을 별도 안내합니다.",
@@ -194,7 +199,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     detail: {
       headline: "주제만 입력하면, AI가 블로그 원고를 완성해요",
       subhead: "제목·목차·본문까지 3단계로 자동 생성. 말투와 키워드만 정하면 발행용 원고가 뚝딱 나옵니다.",
-      fromPrice: "1,000원",
+      fromPrice: "500원",
       benefits: [
         "주제·키워드만 입력하면 제목·목차·본문 자동 생성",
         "말투(해요/합니다 등) 선택으로 톤 맞춤",
@@ -205,8 +210,8 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
         { title: "2. 아웃라인 구성", desc: "AI가 만든 목차를 확인하고 자유롭게 수정합니다." },
         { title: "3. 글쓰기 완료", desc: "완성된 원고를 복사하거나 다운로드합니다." },
       ],
-      costRange: "1건 1,000원 (캐시 차감)",
-      costNote: "원고 1건당 1,000캐시가 차감됩니다. 제목·목차 생성은 무료입니다.",
+      costRange: "1건 500원 (캐시 차감)",
+      costNote: "원고 1건당 500캐시가 차감됩니다. 제목·목차 생성은 무료입니다.",
       conditions: [
         "생성 결과는 발행 전 검수·수정을 권장합니다.",
         "현재는 데모 모드이며, 실제 AI 연결 시 더 풍부한 원고가 생성됩니다.",
@@ -229,22 +234,22 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     },
     detail: {
       headline: "서로이웃·이웃을 늘려 블로그 방문자를 키우세요",
-      subhead: "국내 실사용자 기반으로 서로이웃 신청·이웃 추가를 진행해 블로그 노출과 방문자 수를 끌어올립니다. 계정 비밀번호 없이 블로그 주소만으로 시작합니다.",
-      fromPrice: "20,000원",
+      subhead: "서로이웃은 1명 100원, 최소 50명부터. 클린 IP 환경에서 어뷰징 없이 진행해 블로그 노출과 방문자 수를 끌어올립니다.",
+      fromPrice: "100원",
       benefits: [
         "국내 실사용자 기반 서로이웃·이웃으로 자연스러운 방문자 유입",
-        "계정 로그인 정보 없이 블로그 주소만으로 진행",
-        "서로이웃 신청·이웃 추가 등 항목별 수량 선택",
+        "클린 IP 환경에서 진행 — 어뷰징 작업 없음",
+        "서로이웃 1명 단위로 필요한 만큼만 주문 (최소 50명)",
       ],
       steps: [
-        { title: "1. 항목·수량 선택", desc: "서로이웃 신청·이웃 추가 등 필요한 항목과 수량을 고릅니다." },
-        { title: "2. 블로그 주소 전달", desc: "비밀번호 없이 블로그 주소와 주제·키워드 가이드를 전달합니다." },
+        { title: "1. 항목·수량 선택", desc: "서로이웃 추가(1명 단위)·이웃 추가 등 필요한 항목과 수량을 고릅니다." },
+        { title: "2. 계정 정보 전달", desc: "서로이웃 추가는 계정 정보 공유가 필요해요. 주문 후 안내에 따라 안전하게 전달해 주세요." },
         { title: "3. 분산 진행·확인", desc: "일별로 자연스럽게 분산 진행하고 이웃·방문자 변화를 확인합니다." },
       ],
-      costRange: "서로이웃 추가 100명 2만 원~ / 이웃 추가 200명 3만 원~ (항목·수량별 책정)",
+      costRange: "서로이웃 추가 1명 100원 (최소 50명) / 이웃 추가 200명 3만 원~",
       costNote: "항목·수량·진행 속도에 따라 달라지며, 신청 후 정확한 견적을 안내합니다.",
       conditions: [
-        "계정 비밀번호 등 로그인 정보는 요구하지 않습니다.",
+        "서로이웃 추가는 계정 정보 공유가 필수이며, 작업 후 비밀번호 변경을 권장합니다.",
         "작업 시작 전에는 전액 환불이 가능합니다.",
         "이웃 수락·방문 성과는 콘텐츠와 네이버 블로그 정책에 따라 달라질 수 있습니다.",
       ],
@@ -436,7 +441,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   cafe: {
     slug: "cafe",
     icon: "💬",
-    brand: "naver",
+    brand: "naver-cafe",
     name: "카페 입소문 내기",
     summary: ["지역 맘카페·커뮤니티 카페에", "자연스러운 후기 글로 입소문을 만듭니다."],
     cta: "카페 홍보 신청하기",
@@ -449,20 +454,20 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     },
     detail: {
       headline: "지역 카페·맘카페에서 입소문을 만들어 드려요",
-      subhead: "실제 활동 중인 계정으로 지역 맘카페·커뮤니티 카페에 후기·질문형 게시글을 자연스럽게 올려 우리 매장을 알립니다. 계정 정보 없이 매장 정보만으로 시작해요.",
-      fromPrice: "2,000원",
+      subhead: "여러 카페에 널리 퍼뜨리는 배포형 게시글(1만 원)과 검색 노출을 노리는 노출용 게시글(2만 원) 중에 고르세요. 원고가 없으면 작성 대행(5천 원)을 더하면 돼요.",
+      fromPrice: "5,000원",
       benefits: [
-        "지역 맘카페·대형 커뮤니티 카페 침투 홍보로 동네 입소문 형성",
-        "실사용 계정 기반 후기·질문형 게시글이라 광고 티가 나지 않음",
-        "게시글·댓글·조회수 등 항목별 수량 선택, 게시 URL 보고",
+        "배포형 게시글로 지역 맘카페·커뮤니티 카페에 동네 입소문 형성",
+        "노출용 게시글로 카페 검색 결과에 우리 매장 노출",
+        "원고 작성 대행·카페 공식 제휴(배너·브랜드 계정)까지 선택 가능",
       ],
       steps: [
         { title: "1. 카페·항목 선택", desc: "홍보할 지역·카페 성격과 게시글·댓글 수량을 고릅니다." },
         { title: "2. 매장 정보 전달", desc: "매장 소개와 강조 포인트, 금지 표현 가이드를 전달합니다." },
         { title: "3. 게시·보고 확인", desc: "자연스러운 말투로 게시하고 게시글 URL로 결과를 보고합니다." },
       ],
-      costRange: "게시글 1건 3만 원~ / 댓글 1건 2천 원 (카페 등급·항목별 책정)",
-      costNote: "카페 회원수·등급 조건과 게시 난이도에 따라 달라지며, 신청 후 정확한 견적을 안내합니다.",
+      costRange: "배포형 게시글 1건 1만 원 / 노출용 게시글 1건 2만 원 / 원고 작성 대행 5천 원",
+      costNote: "카페 공식 제휴 마케팅(카페 배너·브랜드명 계정 활용 등)은 카페별 견적으로 안내합니다.",
       conditions: [
         "계정 로그인 정보는 요구하지 않으며, 매장 정보만으로 진행합니다.",
         "카페 운영 규정에 따라 게시글이 이동·삭제될 수 있으며, 조기 삭제 시 재게시 또는 환불 처리합니다.",
@@ -555,42 +560,6 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       ],
     },
   },
-  "place-traffic": {
-    slug: "place-traffic",
-    icon: "🚦",
-    name: "플레이스 리워드 트래픽",
-    summary: ["리워드 기반 저장·트래픽으로", "플레이스·지도 상위 노출을 최적화합니다."],
-    cta: "리워드 트래픽 신청하기",
-    accent: {
-      chip: "bg-lime-50 text-lime-700",
-      iconBg: "bg-lime-100",
-      cardRing: "hover:ring-lime-200",
-      button: "bg-lime-700 hover:bg-lime-800 text-white",
-      gradient: "from-lime-50 to-white",
-    },
-    detail: {
-      headline: "리워드 트래픽으로 플레이스 상위 노출을 최적화하세요",
-      subhead: "실사용자에게 리워드를 제공해 저장하기·플레이스 트래픽을 자연스럽게 발생시킵니다. 네이버·카카오맵·구글맵까지 채널을 골라 진행합니다.",
-      fromPrice: "30원",
-      benefits: [
-        "리워드 기반 실사용자 저장하기·트래픽으로 노출 신호 강화",
-        "네이버 플레이스·카카오맵·구글맵 채널별 선택 진행",
-        "저장하기+트래픽 묶음 또는 단일 트래픽으로 수량 설계",
-      ],
-      steps: [
-        { title: "1. 채널·수량 선택", desc: "노출할 지도 채널과 저장하기·트래픽 수량을 고릅니다." },
-        { title: "2. 매장·키워드 전달", desc: "매장 정보와 검색 키워드를 전달해 작업 대상을 설정합니다." },
-        { title: "3. 분산 진행·확인", desc: "일별로 자연스럽게 분산 진행하고 노출 변화를 확인합니다." },
-      ],
-      costRange: "일반 30원 / 고품질 50원 / 체류형 100원 (1타당, 수량 자유)",
-      costNote: "채널(네이버·카카오맵·구글맵)과 수량, 분산 기간에 따라 달라집니다. 신청 후 정확한 견적을 안내합니다.",
-      conditions: [
-        "작업은 일별 수량으로 분산해 자연스럽게 진행됩니다.",
-        "작업 시작 전에는 전액 환불이 가능합니다.",
-        "노출·순위 성과는 각 지도 플랫폼 정책과 검색 환경에 따라 달라질 수 있습니다.",
-      ],
-    },
-  },
   refund: {
     slug: "refund",
     icon: "💸",
@@ -679,7 +648,6 @@ export const PRODUCT_LIST: Product[] = [
   PRODUCTS.cafe,
   PRODUCTS.daangn,
   PRODUCTS["ai-influencer"],
-  PRODUCTS["place-traffic"],
   PRODUCTS.refund,
   PRODUCTS.consulting,
 ];
@@ -698,13 +666,20 @@ export const PRODUCT_SLUGS: ProductSlug[] = [
   "cafe",
   "daangn",
   "ai-influencer",
-  "place-traffic",
   "refund",
   "consulting",
 ];
 
+/**
+ * Retired slugs that still get a page (old links, search results) and render
+ * the product they were merged into, with that product's canonical URL.
+ */
+export const PRODUCT_ALIASES: Record<string, ProductSlug> = {
+  "place-traffic": "place",
+};
+
 export function getProduct(slug: string): Product | undefined {
-  return PRODUCTS[slug as ProductSlug];
+  return PRODUCTS[(PRODUCT_ALIASES[slug] ?? slug) as ProductSlug];
 }
 
 // --- Product groups (category cards) ---------------------------------------
@@ -729,9 +704,9 @@ const GROUP_PLACE: ProductGroup = {
   icon: "📍",
   name: "플레이스·지도 상위노출",
   summary: ["네이버 플레이스·카카오맵에서 우리 매장을", "상위에 노출하고 방문 고객을 늘립니다."],
-  cta: "플레이스 진단 받기",
+  cta: "플레이스 상위노출 보기",
   accent: PRODUCTS.place.accent,
-  memberSlugs: ["place", "place-traffic", "kakaomap"],
+  memberSlugs: ["place", "kakaomap"],
 };
 
 const GROUP_BLOG: ProductGroup = {

@@ -13,7 +13,7 @@ export type BlogTone = "~해요" | "~습니다" | "~한다" | "~과거형";
 export const BLOG_TONES: BlogTone[] = ["~해요", "~습니다", "~한다", "~과거형"];
 
 /** Cost (cash, 1원=1캐시) to generate one article — matches the 원고 작성 단가. */
-export const BLOG_WRITE_COST = 1_000;
+export const BLOG_WRITE_COST = 500;
 
 /** Max core keywords. */
 export const MAX_KEYWORDS = 10;

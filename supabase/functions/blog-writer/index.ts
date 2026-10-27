@@ -18,7 +18,7 @@ import { createClient } from "npm:@supabase/supabase-js@^2.108.2";
 const MODEL = Deno.env.get("BLOG_MODEL") ?? "claude-opus-4-8";
 
 // Cost (cash) to generate one article — must match BLOG_WRITE_COST on the client.
-const ARTICLE_COST = 1000;
+const ARTICLE_COST = 500;
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",

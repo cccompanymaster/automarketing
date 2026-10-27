@@ -16,6 +16,7 @@ import {
   getGroup,
   groupMembers,
   PRODUCT_SLUGS,
+  PRODUCT_ALIASES,
   GROUP_KEYS,
   isPriceAmount,
 } from "@/lib/products";
@@ -38,17 +39,19 @@ export async function generateMetadata({
   }
   const product = getProduct(slug);
   if (!product) return {};
+  // Aliases (retired slugs) point search engines at the merged product.
+  const url = `/services/${product.slug}/`;
   return {
     title: product.name,
     description: product.detail.subhead,
-    alternates: { canonical: `/services/${slug}/` },
-    openGraph: { ...OG_BASE, title: product.name, description: product.detail.subhead, url: `/services/${slug}/` },
+    alternates: { canonical: url },
+    openGraph: { ...OG_BASE, title: product.name, description: product.detail.subhead, url },
   };
 }
 
 // Pre-render every product detail page and every group category page.
 export function generateStaticParams() {
-  return [...PRODUCT_SLUGS, ...GROUP_KEYS].map((slug) => ({ slug }));
+  return [...PRODUCT_SLUGS, ...Object.keys(PRODUCT_ALIASES), ...GROUP_KEYS].map((slug) => ({ slug }));
 }
 
 export default async function ServiceDetailPage({
@@ -123,7 +126,7 @@ export default async function ServiceDetailPage({
           data={[
             breadcrumbLd([
               { name: "홈", path: "/" },
-              { name: product.name, path: `/services/${slug}/` },
+              { name: product.name, path: `/services/${product.slug}/` },
             ]),
             serviceLd(product, PRICING_ANCHOR[product.slug]),
           ]}
@@ -141,7 +144,7 @@ export default async function ServiceDetailPage({
           data={[
             breadcrumbLd([
               { name: "홈", path: "/" },
-              { name: product.name, path: `/services/${slug}/` },
+              { name: product.name, path: `/services/${product.slug}/` },
             ]),
             serviceLd(product, PRICING_ANCHOR[product.slug]),
           ]}
@@ -161,7 +164,7 @@ export default async function ServiceDetailPage({
         data={[
           breadcrumbLd([
             { name: "홈", path: "/" },
-            { name: product.name, path: `/services/${slug}/` },
+            { name: product.name, path: `/services/${product.slug}/` },
           ]),
           serviceLd(product, PRICING_ANCHOR[product.slug]),
         ]}

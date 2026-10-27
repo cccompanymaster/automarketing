@@ -4,10 +4,11 @@
 // belong to their respective owners and are shown only to indicate which
 // channel each marketing service targets.
 
-export type BrandKey = "naver" | "instagram" | "youtube" | "kakao";
+export type BrandKey = "naver" | "naver-cafe" | "instagram" | "youtube" | "kakao";
 
 const LABEL: Record<BrandKey, string> = {
   naver: "네이버",
+  "naver-cafe": "네이버 카페",
   instagram: "인스타그램",
   youtube: "유튜브",
   kakao: "카카오",
@@ -36,6 +37,16 @@ export function BrandLogo({
             d="M7 6.5h3.2l3.6 5.3V6.5H17v11h-3.2l-3.6-5.3v5.3H7z"
             fill="#fff"
           />
+        </svg>
+      );
+    case "naver-cafe":
+      // Green tile + white coffee cup: the cafe service mark, not the plain N.
+      return (
+        <svg {...common}>
+          <rect width="24" height="24" rx="6" fill="#03C75A" />
+          <path d="M6 9h9.5v4.2a4.75 4.75 0 0 1-9.5 0z" fill="#fff" />
+          <path d="M15.5 10.2h.9a2.1 2.1 0 0 1 0 4.2h-1.2" fill="none" stroke="#fff" strokeWidth="1.5" />
+          <rect x="6" y="18" width="9.5" height="1.4" rx=".7" fill="#fff" />
         </svg>
       );
     case "youtube":

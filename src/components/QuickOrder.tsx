@@ -114,7 +114,7 @@ export function QuickOrder({ product }: { product: Product }) {
           <h2 className="text-xl font-extrabold text-white">바로 주문하기</h2>
           <p className="mt-1 text-sm text-emerald-50">
             {isBlogWrite
-              ? "주제만 입력하면 바로 원고가 나와요. 1건 1,000캐시."
+              ? "주제만 입력하면 바로 원고가 나와요. 1건 500캐시."
               : orderable
                 ? "원하는 상품을 골라 수량만 정하면 끝. 1원 = 1캐시, 부족하면 주문 창에서 바로 충전돼요."
                 : "상품 특성상 맞춤 견적으로 진행돼요. 문의 남겨 주시면 24시간 안에 연락드려요."}

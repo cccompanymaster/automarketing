@@ -60,8 +60,8 @@ export function blogPostingLd(p: {
   dateModified: string;
   author: string;
   question: string;
-}): Json {
-  const url = absoluteUrl(`/blog/${p.slug}/`);
+}, basePath = "/blog/"): Json {
+  const url = absoluteUrl(`${basePath}${p.slug}/`);
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -74,7 +74,7 @@ export function blogPostingLd(p: {
     dateModified: p.dateModified,
     inLanguage: "ko-KR",
     about: p.question,
-    author: { "@type": "Organization", name: p.author, url: absoluteUrl("/blog/") },
+    author: { "@type": "Organization", name: p.author, url: absoluteUrl(basePath) },
     publisher: { "@id": ORG_ID },
     image: absoluteUrl(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/og.png`),
   };

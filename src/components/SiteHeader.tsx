@@ -30,6 +30,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/#services", icon: "🧩", label: "전체 서비스" },
   { href: "/tools/", icon: "🧮", label: "무료 계산기" },
   { href: "/blog/", icon: "📰", label: "사장님 블로그" },
+  { href: "/column/", icon: "🗂️", label: "칼럼 게시판" },
   { href: "/notice/", icon: "📢", label: "공지사항" },
   { href: "/#reviews", icon: "💬", label: "고객후기" },
   { href: "/#faq", icon: "❓", label: "자주 묻는 질문" },

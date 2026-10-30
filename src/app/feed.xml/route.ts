@@ -1,7 +1,7 @@
-// RSS 2.0 feed of published blog posts — input for feed readers, crawlers and
+// RSS 2.0 feed of published blog posts and 마케팅 칼럼 — input for feed readers, crawlers and
 // the IndexNow ping. Rendered to out/feed.xml at build time (static export).
 
-import { BLOG_PATH, getPublishedPosts } from "@/lib/blog";
+import { BLOG, COLUMN, getPublishedPosts } from "@/lib/blog";
 import { COMPANY } from "@/lib/company";
 
 export const dynamic = "force-static";
@@ -12,10 +12,12 @@ const esc = (s: string) =>
 const rfc822 = (d: string) => new Date(`${d}T00:00:00+09:00`).toUTCString();
 
 export function GET() {
-  const posts = getPublishedPosts();
+  const posts = [BLOG, COLUMN]
+    .flatMap((c) => getPublishedPosts(c).map((p) => ({ ...p, base: c.path })))
+    .sort((a, b) => b.datePublished.localeCompare(a.datePublished));
   const items = posts
     .map((p) => {
-      const url = `${SITE}${BLOG_PATH}${p.slug}/`;
+      const url = `${SITE}${p.base}${p.slug}/`;
       return `    <item>
       <title>${esc(p.title)}</title>
       <link>${url}</link>
@@ -30,9 +32,9 @@ export function GET() {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${esc(`${COMPANY.serviceName} 사장님 블로그`)}</title>
-    <link>${SITE}${BLOG_PATH}</link>
+    <link>${SITE}${BLOG.path}</link>
     <atom:link href="${SITE}/feed.xml" rel="self" type="application/rss+xml" />
-    <description>숫자로 답하는 자영업 질문 — 주휴수당, 4대보험, 배달앱 수수료 등</description>
+    <description>숫자로 답하는 자영업 질문과 마케팅 칼럼 — 주휴수당, 4대보험, 배달앱 수수료, 플레이스·블로그 마케팅 비용 등</description>
     <language>ko</language>
 ${last ? `    <lastBuildDate>${rfc822(last)}</lastBuildDate>\n` : ""}${items}
   </channel>

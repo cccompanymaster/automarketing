@@ -5,7 +5,7 @@
 import { COMPANY } from "@/lib/company";
 import { PRODUCT_LIST } from "@/lib/products";
 import { CALCULATORS, CALC_CATEGORIES, CALC_REVIEWED_AT } from "@/lib/calc/registry";
-import { BLOG_PATH, getPublishedPosts } from "@/lib/blog";
+import { BLOG_PATH, COLUMN, getPublishedPosts } from "@/lib/blog";
 import {
   CARD_FEES,
   EMPLOYMENT_INSURANCE,
@@ -62,6 +62,12 @@ function body(): string {
   if (posts.length) {
     lines.push("## 사장님 블로그 (질문 하나 = 글 하나)", "");
     for (const p of posts) lines.push(`- [${p.title}](${url(`${BLOG_PATH}${p.slug}/`)}): ${p.answer} (데이터 기준일 ${p.data_asof})`);
+    lines.push("");
+  }
+  const columns = getPublishedPosts(COLUMN);
+  if (columns.length) {
+    lines.push("## 마케팅 칼럼 (마케팅 비용·용어·고르는 법)", "");
+    for (const p of columns) lines.push(`- [${p.title}](${url(`${COLUMN.path}${p.slug}/`)}): ${p.answer} (단가 기준일 ${p.data_asof})`);
     lines.push("");
   }
   lines.push(

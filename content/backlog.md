@@ -21,6 +21,11 @@
 | 마케팅 대행 사기 유형 | 키워드 리스트 B | question | published | /blog/marketing-agency-scam-signs/ |
 | 블로그 체험단 모집 방법 | 키워드 리스트 B | question | published | /blog/blog-experience-group-guide/ |
 | 가게 홍보 방법 | 키워드 리스트 B | comparison | published | /blog/small-business-promotion-channels/ |
+| 플레이스 상위노출 비용 | 검색 결과가 대행사 광고 위주 (2026-10-30 확인) | comparison | published | /column/naver-place-top-exposure-cost/ |
+| 준최적 블로그 뜻 | 검색 결과가 판매 페이지 위주, 공식 설명 부재 | glossary | published | /column/optimal-vs-semi-optimal-blog/ |
+| 맘카페 홍보 방법 | 검색 결과가 한 대행사 광고 위주, 단가 정보 부재 | comparison | published | /column/mom-cafe-marketing-guide/ |
+| 블로그 상위노출 보장 비용 | 칼럼 후보 (상품 연결: 24시간·25일 보장) | question | backlog | |
+| 서로이웃 늘리는 법 | 칼럼 후보 | question | backlog | |
 | 당근 비즈프로필 광고 | 키워드 리스트 B | question | backlog | |
 | AI 검색 노출 (챗GPT에 우리 가게) | 키워드 리스트 B | question | backlog | |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |

@@ -14,6 +14,25 @@ import { marked } from "marked";
 export const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 export const BLOG_PATH = "/blog/";
 
+/**
+ * A post collection: one content directory rendered under one URL path.
+ * 사장님 블로그 (/blog/) answers money/labor questions; 마케팅 칼럼 게시판
+ * (/column/) covers marketing services. Same format and publish gate.
+ */
+export interface Collection {
+  dir: string;
+  path: string;
+  /** Display name (breadcrumbs, JSON-LD author link label). */
+  name: string;
+}
+
+export const BLOG: Collection = { dir: BLOG_DIR, path: BLOG_PATH, name: "사장님 블로그" };
+export const COLUMN: Collection = {
+  dir: path.join(process.cwd(), "content", "column"),
+  path: "/column/",
+  name: "마케팅 칼럼",
+};
+
 export type PostType = "question" | "data" | "glossary" | "buildlog" | "comparison";
 export type PostStatus = "draft" | "review" | "published" | "refresh-needed" | "merged";
 
@@ -106,14 +125,14 @@ export function readAllPosts(dir = BLOG_DIR): Post[] {
 }
 
 /** Published posts, newest first — what the site renders. */
-export function getPublishedPosts(): Post[] {
-  return readAllPosts()
+export function getPublishedPosts(c: Collection = BLOG): Post[] {
+  return readAllPosts(c.dir)
     .filter((p) => p.status === "published" || p.status === "refresh-needed")
     .sort((a, b) => b.datePublished.localeCompare(a.datePublished));
 }
 
-export function getPost(slug: string): Post | undefined {
-  return getPublishedPosts().find((p) => p.slug === slug);
+export function getPost(slug: string, c: Collection = BLOG): Post | undefined {
+  return getPublishedPosts(c).find((p) => p.slug === slug);
 }
 
 /** Internal links (site-relative) found in the Markdown body. */
@@ -125,7 +144,11 @@ export function internalLinks(body: string): string[] {
  * Publish gate (content.md 4-4). Returns problems; empty = may publish.
  * `knownPaths` lets the caller check that internal links resolve.
  */
-export function validatePost(p: Post, opts: { knownPaths?: Set<string>; allSlugs?: Set<string> } = {}): string[] {
+export function validatePost(
+  p: Post,
+  opts: { knownPaths?: Set<string>; allSlugs?: Set<string>; hubPath?: string } = {},
+): string[] {
+  const hub = opts.hubPath ?? BLOG_PATH;
   const e: string[] = [];
   const len = (s: string) => [...s].length;
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(p.slug)) e.push("slug: 영문 소문자·숫자·하이픈만 (날짜 없이)");
@@ -144,7 +167,7 @@ export function validatePost(p: Post, opts: { knownPaths?: Set<string>; allSlugs
     e.push("sources: 1개 이상, https URL");
   if (p.faq.length < 2 || p.faq.some((f) => !f.q || !f.a)) e.push("faq: 2개 이상");
   const links = internalLinks(p.body);
-  if (!links.some((l) => l === "/blog/" || l.startsWith("/tools/"))) e.push("내부 링크: 상향(허브) 1개 필요");
+  if (!links.some((l) => l === hub || l === BLOG_PATH || l.startsWith("/tools/"))) e.push("내부 링크: 상향(허브) 1개 필요");
   if (new Set(links).size < 3) e.push("내부 링크: 3개 이상 (허브 1 + 관련 2)");
   if (opts.knownPaths) {
     for (const l of links) {

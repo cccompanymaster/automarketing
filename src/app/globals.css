@@ -670,6 +670,16 @@ html.is-member [data-guest-only] {
   padding: 0.5rem 0.75rem;
   text-align: left;
 }
+/* Notices: comparison tables carry sentences, so wrap instead of scrolling. */
+.notice-body table {
+  display: table;
+  white-space: normal;
+}
+@media (min-width: 640px) {
+  .notice-body td:first-child {
+    white-space: nowrap;
+  }
+}
 .post-body th {
   background: rgb(248 250 252);
   font-weight: 700;

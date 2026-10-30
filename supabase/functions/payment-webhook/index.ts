@@ -21,9 +21,11 @@ const PORTONE_WEBHOOK_SECRET = Deno.env.get("PORTONE_WEBHOOK_SECRET");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-// Payments are VAT-inclusive; cash is credited at the supply value
-// (must match cashForPayment in src/lib/cash.ts and the bank-charge RPCs).
-const cashFor = (krw: number) => Math.floor((krw * 10) / 11);
+// From the revised terms (2026-11-06 KST) payments are VAT-inclusive and cash
+// is credited at the supply value; before that 1원 = 1캐시.
+// Must match cashForPayment in src/lib/cash.ts and the bank-charge RPC.
+const VAT_START = Date.parse("2026-11-06T00:00:00+09:00");
+const cashFor = (krw: number) => (Date.now() >= VAT_START ? Math.floor((krw * 10) / 11) : krw);
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {

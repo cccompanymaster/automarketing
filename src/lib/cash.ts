@@ -14,14 +14,25 @@ export const MAX_CHARGE_CASH = 10_000_000;
 /** Top-ups are paid VAT-inclusive; cash is credited at the supply value. */
 export const VAT_RATE = 0.1;
 
-/** KRW to pay (VAT incl.) for a given amount of cash. Cash is kept to multiples of 10, so this is exact. */
-export function paymentForCash(cash: number): number {
-  return Math.round(cash * (1 + VAT_RATE));
+/**
+ * VAT on top-ups starts with the revised terms (제7조, 시행 2026-11-06 KST).
+ * Before that a top-up credits 1원 = 1캐시. Server-side twins: the
+ * request_bank_charge RPC and the payment-webhook function.
+ */
+export const VAT_START = Date.parse("2026-11-06T00:00:00+09:00");
+
+export function vatApplies(at: number = Date.now()): boolean {
+  return at >= VAT_START;
 }
 
-/** Cash credited for a VAT-inclusive payment (mirrors the server: floor(krw × 10 / 11)). */
-export function cashForPayment(krw: number): number {
-  return Math.floor((krw * 10) / 11);
+/** KRW to pay for a given amount of cash (VAT incl. from VAT_START). Cash is kept to multiples of 10, so this is exact. */
+export function paymentForCash(cash: number, at: number = Date.now()): number {
+  return vatApplies(at) ? Math.round(cash * (1 + VAT_RATE)) : cash;
+}
+
+/** Cash credited for a payment (mirrors the server: floor(krw × 10 / 11) from VAT_START). */
+export function cashForPayment(krw: number, at: number = Date.now()): number {
+  return vatApplies(at) ? Math.floor((krw * 10) / 11) : krw;
 }
 
 export type CashTxnType = "charge" | "use" | "refund" | "bonus";

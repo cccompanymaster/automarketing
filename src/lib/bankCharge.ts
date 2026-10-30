@@ -63,7 +63,7 @@ export function validateBankCharge(input: {
   cash?: CashReceiptInfo;
   tax?: TaxInvoiceInfo;
 }): string | null {
-  if (!Number.isInteger(input.amount) || input.amount < 1_100 || input.amount > 11_000_000)
+  if (!Number.isInteger(input.amount) || input.amount < 1_000 || input.amount > 11_000_000)
     return "충전 캐시는 1,000 ~ 10,000,000 사이로 입력해 주세요.";
   const dep = input.depositor.trim();
   if (!dep) return "입금자명을 입력해 주세요.";

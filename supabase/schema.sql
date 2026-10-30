@@ -747,3 +747,5 @@ create trigger charge_requests_notify
 -- admin_confirm_bank_charge credits cash_amount; admin_charge_requests
 -- returns "cashAmount". payment-webhook credits floor(paid × 10 / 11).
 alter table public.charge_requests add column if not exists cash_amount bigint;
+-- (migration "charge_vat_start_date") VAT applies from 2026-11-06 KST, the
+-- revised terms' effective date; before that cash_amount = amount (1:1).

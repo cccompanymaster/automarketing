@@ -3,6 +3,7 @@ import { PRODUCT_SLUGS, GROUP_KEYS } from "@/lib/products";
 import { CALCULATORS, CALC_HUB_PATH, CALC_REVIEWED_AT } from "@/lib/calc/registry";
 import { PRIVACY, TERMS } from "@/lib/legal";
 import { BLOG_PATH, getPublishedPosts } from "@/lib/blog";
+import { NOTICES, NOTICE_PATH } from "@/lib/notices";
 
 // Emit a static sitemap.xml at build time (required by output: "export").
 export const dynamic = "force-static";
@@ -29,6 +30,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/tools/rates/`, priority: 0.8, lastModified: CALC_REVIEWED_AT },
     ...blogEntries(),
     { url: `${SITE_URL}/terms/`, priority: 0.2, lastModified: TERMS.updatedAt },
+    { url: `${SITE_URL}${NOTICE_PATH}`, priority: 0.3, lastModified: NOTICES[0]?.date },
+    ...NOTICES.map((n) => ({ url: `${SITE_URL}${NOTICE_PATH}${n.slug}/`, priority: 0.3, lastModified: n.date })),
     { url: `${SITE_URL}/privacy/`, priority: 0.2, lastModified: PRIVACY.updatedAt },
   ];
 }

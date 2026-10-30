@@ -33,6 +33,7 @@ import {
   formatCash,
   formatKrw,
   paymentForCash,
+  vatApplies,
 } from "@/lib/cash";
 
 type Method = "bank" | "card";
@@ -120,6 +121,7 @@ export function ChargeModal({
 
   const valid = amount >= MIN_CHARGE_CASH && amount <= MAX_CHARGE_CASH && amount % 10 === 0;
   const pay = paymentForCash(amount || 0);
+  const withVat = vatApplies();
 
   const handleCard = async () => {
     if (!valid) {
@@ -179,7 +181,11 @@ export function ChargeModal({
             ✕
           </button>
         </div>
-        <p className="mt-1 text-xs text-slate-400">1캐시 = 1원 (부가세 별도) · 결제 금액에 부가세 10%가 더해져요</p>
+        <p className="mt-1 text-xs text-slate-400">
+          {withVat
+            ? "1캐시 = 1원 (부가세 별도) · 결제 금액에 부가세 10%가 더해져요"
+            : "1원 = 1캐시 · 2026년 11월 6일부터는 충전 시 부가세 10%가 더해져요"}
+        </p>
 
         {/* ===== 무통장입금: request done → transfer guide ===== */}
         {requested ? (
@@ -195,7 +201,7 @@ export function ChargeModal({
                 { k: "은행", v: acct.bank },
                 { k: "계좌번호", v: acct.number, copy: acct.number.replace(/\D/g, "") },
                 { k: "예금주", v: acct.holder },
-                { k: "입금액 (부가세 포함)", v: formatKrw(requested.pay), copy: String(requested.pay) },
+                { k: withVat ? "입금액 (부가세 포함)" : "입금액", v: formatKrw(requested.pay), copy: String(requested.pay) },
                 { k: "적립될 캐시", v: formatCash(requested.cash) },
                 { k: "입금자명", v: requested.depositor },
               ].map((row) => (
@@ -261,7 +267,7 @@ export function ChargeModal({
                   }`}
                 >
                   {(p / 10000).toLocaleString("ko-KR")}만 캐시
-                  <span className="block text-[11px] font-medium text-slate-400">{formatKrw(paymentForCash(p))}</span>
+                  {withVat && <span className="block text-[11px] font-medium text-slate-400">{formatKrw(paymentForCash(p))}</span>}
                 </button>
               ))}
             </div>
@@ -288,10 +294,12 @@ export function ChargeModal({
                 <dt className="text-slate-500">받는 캐시</dt>
                 <dd className="font-extrabold text-emerald-600">{formatCash(amount || 0)}</dd>
               </div>
-              <div className="flex items-center justify-between">
-                <dt className="text-slate-500">부가세 (10%)</dt>
-                <dd className="font-semibold text-slate-600">{formatKrw(pay - (amount || 0))}</dd>
-              </div>
+              {withVat && (
+                <div className="flex items-center justify-between">
+                  <dt className="text-slate-500">부가세 (10%)</dt>
+                  <dd className="font-semibold text-slate-600">{formatKrw(pay - (amount || 0))}</dd>
+                </div>
+              )}
               <div className="flex items-center justify-between border-t border-slate-200 pt-1.5">
                 <dt className="font-semibold text-slate-700">결제 금액</dt>
                 <dd className="text-base font-extrabold text-slate-900">{formatKrw(pay)}</dd>

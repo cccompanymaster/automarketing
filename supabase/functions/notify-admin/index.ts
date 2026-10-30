@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
     .update({ notified_at: new Date().toISOString() })
     .eq("id", id)
     .is("notified_at", null)
-    .select("id, user_id, amount, depositor, receipt_type, receipt_info, created_at")
+    .select("id, user_id, amount, cash_amount, depositor, receipt_type, receipt_info, created_at")
     .maybeSingle();
   if (error) return json({ error: error.message }, 500);
   if (!row) return json({ ok: true, skipped: "already notified or not found" });
@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
   const info = (row.receipt_info ?? {}) as Record<string, string>;
   const receiptDetail =
     row.receipt_type === "tax_invoice"
-      ? ` — ${info.company ?? ""} (${info.bizNo ?? ""}) ${info.email ?? ""}`
+      ? ` — ${info.company ?? ""} (${info.bizNo ?? ""})`
       : row.receipt_type === "cash_receipt"
         ? ` — ${info.purpose === "expense" ? "지출증빙" : "소득공제"} ${info.number ?? ""}`
         : "";
@@ -64,11 +64,21 @@ Deno.serve(async (req) => {
   const subject = `[마케팅방주] 무통장입금 신청 — ${row.depositor} ${won(row.amount)}`;
   const rows: [string, string][] = [
     ["입금자명", row.depositor],
-    ["금액", won(row.amount)],
+    ["입금액", won(row.amount)],
+    ["적립 캐시", `${Number(row.cash_amount ?? row.amount).toLocaleString("ko-KR")}캐시`],
     ["회원", email],
     ["증빙", `${RECEIPT[row.receipt_type] ?? row.receipt_type}${receiptDetail}`],
     ["신청 시각", kst(row.created_at)],
   ];
+  if (row.receipt_type === "tax_invoice") {
+    rows.push(
+      ["대표자", info.ceo ?? ""],
+      ["사업장 주소", info.address ?? ""],
+      ["업태 / 종목", `${info.bizType ?? ""} / ${info.bizItem ?? ""}`],
+      ["계산서 이메일", info.email ?? ""],
+      ["담당자", `${info.managerName ?? ""} ${info.managerPhone ?? ""}`.trim()],
+    );
+  }
   const html = `<div style="font-family:Apple SD Gothic Neo,Malgun Gothic,sans-serif;max-width:480px">
   <h2 style="margin:0 0 12px;font-size:18px">새 무통장입금 충전 신청</h2>
   <table style="border-collapse:collapse;width:100%;font-size:14px">${rows

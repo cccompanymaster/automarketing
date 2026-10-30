@@ -18,8 +18,11 @@ import { isPgConfigured } from "@/lib/payments";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { COMPANY } from "@/lib/company";
 import {
+  EMPTY_TAX_INFO,
   listMyChargeRequests,
+  loadSavedTaxInfo,
   requestBankCharge,
+  saveTaxInfo,
   type ChargeRequest,
   validateBankCharge,
   type CashReceiptInfo,
@@ -81,7 +84,7 @@ export function ChargeModal({
   const [depositor, setDepositor] = useState("");
   const [receiptType, setReceiptType] = useState<ReceiptType>("none");
   const [cash, setCash] = useState<CashReceiptInfo>({ purpose: "income", number: "" });
-  const [tax, setTax] = useState<TaxInvoiceInfo>({ bizNo: "", company: "", ceo: "", email: "", bizType: "", bizItem: "" });
+  const [tax, setTax] = useState<TaxInvoiceInfo>(EMPTY_TAX_INFO);
   const [submitting, setSubmitting] = useState(false);
   const [requested, setRequested] = useState<{ pay: number; cash: number; depositor: string } | null>(null);
   // Requests still waiting for the owner to confirm the deposit — shown so a
@@ -110,7 +113,12 @@ export function ChargeModal({
         .catch(() => {});
     }
     setDepositor((d) => d || user?.name || "");
-    setTax((t) => (t.email ? t : { ...t, email: user?.email ?? "" }));
+    // Prefill the last tax-invoice details used on this browser.
+    setTax((t) => {
+      if (t.company) return t;
+      const saved = user ? loadSavedTaxInfo(user.id) : null;
+      return saved ?? { ...t, email: t.email || user?.email || "", managerName: t.managerName || user?.name || "" };
+    });
     // Only on open / account switch — never on a re-emitted session.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, user?.id]);
@@ -147,6 +155,7 @@ export function ChargeModal({
     setSubmitting(true);
     try {
       await requestBankCharge(input);
+      if (receiptType === "tax_invoice" && user) saveTaxInfo(user.id, tax);
       setRequested({ pay, cash: amount, depositor: depositor.trim() });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "신청하지 못했어요.");
@@ -397,12 +406,15 @@ export function ChargeModal({
                   <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-50 p-3">
                     {(
                       [
-                        { k: "bizNo", label: "사업자등록번호", ph: "000-00-00000", full: true },
-                        { k: "company", label: "상호", ph: "○○식당" },
-                        { k: "ceo", label: "대표자", ph: "홍길동" },
-                        { k: "email", label: "받을 이메일", ph: "tax@example.com", full: true },
-                        { k: "bizType", label: "업태 (선택)", ph: "음식점업" },
-                        { k: "bizItem", label: "종목 (선택)", ph: "한식" },
+                        { k: "company", label: "회사명(법인명)", ph: "○○식당", full: true },
+                        { k: "bizNo", label: "사업자등록번호", ph: "000-00-00000" },
+                        { k: "ceo", label: "대표자명", ph: "홍길동" },
+                        { k: "address", label: "사업장 주소", ph: "사업자등록증의 사업장 소재지", full: true },
+                        { k: "bizType", label: "업태", ph: "예: 서비스업" },
+                        { k: "bizItem", label: "종목", ph: "예: 광고대행업" },
+                        { k: "email", label: "세금계산서 이메일", ph: "tax@example.com", full: true },
+                        { k: "managerName", label: "담당자명", ph: "홍길동" },
+                        { k: "managerPhone", label: "담당자 연락처", ph: "010-0000-0000" },
                       ] as { k: keyof TaxInvoiceInfo; label: string; ph: string; full?: boolean }[]
                     ).map((f) => (
                       <div key={f.k} className={f.full ? "col-span-2" : ""}>
@@ -412,8 +424,10 @@ export function ChargeModal({
                         <input
                           id={`tax-${f.k}`}
                           value={tax[f.k] ?? ""}
-                          maxLength={f.k === "email" ? 100 : 40}
-                          inputMode={f.k === "bizNo" ? "numeric" : f.k === "email" ? "email" : undefined}
+                          maxLength={f.k === "email" || f.k === "address" ? 100 : 40}
+                          inputMode={
+                            f.k === "bizNo" ? "numeric" : f.k === "managerPhone" ? "tel" : f.k === "email" ? "email" : undefined
+                          }
                           onChange={(e) => setTax({ ...tax, [f.k]: e.target.value })}
                           placeholder={f.ph}
                           className={`${INPUT} mt-1 h-10`}
@@ -421,7 +435,8 @@ export function ChargeModal({
                       </div>
                     ))}
                     <p className="col-span-2 text-[11px] leading-relaxed text-slate-400">
-                      입금액(부가세 포함) 기준으로 입금 확인 후 발행해 드려요.
+                      사업자등록증과 같게 적어 주세요. 입금액(부가세 포함) 기준으로 입금 확인 후 발행하고, 다음 충전 때는 이
+                      정보가 자동으로 채워져요.
                     </p>
                   </div>
                 )}

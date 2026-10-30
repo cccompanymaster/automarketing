@@ -15,14 +15,58 @@ export interface CashReceiptInfo {
   number: string;
 }
 
-/** 세금계산서 발행 정보. */
+/** 세금계산서 발행 정보 (공급받는자). */
 export interface TaxInvoiceInfo {
-  bizNo: string;
+  /** 회사명(법인명) */
   company: string;
+  /** 사업자등록번호 */
+  bizNo: string;
+  /** 대표자명 */
   ceo: string;
+  /** 사업장 주소 */
+  address: string;
+  /** 업태 */
+  bizType: string;
+  /** 종목 */
+  bizItem: string;
+  /** 세금계산서 받을 이메일 */
   email: string;
-  bizType?: string;
-  bizItem?: string;
+  /** 담당자명 */
+  managerName: string;
+  /** 담당자 연락처 */
+  managerPhone: string;
+}
+
+export const EMPTY_TAX_INFO: TaxInvoiceInfo = {
+  company: "",
+  bizNo: "",
+  ceo: "",
+  address: "",
+  bizType: "",
+  bizItem: "",
+  email: "",
+  managerName: "",
+  managerPhone: "",
+};
+
+/** Last tax-invoice details per member, so repeat top-ups don't retype them (this browser only). */
+const taxInfoKey = (userId: string) => `selfmarketing.taxInfo.${userId}`;
+
+export function loadSavedTaxInfo(userId: string): TaxInvoiceInfo | null {
+  try {
+    const raw = localStorage.getItem(taxInfoKey(userId));
+    return raw ? { ...EMPTY_TAX_INFO, ...(JSON.parse(raw) as Partial<TaxInvoiceInfo>) } : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveTaxInfo(userId: string, info: TaxInvoiceInfo): void {
+  try {
+    localStorage.setItem(taxInfoKey(userId), JSON.stringify(info));
+  } catch {
+    /* ignore */
+  }
 }
 
 export interface ChargeRequest {
@@ -77,9 +121,15 @@ export function validateBankCharge(input: {
   }
   if (input.receiptType === "tax_invoice") {
     const t = input.tax;
-    if (!t || digits(t.bizNo).length !== 10) return "사업자등록번호 10자리를 입력해 주세요.";
-    if (!t.company.trim() || !t.ceo.trim()) return "상호와 대표자명을 입력해 주세요.";
+    if (!t || !t.company.trim()) return "회사명(법인명)을 입력해 주세요.";
+    if (digits(t.bizNo).length !== 10) return "사업자등록번호 10자리를 입력해 주세요.";
+    if (!t.ceo.trim()) return "대표자명을 입력해 주세요.";
+    if (!t.address.trim()) return "사업장 주소를 입력해 주세요.";
+    if (!t.bizType.trim() || !t.bizItem.trim()) return "업태와 종목을 입력해 주세요. (사업자등록증에 적혀 있어요)";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t.email.trim())) return "세금계산서를 받을 이메일을 확인해 주세요.";
+    if (!t.managerName.trim()) return "담당자명을 입력해 주세요.";
+    const phone = digits(t.managerPhone);
+    if (phone.length < 9 || phone.length > 11) return "담당자 연락처를 확인해 주세요.";
   }
   return null;
 }
@@ -115,7 +165,11 @@ export async function requestBankCharge(input: {
     input.receiptType === "cash_receipt"
       ? { purpose: input.cash!.purpose, number: digits(input.cash!.number) }
       : input.receiptType === "tax_invoice"
-        ? { ...input.tax!, bizNo: digits(input.tax!.bizNo) }
+        ? {
+            ...Object.fromEntries(Object.entries(input.tax!).map(([k, v]) => [k, String(v ?? "").trim()])),
+            bizNo: digits(input.tax!.bizNo),
+            managerPhone: digits(input.tax!.managerPhone),
+          }
         : {};
   const { data, error } = await sb.rpc("request_bank_charge", {
     p_amount: Math.round(input.amount),

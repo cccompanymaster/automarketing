@@ -33,9 +33,21 @@ function ReceiptDetail({ r }: { r: AdminChargeRequest }) {
     return (
       <p className="text-xs leading-relaxed text-slate-500">
         {i.company} ({i.ceo}) · {i.bizNo}
+        {i.address && (
+          <>
+            <br />
+            {i.address}
+          </>
+        )}
+        {i.bizType || i.bizItem ? (
+          <>
+            <br />
+            업태 {i.bizType || "-"} · 종목 {i.bizItem || "-"}
+          </>
+        ) : null}
         <br />
         {i.email}
-        {i.bizType || i.bizItem ? ` · ${[i.bizType, i.bizItem].filter(Boolean).join("/")}` : ""}
+        {i.managerName || i.managerPhone ? ` · 담당 ${[i.managerName, i.managerPhone].filter(Boolean).join(" ")}` : ""}
       </p>
     );
   return null;

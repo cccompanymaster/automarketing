@@ -4,6 +4,9 @@ slug: breakeven-point-calculation
 question: "손익분기점 계산하는 법"
 answer: "손익분기 매출 = 월 고정비 ÷ (1 − 변동비율)이에요. 고정비 600만·변동비 35%면 약 923만 원이에요."
 description: "손익분기점은 이익도 손해도 0이 되는 매출이에요. 월 고정비 600만 원, 객단가 12,000원 가게를 예로 공식을 그대로 계산하고, 변동비율이 30→35→40%로 오를 때 필요한 매출과 주문 수가 얼마나 늘어나는지 표로 보여 드려요."
+thumb: "손익분기점|계산하는 법"
+emoji: "📈"
+theme: emerald
 type: glossary
 datePublished: 2026-09-29
 dateModified: 2026-09-29

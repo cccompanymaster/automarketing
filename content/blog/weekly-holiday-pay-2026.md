@@ -4,6 +4,9 @@ slug: weekly-holiday-pay-2026
 question: "주휴수당 조건"
 answer: "1주 소정근로시간이 15시간 이상이고 그 주를 개근하면 주휴수당을 받아요."
 description: "주휴수당은 1주 15시간 이상 일하고 그 주를 개근하면 생겨요. 2026년 최저임금 10,320원 기준으로 주 15·20·30·40시간 근무자의 주휴수당을 표로 정리하고 계산식을 보여 드려요."
+thumb: "주휴수당|받는 조건"
+emoji: "🗓️"
+theme: emerald
 type: question
 datePublished: 2026-09-27
 dateModified: 2026-09-27

@@ -4,6 +4,9 @@ slug: marketing-agency-cost
 question: "마케팅 대행사 비용"
 answer: "마케팅방주 공개 단가는 블로그 원고 1건 1,000원, 플레이스 SEO 세팅 1회 50,000원이에요."
 description: "마케팅 대행사 비용은 월 관리비형·건당 단가형·성과형 중 어떤 방식인지부터 봐야 비교가 돼요. 세 방식의 차이, 마케팅방주 채널별 공개 단가표, 계약 전에 꼭 확인할 5가지를 정리했어요."
+thumb: "마케팅 대행사|비용 구조"
+emoji: "💰"
+theme: amber
 type: question
 datePublished: 2026-09-29
 dateModified: 2026-10-27

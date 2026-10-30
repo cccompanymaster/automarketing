@@ -6,6 +6,7 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { JsonLd } from "@/components/JsonLd";
+import { PostCard } from "@/components/PostCard";
 import { BLOG_PATH, getPublishedPosts } from "@/lib/blog";
 import { OG_BASE, ORG_ID, absoluteUrl, breadcrumbLd } from "@/lib/seo";
 
@@ -20,7 +21,6 @@ export const metadata: Metadata = {
   openGraph: { ...OG_BASE, title: TITLE, description: DESCRIPTION, url: BLOG_PATH },
 };
 
-const fmt = (d: string) => d.replace(/-/g, ".");
 
 export default function BlogHub() {
   const posts = getPublishedPosts();
@@ -44,9 +44,9 @@ export default function BlogHub() {
       />
       <SiteHeader />
       <main className="flex-1 bg-slate-50">
-        <div className="mx-auto max-w-3xl px-5 pb-16 pt-8 sm:pt-12">
+        <div className="mx-auto max-w-6xl px-5 pb-16 pt-8 sm:pt-12">
           <h1 className="pr-16 text-3xl font-extrabold leading-tight text-slate-900 sm:text-4xl lg:pr-0">사장님 블로그</h1>
-          <p className="mt-3 text-base leading-relaxed text-slate-600">
+          <p className="mt-3 max-w-3xl text-base leading-relaxed text-slate-600">
             사장님들이 검색하는 질문 하나에 글 하나로 답해요. 글마다 첫 줄에 결론, 그 아래 기준일이 적힌 표와 출처를 두고, 바로 계산해 볼 수
             있는{" "}
             <Link href="/tools/" className="font-semibold text-emerald-700 underline underline-offset-2">
@@ -58,19 +58,10 @@ export default function BlogHub() {
             </Link>
             으로 연결해요.
           </p>
-          <ul className="mt-8 space-y-3">
+          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((p) => (
               <li key={p.slug}>
-                <Link
-                  href={`${BLOG_PATH}${p.slug}/`}
-                  className="block rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100 transition hover:ring-emerald-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-                >
-                  <h2 className="text-lg font-bold text-slate-900">{p.title}</h2>
-                  <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{p.answer}</p>
-                  <p className="mt-2 text-xs text-slate-400">
-                    <time dateTime={p.datePublished}>{fmt(p.datePublished)}</time> · 데이터 기준일 {fmt(p.data_asof)}
-                  </p>
-                </Link>
+                <PostCard post={p} href={`${BLOG_PATH}${p.slug}/`} />
               </li>
             ))}
           </ul>

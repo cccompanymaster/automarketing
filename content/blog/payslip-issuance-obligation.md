@@ -4,6 +4,9 @@ slug: payslip-issuance-obligation
 question: "급여명세서 교부 의무"
 answer: "2021년 11월 19일부터 5인 미만 가게도 임금을 줄 때마다 임금명세서를 줘야 해요."
 description: "근로기준법 제48조 제2항에 따라 모든 사업장은 임금명세서를 줘야 해요. 시행령이 정한 기재사항 6가지와 시급 10,320원·주 40시간 직원의 실제 명세서 예시, 위반 시 과태료까지 정리했어요."
+thumb: "급여명세서|교부 의무"
+emoji: "📄"
+theme: indigo
 type: question
 datePublished: 2026-09-29
 dateModified: 2026-09-29

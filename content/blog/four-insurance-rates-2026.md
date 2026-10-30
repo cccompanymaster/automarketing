@@ -4,6 +4,9 @@ slug: four-insurance-rates-2026
 question: "4대보험 요율 2026"
 answer: "2026년 근로자 4대보험 부담은 월급의 약 9.7%로, 250만 원이면 242,920원이에요."
 description: "2026년 국민연금 9.5%, 건강보험 7.19%, 장기요양 13.14%, 고용보험 요율을 한 표로 정리했어요. 월급 250만 원 직원의 근로자 공제액과 사장님 부담액, 총 고용비용까지 실제 숫자로 보여 드려요."
+thumb: "4대보험 요율|한눈에 정리"
+emoji: "🛡️"
+theme: sky
 type: data
 datePublished: 2026-09-27
 dateModified: 2026-09-27

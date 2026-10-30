@@ -4,6 +4,9 @@ slug: blog-experience-group-guide
 question: "블로그 체험단 모집 방법"
 answer: "목표·제공 내역을 정해 공지하고, 모든 후기 제목이나 첫 부분에 '제공받았다'는 표시를 넣게 해요."
 description: "가게가 블로그 체험단을 직접 모집할 때 목표·채널·인원, 제공 내역, 모집 공지, 후기 가이드를 5단계로 정리했어요. 공정위 추천·보증 심사지침에 따른 광고 표시 위치와 하면 안 되는 후기 운영도 함께 알려 드려요."
+thumb: "블로그 체험단|모집 방법"
+emoji: "🎁"
+theme: rose
 type: question
 datePublished: 2026-09-29
 dateModified: 2026-09-29

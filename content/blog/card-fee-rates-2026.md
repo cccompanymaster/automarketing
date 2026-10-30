@@ -4,6 +4,9 @@ slug: card-fee-rates-2026
 question: "카드수수료 우대 구간"
 answer: "연 매출 3억 원 이하 영세가맹점 카드수수료는 신용 0.40%, 체크 0.15%예요."
 description: "영세·중소가맹점 우대 카드수수료를 연 매출 3억·5억·10억·30억 구간별로 정리했어요. 월 카드 매출 1,000만 원일 때 구간마다 수수료가 얼마인지 실제 숫자로 비교하고 구간이 정해지는 방식도 알려 드려요."
+thumb: "카드수수료|우대 구간"
+emoji: "💳"
+theme: violet
 type: data
 datePublished: 2026-09-29
 dateModified: 2026-09-29

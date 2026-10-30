@@ -4,6 +4,9 @@ slug: small-business-promotion-channels
 question: "가게 홍보 방법"
 answer: "네이버 플레이스·카카오맵·당근 비즈프로필 등록은 무료라, 이 3곳부터 채우고 7개 채널을 골라요."
 description: "네이버 플레이스, 네이버 블로그, 카카오맵, 당근 비즈프로필, 인스타그램, 체험단, 언론보도까지 7개 가게 홍보 채널이 각각 무엇에 좋은지, 시작 비용은 얼마인지 한 표로 비교했어요."
+thumb: "가게 홍보|채널별 비교"
+emoji: "📣"
+theme: violet
 type: comparison
 datePublished: 2026-09-29
 dateModified: 2026-10-27

@@ -4,6 +4,9 @@ slug: baemin-store-delivery-vs-baemin-delivery
 question: "배민 가게배달 배민배달 비교"
 answer: "판매가 2만 원·대행료 4,000원 예시에선 가게배달이 건당 약 540~2,360원 더 남아요(가정값)."
 description: "배민 가게배달은 고객 배달팁을 받고 대행료를 내고, 배민배달은 업주 부담 배달비를 내요. 판매가 2만 원 메뉴로 매출 구간 3곳, 대행료 4,000원·5,000원일 때 한 건에 남는 돈과 두 방식이 같아지는 대행료를 계산했어요."
+thumb: "가게배달 vs|배민배달"
+emoji: "🍗"
+theme: amber
 type: comparison
 datePublished: 2026-09-29
 dateModified: 2026-09-29

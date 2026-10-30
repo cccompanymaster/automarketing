@@ -4,6 +4,9 @@ slug: rent-to-sales-ratio
 question: "적정 임대료 비율"
 answer: "흔히 쓰는 참고 기준은 임대료+관리비가 월 매출의 10% 이하면 양호, 20% 초과면 위험이에요."
 description: "임대료 비율은 (월세+관리비)÷월 매출이에요. 흔히 쓰는 10·15·20% 참고 구간이 법이나 통계가 아닌 이유, 월세 300만 원 가게의 매출별 비율, 매출 3,000만 원으로 감당할 수 있는 월세를 계산해 보여 드려요."
+thumb: "적정 임대료|매출의 몇 %?"
+emoji: "🏠"
+theme: sky
 type: question
 datePublished: 2026-09-29
 dateModified: 2026-09-29

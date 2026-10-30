@@ -4,6 +4,9 @@ slug: naver-place-ranking-tips
 question: "네이버 플레이스 순위 올리는 법"
 answer: "순위 공식은 비공개라, 사장님이 스마트플레이스에서 직접 채울 수 있는 8가지부터 점검해요."
 description: "네이버 플레이스 노출을 챙기려면 스마트플레이스 기본 정보·대표 키워드·사진·영업시간·소식·예약·리뷰 답글·통계를 먼저 점검하세요. 사장님이 직접 할 수 있는 8가지 체크리스트와 하면 안 되는 일을 정리했어요."
+thumb: "플레이스 순위|직접 점검 8가지"
+emoji: "📍"
+theme: emerald
 type: question
 datePublished: 2026-09-29
 dateModified: 2026-09-29

@@ -70,6 +70,11 @@ export interface PostMeta {
   status: PostStatus;
   /** Change log lines shown under the post, newest first. */
   changelog: string[];
+  /** Card-news thumbnail headline; "|" breaks the line. Falls back to question. */
+  thumb?: string;
+  emoji?: string;
+  /** Thumbnail color theme (see PostCard THEMES). */
+  theme?: string;
 }
 
 export interface Post extends PostMeta {
@@ -99,6 +104,9 @@ function toMeta(data: Record<string, unknown>, file: string): PostMeta {
     related: (data.related as string[]) ?? [],
     status: (data.status as PostStatus) ?? "draft",
     changelog: (data.changelog as string[]) ?? [],
+    thumb: data.thumb ? String(data.thumb) : undefined,
+    emoji: data.emoji ? String(data.emoji) : undefined,
+    theme: data.theme ? String(data.theme) : undefined,
   };
 }
 

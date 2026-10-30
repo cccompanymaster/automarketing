@@ -4,6 +4,9 @@ slug: daily-worker-withholding-tax
 question: "일용직 원천징수 계산"
 answer: "일용직 소득세는 (일당−15만 원)×2.7%이고, 일당 187,037원까지는 떼지 않아요."
 description: "일용근로소득 원천징수는 일당에서 15만 원을 빼고 6% 세율과 55% 세액공제를 적용해요. 일당 15만·18만·20만·25만·30만 원별 소득세·지방소득세·실지급액과 세금이 0원이 되는 일당 187,037원의 계산 근거를 정리했어요."
+thumb: "일용직|원천징수 계산"
+emoji: "🧾"
+theme: slate
 type: question
 datePublished: 2026-09-29
 dateModified: 2026-09-29

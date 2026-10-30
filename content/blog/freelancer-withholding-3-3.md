@@ -4,6 +4,9 @@ slug: freelancer-withholding-3-3
 question: "3.3% 원천징수 계산"
 answer: "프리랜서에게 줄 돈의 3.3%(소득세 3%+지방소득세 0.3%)를 떼고 지급해요."
 description: "프리랜서·외주 인력에게 사업소득을 줄 때는 지급액의 3.3%를 원천징수해요. 10만~300만 원 지급액별 소득세·지방소득세·실지급액을 표로 정리하고, 10원 미만 절사 규칙과 신고 기한까지 알려 드려요."
+thumb: "3.3% 원천징수|이렇게 계산"
+emoji: "💼"
+theme: indigo
 type: question
 datePublished: 2026-09-29
 dateModified: 2026-09-29

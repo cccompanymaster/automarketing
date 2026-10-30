@@ -4,6 +4,9 @@ slug: optimal-vs-semi-optimal-blog
 question: "준최적 블로그 뜻"
 answer: "최적·준최적은 네이버 공식 등급이 아니라, 블로그의 검색 노출력을 나누는 업계 용어예요."
 description: "준최적 블로그와 최적 블로그가 무슨 뜻인지, 네이버가 공식으로 밝힌 C-Rank·D.I.A.와 어떻게 다른지 정리했어요. 실명·준최적·최적·인플루언서 배포 단가표와 고르는 법, 광고 표시 의무까지 담았어요."
+thumb: "준최적 블로그|뜻과 배포 단가"
+emoji: "✍️"
+theme: sky
 type: glossary
 datePublished: 2026-10-30
 dateModified: 2026-10-30

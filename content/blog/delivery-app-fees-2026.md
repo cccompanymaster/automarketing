@@ -4,6 +4,9 @@ slug: delivery-app-fees-2026
 question: "배달앱 수수료 비교"
 answer: "2026년 중개수수료는 배민·쿠팡이츠 2.0~7.8%, 요기배달 4.7~9.7%, 땡겨요 2%예요."
 description: "배민배달·쿠팡이츠·요기배달·땡겨요의 중개수수료, 업주 부담 배달비, 포장 수수료를 한 표로 비교했어요. 매출 구간별로 달라지는 요율과 확인되지 않은 항목까지 기준일과 함께 정리했어요."
+thumb: "배달앱 수수료|3사 비교"
+emoji: "🛵"
+theme: orange
 type: comparison
 datePublished: 2026-09-27
 dateModified: 2026-09-27

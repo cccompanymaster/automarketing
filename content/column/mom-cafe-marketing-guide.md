@@ -4,6 +4,9 @@ slug: mom-cafe-marketing-guide
 question: "맘카페 홍보 방법"
 answer: "맘카페는 광고 글을 막는 곳이 많아요. 카페 규칙을 먼저 보고 제휴·배포형·노출용 중에 골라요."
 description: "지역 맘카페 홍보 방법을 카페 공식 제휴, 배포형 게시글, 노출용 게시글, 체험단 네 가지로 나눠 비교했어요. 방법별 비용표와 카페 규칙·광고 표시 의무 등 강퇴와 삭제를 피하는 주의점도 정리했어요."
+thumb: "맘카페 홍보|4가지 방법"
+emoji: "💬"
+theme: amber
 type: comparison
 datePublished: 2026-10-30
 dateModified: 2026-10-30

@@ -4,6 +4,9 @@ slug: marketing-agency-scam-signs
 question: "마케팅 대행 사기 유형"
 answer: "공식 협력사 사칭 전화, 상위노출 100% 보장 선결제 요구는 대표적인 마케팅 대행 사기 신호예요."
 description: "네이버·카카오 공식 협력사를 사칭하는 전화, 상위노출 100% 보장을 내세운 선결제, 해지가 어려운 장기 계약 등 사장님을 노리는 마케팅 대행 사기 유형 5가지와 피해를 줄이는 대처법을 정리했어요."
+thumb: "대행 사기|이런 말 조심"
+emoji: "🚨"
+theme: rose
 type: question
 datePublished: 2026-09-29
 dateModified: 2026-09-29

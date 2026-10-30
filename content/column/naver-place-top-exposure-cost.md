@@ -4,6 +4,9 @@ slug: naver-place-top-exposure-cost
 question: "플레이스 상위노출 비용"
 answer: "월 보장형은 키워드마다 견적이 달라요. 건당 단가로 사면 검색량 × 단가로 미리 계산할 수 있어요."
 description: "네이버 플레이스 상위노출 비용을 대행사 월 보장형 견적과 건당 단가로 나눠 비교했어요. 키워드 검색량으로 예산을 미리 계산하는 법, 리워드 3종 단가표, 계약 전에 확인할 5가지를 정리했어요."
+thumb: "플레이스 상위노출|비용 계산법"
+emoji: "📍"
+theme: emerald
 type: comparison
 datePublished: 2026-10-30
 dateModified: 2026-10-30

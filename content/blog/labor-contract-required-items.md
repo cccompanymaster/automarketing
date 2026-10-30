@@ -4,6 +4,9 @@ slug: labor-contract-required-items
 question: "근로계약서 필수 기재사항"
 answer: "임금·소정근로시간·휴일·연차휴가·근무 장소와 업무를 적은 근로계약서를 서면으로 줘야 해요."
 description: "근로기준법 제17조가 정한 근로계약서 필수 기재사항을 표로 정리했어요. 5인 미만 가게·아르바이트 적용 여부, 기간제·단시간·18세 미만 근로자에게 더 적을 항목, 위반 시 벌칙까지 조문과 함께 알려 드려요."
+thumb: "근로계약서|필수 기재사항"
+emoji: "✍️"
+theme: slate
 type: question
 datePublished: 2026-09-29
 dateModified: 2026-09-29

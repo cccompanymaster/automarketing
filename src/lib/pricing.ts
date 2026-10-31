@@ -24,6 +24,8 @@ export interface PricingItem {
   minQty?: number;
   /** Quantity step in `unit`s, e.g. 100 for "일 100타 단위" (default 1). */
   step?: number;
+  /** Store badge on the product card. */
+  badge?: "인기" | "추천" | "신규";
 }
 
 export interface PricingGroup {
@@ -86,6 +88,7 @@ export const PRICING: PricingGroup[] = [
     items: [
       {
         name: "블로그 상위노출 24시간 보장",
+        badge: "추천",
         price: "60,000원 ~",
         amountKrw: 60_000,
         note: "통합검색 1페이지 노출 보장형 · 키워드 난이도에 따라 추가 금액 안내 · 진행 불가 키워드는 전액 환불",
@@ -98,6 +101,7 @@ export const PRICING: PricingGroup[] = [
       },
       {
         name: "블로그 최적 배포",
+        badge: "인기",
         price: "19,900원",
         unit: "1건",
         amountKrw: 19_900,
@@ -111,6 +115,7 @@ export const PRICING: PricingGroup[] = [
       },
       {
         name: "공식 인플루언서 블로그 배포 (준최적)",
+        badge: "신규",
         price: "49,900원",
         unit: "1건",
         amountKrw: 49_900,
@@ -139,12 +144,13 @@ export const PRICING: PricingGroup[] = [
       },
       {
         name: "신로직 준최적 블로그 배포",
+        badge: "신규",
         price: "25,000원",
         unit: "1건",
         amountKrw: 25_000,
         note: "이웃 1,000명 이상 · 일 방문자 1,000명 이상 블로그",
       },
-      { name: "블로그 실명 배포", price: "1,200원", unit: "1건", amountKrw: 1_200 },
+      { name: "블로그 실명 배포", badge: "인기", price: "1,200원", unit: "1건", amountKrw: 1_200 },
       {
         name: "블로그용 원고 작성",
         price: "500원",
@@ -177,6 +183,7 @@ export const PRICING: PricingGroup[] = [
     items: [
       {
         name: "일반형 리워드",
+        badge: "인기",
         price: "25원",
         unit: "1타",
         amountKrw: 25,
@@ -186,6 +193,7 @@ export const PRICING: PricingGroup[] = [
       },
       {
         name: "압축형 미션 리워드",
+        badge: "추천",
         price: "55원",
         unit: "1타",
         amountKrw: 55,
@@ -251,6 +259,7 @@ export const PRICING: PricingGroup[] = [
     items: [
       {
         name: "카페 배포형 게시글 발행",
+        badge: "인기",
         price: "10,000원",
         unit: "1건",
         amountKrw: 10_000,

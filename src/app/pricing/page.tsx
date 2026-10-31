@@ -1,13 +1,11 @@
 "use client";
 
-// Members-only product & price list, organized by channel. A summary grid shows
-// every channel at a glance (item count · lowest price); picking one filters the
-// tables below. Guests are redirected into the signup funnel — public pages
-// expose each product's 예상 비용 instead of the full rate card.
-// TODO(payment): turn each row into an orderable item via the billing API.
+// Members-only product store (크몽-style): search, channel chips, sort and a
+// grid of product cards that order straight from cash. Guests are redirected
+// into the signup funnel — public pages show each product's 예상 비용 instead.
+// /pricing#<group> preselects that channel (links from service pages).
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { useWallet } from "@/components/WalletProvider";
@@ -15,27 +13,18 @@ import { ChargeModal } from "@/components/ChargeModal";
 import { OrderModal } from "@/components/OrderModal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import {
-  PRICING,
-  sortedItems,
-  priceSortValue,
-  displayPrice,
-  type PricingGroup,
-  type PricingItem,
-} from "@/lib/pricing";
+import { StoreCard } from "@/components/StoreCard";
+import { PRICING, type PricingGroup, type PricingItem } from "@/lib/pricing";
+import { searchStore, sortStore, storeItems, type StoreSort } from "@/lib/store";
 import { fetchLivePricing, isSheetPricingConfigured } from "@/lib/sheetPricing";
 import { InquiryModal } from "@/components/InquiryModal";
 import { formatCash } from "@/lib/cash";
 
-/** Cheapest orderable price in a group, for the summary card. */
-function fromPrice(group: PricingGroup): string {
-  const priced = group.items
-    .filter((i) => i.amountKrw != null)
-    .sort((a, b) => priceSortValue(a) - priceSortValue(b));
-  if (priced.length === 0) return "견적 문의";
-  const cheapest = priced[0];
-  return `${cheapest.amountKrw!.toLocaleString("ko-KR")}원${cheapest.unit ? ` / ${cheapest.unit}` : ""}`;
-}
+const SORTS: { key: StoreSort; label: string }[] = [
+  { key: "recommended", label: "추천순" },
+  { key: "price-asc", label: "낮은 가격순" },
+  { key: "price-desc", label: "높은 가격순" },
+];
 
 export default function PricingPage() {
   const router = useRouter();
@@ -49,6 +38,9 @@ export default function PricingPage() {
   const [live, setLive] = useState(false);
   /** null = 전체 채널 */
   const [channel, setChannel] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<StoreSort>("recommended");
+  const [orderableOnly, setOrderableOnly] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -70,29 +62,24 @@ export default function PricingPage() {
     if (hydrated && !isAuthenticated) router.replace("/start");
   }, [hydrated, isAuthenticated, router]);
 
-  const shown = useMemo(
-    () => (channel ? groups.filter((g) => g.key === channel) : groups),
-    [groups, channel],
-  );
-  const totalItems = groups.reduce((n, g) => n + g.items.length, 0);
-
-  // A hash (e.g. /pricing#sns) selects that channel and scrolls to it.
+  // A hash (e.g. /pricing#sns) preselects that channel.
   useEffect(() => {
     if (!hydrated) return;
     const hash = decodeURIComponent(window.location.hash.slice(1));
-    if (!hash) return;
-    if (groups.some((g) => g.key === hash)) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time deep-link sync
-      setChannel(hash);
-    }
-    requestAnimationFrame(() => document.getElementById(hash)?.scrollIntoView());
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time deep-link sync
+    if (hash && groups.some((g) => g.key === hash)) setChannel(hash);
   }, [hydrated, groups]);
+
+  const all = useMemo(() => storeItems(groups), [groups]);
+  const shown = useMemo(() => {
+    let list = channel ? all.filter((e) => e.group.key === channel) : all;
+    if (orderableOnly) list = list.filter((e) => e.item.amountKrw != null && !e.item.inquiry);
+    return sortStore(searchStore(list, query), sort);
+  }, [all, channel, orderableOnly, query, sort]);
 
   const selectChannel = (key: string | null) => {
     setChannel(key);
-    if (key) {
-      requestAnimationFrame(() => document.getElementById(key)?.scrollIntoView());
-    }
+    history.replaceState(null, "", key ? `#${key}` : window.location.pathname);
   };
 
   if (!authed) return null;
@@ -101,245 +88,157 @@ export default function PricingPage() {
     <>
       <SiteHeader />
       <main className="flex-1 bg-slate-50">
-        <div className="mx-auto max-w-5xl px-5 py-12">
-          <header className="flex flex-wrap items-end justify-between gap-3">
+        {/* Store banner + search */}
+        <section className="bg-gradient-to-br from-emerald-700 via-emerald-800 to-slate-900 text-white">
+          <div className="mx-auto max-w-6xl px-5 pb-8 pt-16 lg:pt-10">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="text-sm font-bold tracking-widest text-emerald-200">마케팅방주 스토어</p>
+                <h1 className="mt-1 text-2xl font-extrabold sm:text-3xl">필요한 마케팅, 골라서 바로 주문하세요</h1>
+                <p className="mt-2 text-sm text-emerald-50/90">
+                  모든 단가 공개 · 1캐시 = 1원 (부가세 별도) · 작업 시작 전 전액 환불
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setChargeOpen(true)}
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-white/15 px-4 text-sm font-bold backdrop-blur transition hover:bg-white/25"
+              >
+                내 캐시 <span className="num">{formatCash(balance)}</span> · 충전
+              </button>
+            </div>
+            <label htmlFor="store-search" className="sr-only">
+              상품 검색
+            </label>
+            <div className="mt-6 flex items-center gap-2 rounded-2xl bg-white p-1.5 shadow-lg">
+              <span aria-hidden="true" className="pl-3 text-lg">🔍</span>
+              <input
+                id="store-search"
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="플레이스, 블로그, 맘카페…"
+                className="h-12 min-w-0 flex-1 bg-transparent px-1 text-base text-slate-900 outline-none placeholder:text-slate-400"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="h-10 shrink-0 rounded-xl px-3 text-sm font-semibold text-slate-500 hover:bg-slate-100"
+                >
+                  지우기
+                </button>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <div className="mx-auto max-w-6xl px-5 pb-14">
+          {/* Channel chips */}
+          <nav aria-label="카테고리" className="-mx-5 mt-6 overflow-x-auto px-5 pb-2">
+            <ul className="flex w-max gap-2">
+              {[{ key: null, icon: "🗂️", title: "전체", count: all.length }, ...groups.map((g) => ({ key: g.key, icon: g.icon, title: g.title, count: g.items.length }))].map(
+                (c) => {
+                  const active = channel === c.key;
+                  return (
+                    <li key={c.key ?? "all"}>
+                      <button
+                        type="button"
+                        onClick={() => selectChannel(c.key)}
+                        aria-pressed={active}
+                        className={`flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-full px-4 text-sm font-bold transition ${
+                          active
+                            ? "bg-slate-900 text-white shadow"
+                            : "bg-white text-slate-700 ring-1 ring-slate-200 hover:ring-emerald-300"
+                        }`}
+                      >
+                        <span aria-hidden="true">{c.icon}</span>
+                        {c.title}
+                        <span className={`num text-xs ${active ? "text-white/70" : "text-slate-400"}`}>{c.count}</span>
+                      </button>
+                    </li>
+                  );
+                },
+              )}
+            </ul>
+          </nav>
+
+          {/* Toolbar */}
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-slate-600">
+              <b className="num text-slate-900">{shown.length}</b>개 상품
+              {isSheetPricingConfigured && live && (
+                <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" aria-hidden="true" />
+                  실시간 단가
+                </span>
+              )}
+            </p>
+            <div className="flex items-center gap-2">
+              <label className="flex min-h-10 cursor-pointer items-center gap-2 rounded-xl bg-white px-3 text-sm font-semibold text-slate-600 ring-1 ring-slate-200">
+                <input
+                  type="checkbox"
+                  checked={orderableOnly}
+                  onChange={(e) => setOrderableOnly(e.target.checked)}
+                  className="h-4 w-4 rounded border-slate-300 text-emerald-600"
+                />
+                바로 주문 가능
+              </label>
+              <label htmlFor="store-sort" className="sr-only">
+                정렬
+              </label>
+              <select
+                id="store-sort"
+                value={sort}
+                onChange={(e) => setSort(e.target.value as StoreSort)}
+                className="min-h-10 rounded-xl bg-white px-3 text-sm font-semibold text-slate-700 ring-1 ring-slate-200"
+              >
+                {SORTS.map((o) => (
+                  <option key={o.key} value={o.key}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Product grid — columns follow the space left between the wings */}
+          {shown.length > 0 ? (
+            <div className="@container mt-5">
+              <ul className="grid grid-cols-2 gap-3 @3xl:grid-cols-3 @5xl:grid-cols-4 sm:gap-4">
+                {shown.map((e) => (
+                  <li key={`${e.group.key}-${e.item.name}`}>
+                    <StoreCard entry={e} onOrder={() => setOrderItem(e.item)} onInquiry={() => setInquiryTopic(e.item.name)} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <div className="mt-8 rounded-2xl bg-white p-10 text-center ring-1 ring-slate-100">
+              <p className="text-base font-bold text-slate-800">찾는 상품이 없어요</p>
+              <p className="mt-1 text-sm text-slate-500">다른 검색어를 넣거나, 원하는 마케팅을 문의해 주세요.</p>
+              <button
+                type="button"
+                onClick={() => setInquiryTopic(query || "상품 문의")}
+                className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-emerald-600 px-5 text-sm font-bold text-white hover:bg-emerald-700"
+              >
+                문의하기
+              </button>
+            </div>
+          )}
+
+          {/* Inquiry CTA (quote-based items) */}
+          <div className="mt-10 flex flex-col items-start justify-between gap-4 rounded-2xl bg-slate-900 px-6 py-7 sm:flex-row sm:items-center">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">상품 · 요금</h1>
-              <p className="mt-2 text-sm text-slate-500">
-                채널별로 정리했어요. <b className="text-slate-600">1캐시 = 1원(부가세 별도)</b>로 필요한 만큼만
-                주문할 수 있고, 표시 금액은 부가세 별도입니다.
+              <h2 className="text-lg font-bold text-white">키워드 단가·견적이 궁금하신가요?</h2>
+              <p className="mt-1 text-sm text-slate-300">
+                카페 공식 제휴·C사 트래픽 등 견적형 상품은 문의 후 24시간 안에 회신드려요.
               </p>
             </div>
             <button
               type="button"
-              onClick={() => setChargeOpen(true)}
-              className="rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
-            >
-              보유 {formatCash(balance)} · 충전
-            </button>
-          </header>
-
-          {/* ===== Channel overview — every channel at a glance ===== */}
-          <section aria-label="채널 한눈에 보기" className="mt-8">
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="text-base font-bold text-slate-900">
-                채널 한눈에 보기
-                <span className="num ml-2 text-xs font-semibold text-slate-400">
-                  {groups.length}개 채널 · {totalItems}개 상품
-                </span>
-              </h2>
-              {isSheetPricingConfigured && live && (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" aria-hidden="true" />
-                  실시간 단가 반영 중
-                </span>
-              )}
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {/* 전체 보기 */}
-              <button
-                type="button"
-                onClick={() => selectChannel(null)}
-                aria-pressed={channel === null}
-                className={`flex min-h-24 flex-col justify-between rounded-2xl border p-4 text-left transition ${
-                  channel === null
-                    ? "border-emerald-600 bg-emerald-700 text-white shadow-md"
-                    : "border-slate-100 bg-white text-slate-700 hover:border-emerald-200 hover:shadow-sm"
-                }`}
-              >
-                <span className="text-xl" aria-hidden="true">🗂️</span>
-                <span className="mt-2 text-sm font-bold">전체 보기</span>
-                <span
-                  className={`num text-xs ${channel === null ? "text-emerald-50" : "text-slate-400"}`}
-                >
-                  {totalItems}개 상품
-                </span>
-              </button>
-
-              {groups.map((g) => {
-                const active = channel === g.key;
-                const orderableCount = g.items.filter((i) => i.amountKrw != null && !i.inquiry).length;
-                return (
-                  <button
-                    key={g.key}
-                    type="button"
-                    onClick={() => selectChannel(g.key)}
-                    aria-pressed={active}
-                    className={`flex min-h-24 flex-col justify-between rounded-2xl border p-4 text-left transition ${
-                      active
-                        ? "border-emerald-600 bg-emerald-700 text-white shadow-md"
-                        : "border-slate-100 bg-white text-slate-700 hover:border-emerald-200 hover:shadow-sm"
-                    }`}
-                  >
-                    <span className="text-xl" aria-hidden="true">{g.icon}</span>
-                    <span className="mt-2 text-sm font-bold">{g.title}</span>
-                    <span className={`num text-xs ${active ? "text-emerald-50" : "text-slate-400"}`}>
-                      {g.items.length}개 · 최저 {fromPrice(g)}
-                    </span>
-                    {orderableCount > 0 && (
-                      <span
-                        className={`mt-1 inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold ${
-                          active ? "bg-white/20 text-white" : "bg-emerald-50 text-emerald-700"
-                        }`}
-                      >
-                        즉시 주문 {orderableCount}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </section>
-
-          {/* Legend — what each action means */}
-          <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-500">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" aria-hidden="true" />
-              캐시로 바로 주문
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-amber-400" aria-hidden="true" />
-              견적·문의
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-slate-300" aria-hidden="true" />
-              준비 중
-            </span>
-            {channel && (
-              <button
-                type="button"
-                onClick={() => selectChannel(null)}
-                className="ml-auto rounded-full border border-slate-200 px-3 py-1 font-semibold text-slate-600 transition hover:bg-white"
-              >
-                ← 전체 채널 보기
-              </button>
-            )}
-          </div>
-
-          <div className="mt-4 space-y-6">
-            {shown.map((group) => (
-              <section
-                key={group.key}
-                id={group.key}
-                className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm scroll-mt-24"
-              >
-                <div className="flex items-start gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
-                  <span className="text-2xl" aria-hidden="true">
-                    {group.icon}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="text-base font-bold text-slate-900">{group.title}</h2>
-                    <p className="mt-0.5 text-xs text-slate-500">{group.description}</p>
-                  </div>
-                  <span className="num shrink-0 rounded-full bg-slate-50 px-2.5 py-1 text-[11px] font-bold text-slate-500">
-                    {group.items.length}개
-                  </span>
-                </div>
-
-                <ul className="divide-y divide-slate-50">
-                  {sortedItems(group).map((item) => {
-                    const price = displayPrice(item);
-                    const orderable = price.kind === "order";
-                    const isBlogWrite = item.name === "블로그용 원고 작성";
-                    return (
-                      <li
-                        key={item.name}
-                        className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 px-5 py-3.5 transition hover:bg-slate-50/60 sm:grid-cols-[1fr_9.5rem_5rem] sm:px-6"
-                      >
-                        {/* Name + note */}
-                        <div className="min-w-0">
-                          <p className="truncate text-[15px] font-semibold text-slate-800">
-                            {item.name}
-                          </p>
-                          {item.note && (
-                            <p className="mt-0.5 truncate text-xs text-slate-400" title={item.note}>
-                              {item.note}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Price — one consistent format for every row */}
-                        <div className="col-start-2 row-start-1 text-right sm:col-start-2">
-                          {price.kind === "order" ? (
-                            <span className="inline-flex items-baseline gap-1">
-                              <span className="num text-[17px] font-extrabold text-slate-900">
-                                {price.main}
-                              </span>
-                              {price.from && (
-                                <span className="text-[11px] font-semibold text-slate-400">부터</span>
-                              )}
-                            </span>
-                          ) : (
-                            <span
-                              className={`inline-block rounded-md px-2 py-0.5 text-xs font-bold ${
-                                price.kind === "quote"
-                                  ? "bg-amber-50 text-amber-700"
-                                  : "bg-slate-100 text-slate-400"
-                              }`}
-                            >
-                              {price.main}
-                            </span>
-                          )}
-                          {price.unit && (
-                            <span className="num mt-0.5 block text-[11px] text-slate-400">
-                              / {price.unit}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Action — compact, right-aligned on mobile too */}
-                        <div className="col-start-2 row-start-2 w-20 justify-self-end sm:col-start-3 sm:row-start-1 sm:w-full">
-                          {isBlogWrite ? (
-                            <Link
-                              href="/tools/blog-writer"
-                              className="flex h-9 w-full items-center justify-center rounded-lg bg-emerald-700 text-xs font-bold text-white transition hover:bg-emerald-800"
-                            >
-                              AI 작성
-                            </Link>
-                          ) : orderable ? (
-                            <button
-                              type="button"
-                              onClick={() => setOrderItem(item)}
-                              className="flex h-9 w-full items-center justify-center rounded-lg bg-emerald-700 text-xs font-bold text-white transition hover:bg-emerald-800"
-                            >
-                              주문
-                            </button>
-                          ) : price.kind === "soon" ? (
-                            <span
-                              aria-disabled="true"
-                              className="flex h-9 w-full cursor-not-allowed items-center justify-center rounded-lg text-xs font-semibold text-slate-300"
-                            >
-                              준비 중
-                            </span>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => setInquiryTopic(item.name)}
-                              className="flex h-9 w-full items-center justify-center rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 transition hover:border-emerald-300 hover:text-emerald-800"
-                            >
-                              문의
-                            </button>
-                          )}
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-            ))}
-          </div>
-
-          {/* Inquiry CTA (quote-based items) */}
-          <div className="mt-8 rounded-2xl bg-emerald-700 px-6 py-7 text-center">
-            <h2 className="text-lg font-bold text-white">키워드 단가·견적이 궁금하신가요?</h2>
-            <p className="mt-1.5 text-sm text-emerald-50">
-              카페 공식 제휴·C사 트래픽 등 견적형 상품은 키워드 문의 후 24시간 내 회신드립니다.
-            </p>
-            <button
-              type="button"
               onClick={() => setInquiryTopic("컨설팅·견적 상담")}
-              className="mt-5 inline-block rounded-xl bg-white px-7 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+              className="inline-flex min-h-12 shrink-0 items-center rounded-xl bg-emerald-500 px-6 text-sm font-bold text-white transition hover:bg-emerald-400"
             >
               견적·문의하기
             </button>

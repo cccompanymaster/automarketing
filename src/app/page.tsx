@@ -20,7 +20,7 @@ export default function HomePage() {
       <HomeSwitch>
         <Landing />
       </HomeSwitch>
-      <SiteFooter />
+      <SiteFooter businessInfo />
     </>
   );
 }

@@ -1,10 +1,15 @@
-// Footer with business / legal registration info (from the business
-// registration certificate) and links to terms / privacy.
+// Footer with links to terms / privacy. The business / legal registration
+// card (전자상거래법 제10조 표시 항목) shows on the home page only — the law
+// asks for it on the site's first screen; other pages link back to it.
 
 import Link from "next/link";
 import { COMPANY } from "@/lib/company";
 
-export function SiteFooter() {
+export function SiteFooter({
+  businessInfo = false,
+}: {
+  businessInfo?: boolean;
+}) {
   const items: { label: string; value: string }[] = [
     { label: "상호", value: COMPANY.companyName },
     { label: "대표", value: COMPANY.ceo },
@@ -15,7 +20,9 @@ export function SiteFooter() {
     { label: "이메일", value: COMPANY.email },
     ...(COMPANY.phone ? [{ label: "전화", value: COMPANY.phone }] : []),
     { label: "상담", value: "카카오톡 채널 1:1 채팅" },
-    ...(COMPANY.mailOrderNumber ? [{ label: "통신판매업 신고번호", value: COMPANY.mailOrderNumber }] : []),
+    ...(COMPANY.mailOrderNumber
+      ? [{ label: "통신판매업 신고번호", value: COMPANY.mailOrderNumber }]
+      : []),
     { label: "호스팅 서비스 제공자", value: COMPANY.hostingProvider },
   ];
 
@@ -29,30 +36,52 @@ export function SiteFooter() {
               <span>{COMPANY.serviceName}</span>
             </div>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-500">
-              대행사 없이도 손쉽게 시작하는 우리 매장 마케팅. 소상공인·온라인 셀러·매장 운영자를 위한 셀프 마케팅 플랫폼입니다.
+              대행사 없이도 손쉽게 시작하는 우리 매장 마케팅. 소상공인·온라인
+              셀러·매장 운영자를 위한 셀프 마케팅 플랫폼입니다.
             </p>
           </div>
 
           <nav className="flex flex-wrap gap-x-2 text-sm font-medium text-slate-600">
-            <Link href="/tools/" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
+            <Link
+              href="/tools/"
+              className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900"
+            >
               무료 계산기
             </Link>
-            <Link href="/blog/" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
+            <Link
+              href="/blog/"
+              className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900"
+            >
               블로그
             </Link>
-            <Link href="/column/" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
+            <Link
+              href="/column/"
+              className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900"
+            >
               마케팅 칼럼
             </Link>
-            <Link href="/#faq" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
+            <Link
+              href="/#faq"
+              className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900"
+            >
               자주 묻는 질문
             </Link>
-            <Link href="/notice/" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
+            <Link
+              href="/notice/"
+              className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900"
+            >
               공지사항
             </Link>
-            <Link href="/terms" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
+            <Link
+              href="/terms"
+              className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900"
+            >
               이용약관
             </Link>
-            <Link href="/privacy" className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900">
+            <Link
+              href="/privacy"
+              className="inline-flex min-h-11 items-center px-2 py-2 transition hover:text-slate-900"
+            >
               개인정보처리방침
             </Link>
             {/* 제3자 제공 link returns with THIRD_PARTY_CONSENT_ENABLED; the page
@@ -60,44 +89,83 @@ export function SiteFooter() {
           </nav>
         </div>
 
-        <dl className="mt-8 grid grid-cols-1 gap-x-6 gap-y-2 text-xs text-slate-500 sm:grid-cols-2">
-          {items.map((item) => (
-            <div key={item.label} className="flex gap-2">
-              <dt className="shrink-0 font-medium text-slate-400">{item.label}</dt>
-              <dd>
-                {item.label === "상담" ? (
-                  <a href={COMPANY.kakaoChatUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-800">
-                    {item.value}
-                  </a>
-                ) : (
-                  item.value
-                )}
-                {item.label === "통신판매업 신고번호" && (
-                  <a
-                    href={`https://www.ftc.go.kr/bizCommPop.do?wrkr_no=${COMPANY.businessRegistrationNumber.replace(/-/g, "")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-1.5 underline underline-offset-2 hover:text-slate-700"
-                  >
-                    사업자정보 확인
-                  </a>
-                )}
-              </dd>
-            </div>
-          ))}
-        </dl>
+        {businessInfo ? (
+          <>
+            <dl
+              id="business-info"
+              className="mt-8 grid scroll-mt-20 grid-cols-1 gap-x-6 gap-y-2 text-xs text-slate-500 sm:grid-cols-2"
+            >
+              {items.map((item) => (
+                <div key={item.label} className="flex gap-2">
+                  <dt className="shrink-0 font-medium text-slate-400">
+                    {item.label}
+                  </dt>
+                  <dd>
+                    {item.label === "상담" ? (
+                      <a
+                        href={COMPANY.kakaoChatUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline underline-offset-2 hover:text-slate-800"
+                      >
+                        {item.value}
+                      </a>
+                    ) : (
+                      item.value
+                    )}
+                    {item.label === "통신판매업 신고번호" && (
+                      <a
+                        href={`https://www.ftc.go.kr/bizCommPop.do?wrkr_no=${COMPANY.businessRegistrationNumber.replace(/-/g, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ml-1.5 underline underline-offset-2 hover:text-slate-700"
+                      >
+                        사업자정보 확인
+                      </a>
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
 
-        <p className="mt-6 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500">
-          <span className="font-medium text-slate-400">공식 채널</span>
-          {COMPANY.channels.map((c) => (
-            <a key={c.url} href={c.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-800">
-              {c.label}
+            <p className="mt-6 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500">
+              <span className="font-medium text-slate-400">공식 채널</span>
+              {COMPANY.channels.map((c) => (
+                <a
+                  key={c.url}
+                  href={c.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2 hover:text-slate-800"
+                >
+                  {c.label}
+                </a>
+              ))}
+            </p>
+          </>
+        ) : (
+          <p className="mt-6 text-xs text-slate-500">
+            <Link
+              href="/#business-info"
+              className="underline underline-offset-2 hover:text-slate-800"
+            >
+              사업자 정보
+            </Link>
+            <span className="mx-2 text-slate-300">|</span>
+            <a
+              href={COMPANY.kakaoChatUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-slate-800"
+            >
+              카카오톡 상담
             </a>
-          ))}
-        </p>
+          </p>
+        )}
 
         <p className="mt-8 text-xs text-slate-400">
-          © {new Date().getFullYear()} {COMPANY.companyName}. All rights reserved.
+          © {new Date().getFullYear()} {COMPANY.companyName}. All rights
+          reserved.
         </p>
       </div>
     </footer>

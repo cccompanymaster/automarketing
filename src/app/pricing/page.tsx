@@ -14,8 +14,9 @@ import { OrderModal } from "@/components/OrderModal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { StoreCard } from "@/components/StoreCard";
+import { ProductOptionsModal } from "@/components/ProductOptionsModal";
 import { PRICING, type PricingGroup, type PricingItem } from "@/lib/pricing";
-import { searchStore, sortStore, storeItems, type StoreSort } from "@/lib/store";
+import { isOrderable, searchStore, sortStore, storeProducts, type StoreProduct, type StoreSort } from "@/lib/store";
 import { fetchLivePricing, isSheetPricingConfigured } from "@/lib/sheetPricing";
 import { InquiryModal } from "@/components/InquiryModal";
 import { formatCash } from "@/lib/cash";
@@ -41,6 +42,7 @@ export default function PricingPage() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<StoreSort>("recommended");
   const [orderableOnly, setOrderableOnly] = useState(false);
+  const [openProduct, setOpenProduct] = useState<StoreProduct | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -70,10 +72,10 @@ export default function PricingPage() {
     if (hash && groups.some((g) => g.key === hash)) setChannel(hash);
   }, [hydrated, groups]);
 
-  const all = useMemo(() => storeItems(groups), [groups]);
+  const all = useMemo(() => storeProducts(groups), [groups]);
   const shown = useMemo(() => {
-    let list = channel ? all.filter((e) => e.group.key === channel) : all;
-    if (orderableOnly) list = list.filter((e) => e.item.amountKrw != null && !e.item.inquiry);
+    let list = channel ? all.filter((p) => p.group.key === channel) : all;
+    if (orderableOnly) list = list.filter(isOrderable);
     return sortStore(searchStore(list, query), sort);
   }, [all, channel, orderableOnly, query, sort]);
 
@@ -137,7 +139,7 @@ export default function PricingPage() {
           {/* Channel chips */}
           <nav aria-label="카테고리" className="-mx-5 mt-6 overflow-x-auto px-5 pb-2">
             <ul className="flex w-max gap-2">
-              {[{ key: null, icon: "🗂️", title: "전체", count: all.length }, ...groups.map((g) => ({ key: g.key, icon: g.icon, title: g.title, count: g.items.length }))].map(
+              {[{ key: null, icon: "🗂️", title: "전체", count: all.length }, ...groups.map((g) => ({ key: g.key, icon: g.icon, title: g.title, count: all.filter((p) => p.group.key === g.key).length }))].map(
                 (c) => {
                   const active = channel === c.key;
                   return (
@@ -206,9 +208,13 @@ export default function PricingPage() {
           {shown.length > 0 ? (
             <div className="@container mt-5">
               <ul className="grid grid-cols-2 gap-3 @3xl:grid-cols-3 @5xl:grid-cols-4 sm:gap-4">
-                {shown.map((e) => (
-                  <li key={`${e.group.key}-${e.item.name}`}>
-                    <StoreCard entry={e} onOrder={() => setOrderItem(e.item)} onInquiry={() => setInquiryTopic(e.item.name)} />
+                {shown.map((p) => (
+                  <li key={p.id}>
+                    <StoreCard
+                      product={p}
+                      onOpen={() => (p.options.length > 1 ? setOpenProduct(p) : setOrderItem(p.options[0]))}
+                      onInquiry={() => setInquiryTopic(p.title)}
+                    />
                   </li>
                 ))}
               </ul>
@@ -247,6 +253,18 @@ export default function PricingPage() {
       </main>
       <SiteFooter />
 
+      <ProductOptionsModal
+        product={openProduct}
+        onClose={() => setOpenProduct(null)}
+        onOrder={(item) => {
+          setOpenProduct(null);
+          setOrderItem(item);
+        }}
+        onInquiry={(item) => {
+          setOpenProduct(null);
+          setInquiryTopic(item.name);
+        }}
+      />
       <OrderModal
         item={orderItem}
         onClose={() => setOrderItem(null)}

@@ -24,9 +24,15 @@
 | 플레이스 상위노출 비용 | 검색 결과가 대행사 광고 위주 (2026-10-30 확인) | comparison | published | /column/naver-place-top-exposure-cost/ |
 | 준최적 블로그 뜻 | 검색 결과가 판매 페이지 위주, 공식 설명 부재 | glossary | published | /column/optimal-vs-semi-optimal-blog/ |
 | 맘카페 홍보 방법 | 검색 결과가 한 대행사 광고 위주, 단가 정보 부재 | comparison | published | /column/mom-cafe-marketing-guide/ |
-| 블로그 상위노출 보장 비용 | 칼럼 후보 (상품 연결: 24시간·25일 보장) | question | backlog | |
-| 서로이웃 늘리는 법 | 칼럼 후보 | question | backlog | |
-| 당근 비즈프로필 광고 | 키워드 리스트 B | question | backlog | |
-| AI 검색 노출 (챗GPT에 우리 가게) | 키워드 리스트 B | question | backlog | |
+| 블로그 상위노출 보장 비용 | 칼럼 (상품 연결: 24시간·25일 보장) | comparison | scheduled 2026-11-01 | /column/blog-top-exposure-guarantee/ |
+| 서로이웃 늘리는 법 | 칼럼 | question | scheduled 2026-11-01 | /column/blog-neighbor-growth/ |
+| 당근 비즈프로필 홍보 | 키워드 리스트 B | question | scheduled 2026-11-01 | /column/daangn-bizprofile-marketing/ |
+| AI 검색 노출 (챗GPT에 우리 가게) | 키워드 리스트 B | question | scheduled 2026-11-01 | /column/ai-search-citation/ |
+| 보도자료 배포 비용 | 칼럼 (상품 연결: 언론 송출) | question | scheduled 2026-11-01 | /column/press-release-cost/ |
+| 최저임금 2026 | 추정 (계산기 대응) | data | scheduled 2026-11-01 | /blog/minimum-wage-2026/ |
+| 간이과세자 기준 | 추정 | question | scheduled 2026-11-01 | /blog/simplified-taxpayer-threshold/ |
+| 부가세 신고 기간 | 추정 | data | scheduled 2026-11-01 | /blog/vat-filing-schedule/ |
+| 퇴직금 계산 | 추정 | question | scheduled 2026-11-01 | /blog/severance-pay-calculation/ |
+| 휴게시간 규정 | 추정 | question | scheduled 2026-11-01 | /blog/break-time-rules/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

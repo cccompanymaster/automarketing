@@ -9,6 +9,10 @@ on:
     branches:
       - claude/pensive-fermat-MZ94X
   workflow_dispatch:
+  # Daily rebuild at 00:01 KST so scheduled posts (future datePublished) go
+  # live on their date; the IndexNow step then pings the new URLs.
+  schedule:
+    - cron: "1 15 * * *"
 
 permissions:
   contents: read

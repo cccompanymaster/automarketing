@@ -30,6 +30,16 @@ const knownPaths = new Set<string>([
   ...columns.map((p) => `${COLUMN.path}${p.slug}/`),
 ]);
 const allSlugs = new Set(posts.map((p) => p.slug));
+
+/** Paths live on a given date: a scheduled post may only link to posts already published by then. */
+const knownOn = (date: string) => {
+  const future = new Set(
+    [...posts.map((p) => [BLOG_PATH, p] as const), ...columns.map((p) => [COLUMN.path, p] as const)]
+      .filter(([, p]) => p.datePublished > date)
+      .map(([base, p]) => `${base}${p.slug}/`),
+  );
+  return new Set([...knownPaths].filter((k) => !future.has(k)));
+};
 const columnSlugs = new Set(columns.map((p) => p.slug));
 
 describe("blog publish gate", () => {
@@ -38,7 +48,7 @@ describe("blog publish gate", () => {
   });
 
   it.each(posts.map((p) => [p.slug, p] as [string, Post]))("%s passes the gate", (_slug, p) => {
-    expect(validatePost(p, { knownPaths, allSlugs })).toEqual([]);
+    expect(validatePost(p, { knownPaths: knownOn(p.datePublished), allSlugs })).toEqual([]);
   });
 
   it("titles, descriptions, questions and slugs are unique", () => {
@@ -55,7 +65,7 @@ describe("column publish gate", () => {
   });
 
   it.each(columns.map((p) => [p.slug, p] as [string, Post]))("%s passes the gate", (_slug, p) => {
-    expect(validatePost(p, { knownPaths, allSlugs: columnSlugs, hubPath: COLUMN.path })).toEqual([]);
+    expect(validatePost(p, { knownPaths: knownOn(p.datePublished), allSlugs: columnSlugs, hubPath: COLUMN.path })).toEqual([]);
   });
 
   it("titles, descriptions, questions and slugs are unique across blog and columns", () => {

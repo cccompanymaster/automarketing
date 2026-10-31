@@ -132,10 +132,22 @@ export function readAllPosts(dir = BLOG_DIR): Post[] {
     });
 }
 
-/** Published posts, newest first — what the site renders. */
+/**
+ * Today in KST (YYYY-MM-DD). Scheduled posts carry a future datePublished and
+ * stay hidden until a build on or after that date; the deploy workflow
+ * rebuilds daily at 00:01 KST. BUILD_DATE overrides it (previews, tests).
+ */
+export function todayKst(now: Date = new Date()): string {
+  if (process.env.BUILD_DATE) return process.env.BUILD_DATE;
+  return new Date(now.getTime() + 9 * 3600_000).toISOString().slice(0, 10);
+}
+
+/** Published posts, newest first — what the site renders (scheduled ones once their date arrives). */
 export function getPublishedPosts(c: Collection = BLOG): Post[] {
+  const today = todayKst();
   return readAllPosts(c.dir)
     .filter((p) => p.status === "published" || p.status === "refresh-needed")
+    .filter((p) => p.datePublished <= today)
     .sort((a, b) => b.datePublished.localeCompare(a.datePublished));
 }
 

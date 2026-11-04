@@ -108,6 +108,9 @@ export function OrderModal({
   const [ackVariable, setAckVariable] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const submittingRef = useRef(false);
+  // One key per opened order: a retry after a dropped connection or a double
+  // tap reaches the server with the same key and is charged once.
+  const orderKey = useRef<string>("");
   const panelRef = useRef<HTMLDivElement>(null);
   useModal(panelRef, Boolean(item), onClose);
 
@@ -118,6 +121,7 @@ export function OrderModal({
     setRequest(draft?.request ?? "");
     setForm(draft?.form ?? {});
     setAckVariable(false);
+    orderKey.current = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "";
     if (item) track("begin_checkout", { item_name: item.name, currency: "KRW", value: item.amountKrw });
   }, [item, draft]);
 
@@ -153,6 +157,7 @@ export function OrderModal({
         amountCash: totalCash,
         qty: quantity,
         request: formatRequest(spec, form, request).slice(0, 4000),
+        clientKey: orderKey.current || undefined,
       });
       track("purchase", { item_name: item.name, quantity, currency: "KRW", value: totalCash });
       onOrdered?.();

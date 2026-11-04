@@ -114,3 +114,7 @@ GitHub Variables에 추가:
 - [ ] `prices` 웹에 게시(CSV) → `NEXT_PUBLIC_PRICE_SHEET_CSV_URL` 등록
 - [ ] Apps Script 붙여넣기 → 웹 앱 배포(모든 사용자) → `NEXT_PUBLIC_INQUIRY_WEBHOOK_URL` 등록
 - [ ] Actions Re-run → `/pricing`에서 "실시간 단가 반영 중" 배지 + 문의 폼 확인
+
+## 주의: 서버 단가표와 같아야 주문돼요 (2026-11-04~)
+
+주문 금액은 이제 서버 단가표(`public.catalog_items`)로 다시 계산해요. 시트에서 가격을 바꾸면 화면 가격과 서버 가격이 달라져 주문이 "가격이 바뀌었어요"로 거절돼요. 가격을 바꿀 때는 `src/lib/pricing.ts`를 고치고 `npm run catalog:sql`로 만든 `supabase/catalog.sql`을 마이그레이션으로 적용하세요. 시트 연동을 쓰는 동안에는 서버 단가표도 같은 값으로 맞춰야 해요.

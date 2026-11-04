@@ -34,5 +34,9 @@
 | 부가세 신고 기간 | 추정 | data | scheduled 2026-11-01 | /blog/vat-filing-schedule/ |
 | 퇴직금 계산 | 추정 | question | scheduled 2026-11-01 | /blog/severance-pay-calculation/ |
 | 휴게시간 규정 | 추정 | question | scheduled 2026-11-01 | /blog/break-time-rules/ |
+| 연차휴가 계산법 | 추정 (근로기준법 질문) | question | scheduled 2026-11-05 | /blog/annual-leave-calculation/ |
+| 종합소득세 중간예납 | 추정 (11월 납부 시즌) | question | scheduled 2026-11-05 | /blog/income-tax-interim-prepayment/ |
+| 네이버 인플루언서 블로그 배포 비용 | 칼럼 (상품 연결: 공식 인플루언서 배포) | comparison | scheduled 2026-11-05 | /column/naver-influencer-blog-cost/ |
+| 마케팅 원고 작성 비용 | 칼럼 (상품 연결: 원고 작성·대필) | comparison | scheduled 2026-11-05 | /column/content-writing-cost/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

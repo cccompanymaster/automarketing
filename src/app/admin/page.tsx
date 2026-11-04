@@ -6,6 +6,7 @@
 // (see lib/admin.ts). Demo placeholders are shown only in stub mode.
 
 import { AdminChargeRequests } from "@/components/AdminChargeRequests";
+import { AdminInquiries } from "@/components/AdminInquiries";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
@@ -173,6 +174,9 @@ export default function AdminPage() {
 
               {/* Bank-transfer top-ups: confirm deposits, track receipts */}
               <AdminChargeRequests onChanged={() => void load()} />
+
+              {/* Site inquiries (also emailed) */}
+              <AdminInquiries />
 
               {/* Deliverable upload + confirmation status */}
               <DeliverablesPanel />

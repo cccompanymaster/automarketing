@@ -1,7 +1,7 @@
-// Supabase Edge Function: 관리자 알림 — 무통장입금 충전 신청 → 사장님 이메일.
+// Supabase Edge Function: 관리자 알림 — 무통장입금 충전 신청·사이트 문의 → 사장님 이메일.
 //
-// Called by the AFTER INSERT trigger on public.charge_requests (pg_net) with
-// { id }. It "claims" the row by setting notified_at only when it's still null,
+// Called by the AFTER INSERT triggers on public.charge_requests ({ id }) and
+// public.inquiries ({ kind: "inquiry", id }) via pg_net. It "claims" the row by setting notified_at only when it's still null,
 // so each request emails at most once no matter how often this is called —
 // that's why it can run without JWT verification (verify_jwt=false) safely.
 //
@@ -29,10 +29,11 @@ const RECEIPT: Record<string, string> = { none: "발행 안 함", cash_receipt: 
 
 Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "POST only" }, 405);
-  const { id } = (await req.json().catch(() => ({}))) as { id?: string };
+  const { id, kind } = (await req.json().catch(() => ({}))) as { id?: string; kind?: string };
   if (!id || !/^[0-9a-f-]{36}$/i.test(id)) return json({ error: "id required" }, 400);
 
   const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  if (kind === "inquiry") return notifyInquiry(admin, id);
 
   // Claim: only the first call for a request gets the row back.
   const { data: row, error } = await admin
@@ -100,3 +101,49 @@ Deno.serve(async (req) => {
   }
   return json({ ok: true });
 });
+
+// --- Site inquiries ------------------------------------------------------------
+
+async function notifyInquiry(admin: ReturnType<typeof createClient>, id: string): Promise<Response> {
+  const { data: row, error } = await admin
+    .from("inquiries")
+    .update({ notified_at: new Date().toISOString() })
+    .eq("id", id)
+    .is("notified_at", null)
+    .select("id, code, name, contact, email, topic, message, page, created_at")
+    .maybeSingle();
+  if (error) return json({ error: error.message }, 500);
+  if (!row) return json({ ok: true, skipped: "already notified or not found" });
+  const release = () => admin.from("inquiries").update({ notified_at: null }).eq("id", id);
+  if (!RESEND_API_KEY) {
+    await release();
+    return json({ error: "RESEND_API_KEY is not set" }, 500);
+  }
+  const rows: [string, string][] = [
+    ["접수번호", row.code],
+    ["주제", row.topic],
+    ["이름", row.name],
+    ["연락처", row.contact],
+    ...(row.email ? ([["이메일", row.email]] as [string, string][]) : []),
+    ["접수 시각", kst(row.created_at)],
+  ];
+  const html = `<div style="font-family:Apple SD Gothic Neo,Malgun Gothic,sans-serif;max-width:520px">
+  <h2 style="margin:0 0 12px;font-size:18px">새 문의 ${esc(row.code)}</h2>
+  <table style="border-collapse:collapse;width:100%;font-size:14px">${rows
+    .map(([k, v]) => `<tr><td style="padding:6px 10px;color:#64748b;border-bottom:1px solid #e2e8f0;white-space:nowrap">${esc(k)}</td><td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;font-weight:600">${esc(v)}</td></tr>`)
+    .join("")}</table>
+  <p style="font-size:14px;white-space:pre-wrap;background:#f8fafc;border-radius:10px;padding:12px;margin:14px 0">${esc(row.message)}</p>
+  <a href="${SITE}/admin/" style="display:inline-block;background:#047857;color:#fff;text-decoration:none;padding:10px 18px;border-radius:10px;font-weight:700">관리자 페이지 열기</a>
+</div>`;
+  const text = `새 문의 ${row.code}\n${rows.map(([k, v]) => `${k}: ${v}`).join("\n")}\n\n${row.message}\n\n${SITE}/admin/`;
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ from: FROM, to: TO, subject: `[마케팅방주] 새 문의 ${row.code} — ${row.topic}`, html, text, reply_to: row.email || undefined }),
+  });
+  if (!res.ok) {
+    await release();
+    return json({ error: `resend ${res.status}`, detail: (await res.text()).slice(0, 300) }, 502);
+  }
+  return json({ ok: true });
+}

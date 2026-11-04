@@ -93,6 +93,11 @@ export function Landing() {
         <div className="mt-10">
           <FaqAccordion items={SITE_FAQS} />
         </div>
+        <p className="mt-6 text-center">
+          <Link href="/faq/" className="text-sm font-semibold text-emerald-700 underline-offset-2 hover:underline">
+            주문·캐시·환불 질문까지 전체 보기 →
+          </Link>
+        </p>
       </section>
 
       {/* Free calculators — no signup, a reason to come back */}

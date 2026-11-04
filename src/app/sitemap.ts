@@ -34,6 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...postEntries(BLOG),
     ...postEntries(COLUMN),
     { url: `${SITE_URL}/terms/`, priority: 0.2, lastModified: TERMS.updatedAt },
+    { url: `${SITE_URL}/faq/`, priority: 0.6 },
     { url: `${SITE_URL}${NOTICE_PATH}`, priority: 0.3, lastModified: NOTICES[0]?.date },
     ...NOTICES.map((n) => ({ url: `${SITE_URL}${NOTICE_PATH}${n.slug}/`, priority: 0.3, lastModified: n.date })),
     { url: `${SITE_URL}/privacy/`, priority: 0.2, lastModified: PRIVACY.updatedAt },

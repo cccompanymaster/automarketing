@@ -31,7 +31,9 @@ export type AnalyticsEvent =
   | "begin_checkout"
   | "purchase"
   | "charge_start"
-  | "search";
+  | "search"
+  // Inquiry received by the site (not counted for the mail-app fallback).
+  | "generate_lead";
 
 /**
  * Push a conversion event into the dataLayer.

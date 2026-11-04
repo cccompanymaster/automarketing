@@ -1,13 +1,16 @@
 "use client";
 
-// Inquiry form modal (컨설팅/견적형 상품). Submits to the sheet+email webhook
-// when configured, otherwise falls back to the visitor's mail client.
+// Inquiry form modal (컨설팅/견적형 상품). Submits inside the site (Supabase
+// RPC → receipt code, or the sheet webhook). On failure — or when the site
+// can't take inquiries itself — it keeps what was typed and offers 다시 시도,
+// 카카오톡 상담, 전화, "이메일 앱에서 작성" and 내용 복사.
 
 import { useEffect, useRef, useState } from "react";
 import { useModal } from "@/components/useModal";
 import { toast } from "sonner";
-import { submitInquiry, isInquiryWebhookConfigured } from "@/lib/inquiry";
+import { submitInquiry, canSubmitInquiry, inquiryMailto, inquiryText, InquiryError, type InquiryInput } from "@/lib/inquiry";
 import { track } from "@/lib/analytics";
+import { COMPANY } from "@/lib/company";
 
 export function InquiryModal({
   open,
@@ -24,43 +27,57 @@ export function InquiryModal({
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
-  const [done, setDone] = useState(false);
+  /** Receipt: code when the server issued one, "" for the webhook path. */
+  const [done, setDone] = useState<string | null>(null);
+  const [failure, setFailure] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reset per open
-    setDone(false);
+    setDone(null);
+    setFailure(null);
   }, [open]);
   const panelRef = useRef<HTMLDivElement>(null);
   useModal(panelRef, open, onClose);
 
   if (!open) return null;
 
+  const input = (): InquiryInput => ({
+    name: name.trim(),
+    contact: contact.trim(),
+    email: email.trim() || undefined,
+    topic,
+    message: message.trim(),
+  });
+
   const submit = async () => {
     if (!name.trim() || !contact.trim() || !message.trim()) {
       toast.error("이름, 연락처, 문의 내용을 입력해 주세요.");
       return;
     }
+    if (!canSubmitInquiry) {
+      setFailure("사이트에서 바로 접수할 수 없어요. 아래 방법 중 편한 것으로 보내 주세요.");
+      return;
+    }
     setBusy(true);
+    setFailure(null);
     try {
-      const { via } = await submitInquiry({
-        name: name.trim(),
-        contact: contact.trim(),
-        email: email.trim() || undefined,
-        topic,
-        message: message.trim(),
-      });
-      track("cta_click", { product_slug: "consulting" });
-      if (via === "webhook") {
-        setDone(true);
-      } else {
-        toast.success("메일 앱이 열렸어요. 전송 버튼만 눌러주시면 접수됩니다.");
-        onClose();
-      }
-    } catch {
-      toast.error("접수에 실패했어요. 잠시 후 다시 시도해 주세요.");
+      const res = await submitInquiry(input());
+      track("generate_lead", { topic });
+      setDone(res.via === "server" ? res.code : "");
+    } catch (e) {
+      setFailure(e instanceof InquiryError ? e.message : "접수에 실패했어요. 잠시 후 다시 시도해 주세요.");
     } finally {
       setBusy(false);
+    }
+  };
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(inquiryText(input()));
+      toast.success("문의 내용을 복사했어요. 카카오톡이나 메일에 붙여 넣어 주세요.");
+    } catch {
+      toast.error("복사하지 못했어요. 내용을 직접 선택해 복사해 주세요.");
     }
   };
 
@@ -74,17 +91,23 @@ export function InquiryModal({
     >
       <div
         ref={panelRef}
-        className="w-full max-w-md rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl"
+        className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {done ? (
+        {done !== null ? (
           <div className="py-6 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-3xl" aria-hidden="true">
               ✅
             </div>
             <h2 className="mt-4 text-xl font-bold text-slate-900">문의가 접수됐어요</h2>
-            <p className="mt-2 text-sm leading-relaxed text-slate-600">
-              담당자가 확인 후 <b>24시간 내</b>에 남겨주신 연락처로 회신드릴게요.
+            {done && (
+              <p className="mt-3 inline-flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-2 text-sm text-slate-600 ring-1 ring-slate-200">
+                접수번호 <b className="num text-base text-slate-900">{done}</b>
+              </p>
+            )}
+            <p className="mt-3 text-sm leading-relaxed text-slate-600">
+              담당자가 확인한 뒤 남겨 주신 연락처로 회신드릴게요.
+              {done && <><br />카카오톡으로 문의할 때 접수번호를 알려 주시면 더 빨라요.</>}
             </p>
             <button
               type="button"
@@ -171,18 +194,44 @@ export function InquiryModal({
               </div>
             </div>
 
+            {failure && (
+              <div role="alert" className="mt-4 rounded-xl bg-rose-50 p-3 text-sm text-rose-800 ring-1 ring-rose-100">
+                <p className="font-semibold">{failure}</p>
+                <p className="mt-1 text-xs text-rose-700">입력한 내용은 그대로 남아 있어요.</p>
+                <div className="mt-2.5 grid grid-cols-2 gap-2 text-xs font-bold">
+                  <a
+                    href={COMPANY.kakaoChatUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex min-h-10 items-center justify-center rounded-lg bg-[#FEE500] text-slate-900"
+                  >
+                    카카오톡 상담
+                  </a>
+                  <a href={`tel:${COMPANY.phone}`} className="flex min-h-10 items-center justify-center rounded-lg bg-white text-slate-700 ring-1 ring-slate-200">
+                    전화 {COMPANY.phone}
+                  </a>
+                  <a href={inquiryMailto(input())} className="flex min-h-10 items-center justify-center rounded-lg bg-white text-slate-700 ring-1 ring-slate-200">
+                    이메일 앱에서 작성
+                  </a>
+                  <button type="button" onClick={copy} className="min-h-10 rounded-lg bg-white text-slate-700 ring-1 ring-slate-200">
+                    내용 복사
+                  </button>
+                </div>
+              </div>
+            )}
+
             <button
               type="button"
               onClick={submit}
               disabled={busy}
               className="mt-5 w-full rounded-xl bg-emerald-700 py-3.5 text-sm font-bold text-white transition hover:bg-emerald-800 disabled:opacity-60"
             >
-              {busy ? "접수 중…" : "문의 보내기"}
+              {busy ? "접수 중…" : failure && canSubmitInquiry ? "다시 시도" : "문의 보내기"}
             </button>
             <p className="mt-3 text-center text-[11px] text-slate-400">
-              {isInquiryWebhookConfigured
-                ? "접수 즉시 담당자에게 메일로 전달되고, 24시간 내 회신드려요."
-                : "메일 앱이 열리면 전송 버튼을 눌러 완료해 주세요."}
+              {canSubmitInquiry
+                ? "사이트에서 바로 접수되고 접수번호를 알려 드려요."
+                : "보내기를 누르면 카카오톡·전화·이메일 앱 중에서 고를 수 있어요."}
             </p>
           </>
         )}

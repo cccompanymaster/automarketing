@@ -7,7 +7,7 @@ import { COMPANY } from "@/lib/company";
 import { PRODUCT_LIST, isPriceAmount } from "@/lib/products";
 import { PRICING, displayPrice } from "@/lib/pricing";
 import { PRODUCT_STORIES } from "@/lib/productStories";
-import { SITE_FAQS } from "@/lib/faq";
+import { ORDER_FAQS, SITE_FAQS } from "@/lib/faq";
 import { TERMS } from "@/lib/legal";
 import { BLOG_WRITE_COST } from "@/lib/blogWriter";
 
@@ -87,7 +87,7 @@ export function buildChatKnowledge(siteUrl: string): string {
   }
 
   h("자주 묻는 질문");
-  for (const f of SITE_FAQS) L.push(`- Q. ${f.q}`, `  A. ${f.a}`);
+  for (const f of [...SITE_FAQS, ...ORDER_FAQS]) L.push(`- Q. ${f.q}`, `  A. ${f.a}`);
 
   h("환불·취소 (이용약관 요약)");
   for (const s of TERMS.sections.filter((x) => /캐시|환불|취소/.test(x.heading))) {

@@ -5,7 +5,9 @@
 import { QuickOrder } from "@/components/QuickOrder";
 import { TrendRankingMock } from "@/components/TrendRankingMock";
 import { PlaceRankingMock } from "@/components/PlaceRankingMock";
-import { isPriceAmount, type Product, type ProductSlug } from "@/lib/products";
+import Link from "next/link";
+import { getProduct, isPriceAmount, type Product, type ProductSlug } from "@/lib/products";
+import { RELATED_SERVICES } from "@/lib/store";
 import { PRODUCT_STORIES } from "@/lib/productStories";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -223,6 +225,40 @@ export function ProductDetailBody({
 
       {/* Order entry — rows of this product with an order button each */}
       <QuickOrder product={product} />
+
+      {/* 함께 쓰면 좋은 상품 */}
+      {(() => {
+        const related = (RELATED_SERVICES[product.slug] ?? []).map((s) => getProduct(s)).filter((p): p is Product => !!p);
+        if (related.length === 0) return null;
+        return (
+          <section className="mt-12">
+            <h2 className="text-xl font-bold text-slate-900">함께 쓰면 좋은 상품</h2>
+            <ul className="mt-4 grid gap-3 sm:grid-cols-3">
+              {related.map((r) => (
+                <li key={r.slug}>
+                  <Link
+                    href={`/services/${r.slug}/`}
+                    className="flex h-full items-center gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition hover:border-emerald-200 hover:shadow-md"
+                  >
+                    <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-2xl ${r.accent.iconBg}`} aria-hidden="true">
+                      {r.icon}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-sm font-bold text-slate-900">{r.name}</span>
+                      {r.detail.fromPrice && (
+                        <span className="mt-0.5 block text-xs text-slate-500">
+                          {r.detail.fromPrice}
+                          {isPriceAmount(r.detail.fromPrice) && " 부터"}
+                        </span>
+                      )}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        );
+      })()}
     </div>
   );
 }

@@ -10,6 +10,8 @@ import { useWallet } from "@/components/WalletProvider";
 import { useOrders } from "@/components/OrdersProvider";
 import { formatCash, formatKrw, krwToCash } from "@/lib/cash";
 import type { PricingItem } from "@/lib/pricing";
+import { track } from "@/lib/analytics";
+import Link from "next/link";
 
 export interface OrderDraft {
   qty: number;
@@ -43,6 +45,7 @@ export function OrderModal({
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setQty(draft?.qty ?? item?.minQty ?? 1);
     setRequest(draft?.request ?? "");
+    if (item) track("begin_checkout", { item_name: item.name, currency: "KRW", value: item.amountKrw });
   }, [item, draft]);
 
   if (!item || item.amountKrw == null) return null;
@@ -71,6 +74,7 @@ export function OrderModal({
         qty: quantity,
         request: request.trim().slice(0, 1000),
       });
+      track("purchase", { item_name: item.name, quantity, currency: "KRW", value: totalCash });
       toast.success(`주문 완료 — ${formatCash(totalCash)} 차감되었습니다.`);
       onClose();
     } catch (e) {
@@ -169,8 +173,17 @@ export function OrderModal({
         </div>
 
         <div className="mt-4 space-y-2 rounded-xl bg-slate-50 px-4 py-3 text-sm">
+          {hasUnit && (
+            <div className="flex items-center justify-between text-xs text-slate-500">
+              <span>단가 × 수량</span>
+              <span className="num">
+                {formatKrw(item.amountKrw)} × {quantity.toLocaleString("ko-KR")}
+                {item.unit?.replace(/^1/, "") ?? ""}
+              </span>
+            </div>
+          )}
           <div className="flex items-center justify-between">
-            <span className="text-slate-500">결제 캐시</span>
+            <span className="text-slate-500">차감 캐시</span>
             <span className="font-extrabold text-slate-900">{formatCash(totalCash)}</span>
           </div>
           <div className="flex items-center justify-between">
@@ -210,9 +223,22 @@ export function OrderModal({
             캐시가 부족합니다 · 충전하러 가기
           </button>
         )}
+        <div className="mt-4 rounded-xl bg-amber-50/70 px-4 py-3 text-[12px] leading-relaxed text-slate-600 ring-1 ring-amber-100">
+          <p>
+            <b className="text-slate-800">작업 시작 전에는 전액 환불</b>돼요. 시작 후에는 진행분을 뺀 나머지를 캐시로 돌려드려요.
+          </p>
+          <p className="mt-1">
+            노출·순위 같은 성과는 검색·플랫폼 환경에 따라 달라질 수 있어요. 상품에 보장 조건이 따로 적혀 있지 않으면 성과 미달을
+            이유로 한 환불은 제한될 수 있어요.{" "}
+            <Link href="/terms/" target="_blank" className="font-semibold underline underline-offset-2">
+              이용약관
+            </Link>
+          </p>
+          <p className="mt-1 text-slate-400">상품 단가는 부가세 별도이며, 부가세는 캐시 충전 때 함께 결제돼요.</p>
+        </div>
         <p className="mt-3 text-center text-[11px] text-slate-400">
           {/* TODO(backend): 주문을 실제 작업 의뢰/대시보드와 연동. */}
-          주문 시 캐시가 차감되며, 내역은 마이페이지에서 확인할 수 있습니다.
+          주문 내역과 진행 상황은 마이페이지에서 확인할 수 있어요.
         </p>
       </div>
     </div>

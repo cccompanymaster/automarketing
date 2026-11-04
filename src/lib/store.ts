@@ -315,3 +315,53 @@ export function searchStore(list: StoreProduct[], query: string): StoreProduct[]
       .includes(q),
   );
 }
+
+// --- Goal-first browsing ----------------------------------------------------
+
+/** "무엇이 필요한가" tabs: owners who don't know product names start here. */
+export const GOALS: { key: string; icon: string; label: string; ids: string[] }[] = [
+  {
+    key: "exposure",
+    icon: "📈",
+    label: "노출 올리기",
+    ids: ["place-reward", "place-basics", "blog-guarantee", "blog-deploy", "kakaomap-trend", "kakaomap-review", "ai-aeo"],
+  },
+  {
+    key: "trust",
+    icon: "⭐",
+    label: "후기·신뢰 쌓기",
+    ids: ["place-basics", "blog-influencer", "kakaomap-review", "daangn-review", "cafe-post", "press"],
+  },
+  {
+    key: "content",
+    icon: "✍️",
+    label: "콘텐츠 만들기",
+    ids: ["blog-블로그용 원고 작성", "blog-deploy", "cafe-post", "daangn-content", "press"],
+  },
+  { key: "sns", icon: "📸", label: "SNS·이웃 키우기", ids: ["instagram", "youtube", "blog-neighbor", "daangn-reaction"] },
+  { key: "sales", icon: "🛒", label: "매출 늘리기", ids: ["commerce", "place-reward", "daangn-project", "kakaomap-trend"] },
+];
+
+/** 목표별 추천 조합 — a starting set per situation (each product ordered separately). */
+export const PACKAGES: { key: string; title: string; who: string; ids: string[] }[] = [
+  { key: "new-store", title: "처음 시작하는 매장", who: "검색해도 잘 안 나오는 신규 매장", ids: ["place-basics", "blog-블로그용 원고 작성", "blog-deploy"] },
+  { key: "local", title: "지역 매장 홍보", who: "동네 손님을 늘리고 싶은 매장", ids: ["place-reward", "kakaomap-review", "daangn-reaction"] },
+  { key: "seller", title: "온라인 셀러 입문", who: "상품 순위와 후기가 필요한 셀러", ids: ["commerce", "blog-deploy", "instagram"] },
+  { key: "content", title: "콘텐츠 운영형", who: "글을 꾸준히 쌓고 싶은 사장님", ids: ["blog-블로그용 원고 작성", "blog-deploy", "blog-neighbor"] },
+];
+
+/** 함께 쓰면 좋은 상품 on service detail pages (service slug → related slugs). */
+export const RELATED_SERVICES: Record<string, string[]> = {
+  place: ["blog", "kakaomap", "daangn"],
+  blog: ["blogwrite", "blog-neighbor", "place"],
+  "blog-neighbor": ["blog", "blogwrite"],
+  blogwrite: ["blog", "cafe"],
+  shopping: ["blog", "instagram"],
+  cafe: ["blog", "daangn"],
+  kakaomap: ["place", "daangn"],
+  daangn: ["place", "kakaomap"],
+  press: ["ai-influencer", "blog"],
+  "ai-influencer": ["press", "blog"],
+  instagram: ["youtube", "blog"],
+  youtube: ["instagram", "blog"],
+};

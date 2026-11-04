@@ -16,7 +16,10 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { StoreCard } from "@/components/StoreCard";
 import { ProductOptionsModal } from "@/components/ProductOptionsModal";
 import { PRICING, type PricingGroup, type PricingItem } from "@/lib/pricing";
-import { isOrderable, searchStore, sortStore, storeProducts, type StoreProduct, type StoreSort } from "@/lib/store";
+import { GOALS, PACKAGES, isOrderable, searchStore, sortStore, storeProducts, type StoreProduct, type StoreSort } from "@/lib/store";
+import { track } from "@/lib/analytics";
+import Link from "next/link";
+import { COMPANY } from "@/lib/company";
 import { fetchLivePricing, isSheetPricingConfigured } from "@/lib/sheetPricing";
 import { InquiryModal } from "@/components/InquiryModal";
 import { formatCash } from "@/lib/cash";
@@ -43,6 +46,9 @@ export default function PricingPage() {
   const [sort, setSort] = useState<StoreSort>("recommended");
   const [orderableOnly, setOrderableOnly] = useState(false);
   const [openProduct, setOpenProduct] = useState<StoreProduct | null>(null);
+  /** Goal tab ("노출 올리기"…) or a recommended combo narrows the grid to its products. */
+  const [goal, setGoal] = useState<string | null>(null);
+  const [pack, setPack] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -75,9 +81,23 @@ export default function PricingPage() {
   const all = useMemo(() => storeProducts(groups), [groups]);
   const shown = useMemo(() => {
     let list = channel ? all.filter((p) => p.group.key === channel) : all;
+    const ids = pack ? PACKAGES.find((x) => x.key === pack)?.ids : goal ? GOALS.find((x) => x.key === goal)?.ids : null;
+    if (ids) list = list.filter((p) => ids.includes(p.id)).sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
     if (orderableOnly) list = list.filter(isOrderable);
-    return sortStore(searchStore(list, query), sort);
-  }, [all, channel, orderableOnly, query, sort]);
+    // A combo keeps its own order; everything else follows the chosen sort.
+    return pack ? searchStore(list, query) : sortStore(searchStore(list, query), sort);
+  }, [all, channel, goal, pack, orderableOnly, query, sort]);
+  const browsing = !query && !goal && !pack && !channel;
+  const activePack = PACKAGES.find((x) => x.key === pack);
+  const activeGoal = GOALS.find((x) => x.key === goal);
+
+  const openCard = (p: StoreProduct) => {
+    track("select_item", { item_id: p.id, item_name: p.title, item_category: p.group.title });
+    if (p.options.length > 1) {
+      track("view_item", { item_id: p.id, item_name: p.title });
+      setOpenProduct(p);
+    } else setOrderItem(p.options[0]);
+  };
 
   const selectChannel = (key: string | null) => {
     setChannel(key);
@@ -101,13 +121,29 @@ export default function PricingPage() {
                   모든 단가 공개 · 1캐시 = 1원 (부가세 별도) · 작업 시작 전 전액 환불
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => setChargeOpen(true)}
-                className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-white/15 px-4 text-sm font-bold backdrop-blur transition hover:bg-white/25"
-              >
-                내 캐시 <span className="num">{formatCash(balance)}</span> · 충전
-              </button>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setChargeOpen(true)}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-white/15 px-4 text-sm font-bold backdrop-blur transition hover:bg-white/25"
+                >
+                  내 캐시 <span className="num">{formatCash(balance)}</span> · 충전
+                </button>
+                <Link
+                  href="/mypage#orders"
+                  className="inline-flex min-h-11 items-center rounded-xl bg-white/15 px-4 text-sm font-bold backdrop-blur transition hover:bg-white/25"
+                >
+                  주문내역
+                </Link>
+                <a
+                  href={COMPANY.kakaoChatUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center rounded-xl bg-[#FEE500] px-4 text-sm font-bold text-slate-900 transition hover:brightness-95"
+                >
+                  상담하기
+                </a>
+              </div>
             </div>
             <label htmlFor="store-search" className="sr-only">
               상품 검색
@@ -132,6 +168,42 @@ export default function PricingPage() {
                 </button>
               )}
             </div>
+
+            {/* Goal-first browsing: what do you need? */}
+            <p className="mt-6 text-sm font-bold text-emerald-100">무엇이 필요하세요?</p>
+            <ul className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-6">
+              {GOALS.map((g) => {
+                const active = goal === g.key;
+                return (
+                  <li key={g.key}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPack(null);
+                        setGoal(active ? null : g.key);
+                      }}
+                      aria-pressed={active}
+                      className={`flex min-h-16 w-full flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-center text-xs font-bold transition sm:text-sm ${
+                        active ? "bg-white text-emerald-800 shadow-lg" : "bg-white/10 text-white hover:bg-white/20"
+                      }`}
+                    >
+                      <span aria-hidden="true" className="text-xl">{g.icon}</span>
+                      {g.label}
+                    </button>
+                  </li>
+                );
+              })}
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setInquiryTopic("무엇부터 할지 상담")}
+                  className="flex min-h-16 w-full flex-col items-center justify-center gap-1 rounded-2xl border border-dashed border-white/40 px-2 py-2 text-center text-xs font-bold text-white transition hover:bg-white/10 sm:text-sm"
+                >
+                  <span aria-hidden="true" className="text-xl">🙋</span>
+                  잘 모르겠어요
+                </button>
+              </li>
+            </ul>
           </div>
         </section>
 
@@ -164,6 +236,52 @@ export default function PricingPage() {
               )}
             </ul>
           </nav>
+
+          {/* 목표별 추천 조합 — only while browsing everything */}
+          {browsing && (
+            <section aria-label="목표별 추천 조합" className="mt-6">
+              <h2 className="text-base font-extrabold text-slate-900">목표별 추천 조합</h2>
+              <ul className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {PACKAGES.map((k) => (
+                  <li key={k.key}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setGoal(null);
+                        setPack(k.key);
+                      }}
+                      className="flex h-full w-full flex-col rounded-2xl bg-white p-4 text-left ring-1 ring-slate-200/70 transition hover:ring-emerald-300"
+                    >
+                      <span className="text-sm font-extrabold text-slate-900">{k.title}</span>
+                      <span className="mt-0.5 text-xs text-slate-500">{k.who}</span>
+                      <span className="mt-2 text-xs font-semibold text-emerald-700">
+                        {k.ids.map((id) => all.find((p) => p.id === id)?.title).filter(Boolean).join(" + ")}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {(activePack || activeGoal) && (
+            <div className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900 ring-1 ring-emerald-100">
+              <span className="font-bold">
+                {activePack ? `추천 조합 · ${activePack.title}` : `${activeGoal!.icon} ${activeGoal!.label}`}
+              </span>
+              {activePack && <span className="text-xs text-emerald-800">{activePack.who} — 상품은 각각 주문해요</span>}
+              <button
+                type="button"
+                onClick={() => {
+                  setGoal(null);
+                  setPack(null);
+                }}
+                className="ml-auto rounded-full bg-white px-3 py-1 text-xs font-bold text-emerald-800 ring-1 ring-emerald-200"
+              >
+                ✕ 해제
+              </button>
+            </div>
+          )}
 
           {/* Toolbar */}
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -212,7 +330,7 @@ export default function PricingPage() {
                   <li key={p.id}>
                     <StoreCard
                       product={p}
-                      onOpen={() => (p.options.length > 1 ? setOpenProduct(p) : setOrderItem(p.options[0]))}
+                      onOpen={() => openCard(p)}
                       onInquiry={() => setInquiryTopic(p.title)}
                     />
                   </li>

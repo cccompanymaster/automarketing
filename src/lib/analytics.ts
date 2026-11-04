@@ -23,7 +23,14 @@ export type AnalyticsEvent =
   | "onboarding_complete"
   | "signup_start"
   | "signup_complete"
-  | "login_success";
+  | "login_success"
+  // Store funnel (GA4 recommended e-commerce names): card click → options
+  // → order window → order placed; plus top-up starts.
+  | "select_item"
+  | "view_item"
+  | "begin_checkout"
+  | "purchase"
+  | "charge_start";
 
 /**
  * Push a conversion event into the dataLayer.

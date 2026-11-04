@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { useWallet } from "@/components/WalletProvider";
 import { useAuth } from "@/components/AuthProvider";
 import { isPgConfigured } from "@/lib/payments";
+import { track } from "@/lib/analytics";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { COMPANY } from "@/lib/company";
 import {
@@ -136,6 +137,7 @@ export function ChargeModal({
       toast.error(`충전 캐시는 ${formatCash(MIN_CHARGE_CASH)} ~ ${formatCash(MAX_CHARGE_CASH)} 사이여야 합니다.`);
       return;
     }
+    track("charge_start", { method: "card", value: pay, currency: "KRW" });
     try {
       await charge(pay);
       toast.success(`${formatCash(amount)} 충전되었습니다.`);
@@ -152,6 +154,7 @@ export function ChargeModal({
       toast.error(problem);
       return;
     }
+    track("charge_start", { method: "bank", value: pay, currency: "KRW" });
     setSubmitting(true);
     try {
       await requestBankCharge(input);

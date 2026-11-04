@@ -183,6 +183,11 @@ export function QuickOrder({ product }: { product: Product }) {
           </div>
         )}
 
+        {(orderable || isBlogWrite) && (
+          <p className="border-t border-slate-100 px-5 py-3 text-xs leading-relaxed text-slate-500 sm:px-8">
+            작업 시작 전에는 전액 환불돼요. 노출·순위 같은 성과는 검색·플랫폼 환경에 따라 달라질 수 있어요(보장 조건이 적힌 상품 제외).
+          </p>
+        )}
         {!authed && (orderable || isBlogWrite) && (
           <p className="border-t border-slate-100 bg-slate-50 px-5 py-3 text-center text-xs text-slate-500 sm:px-8">
             처음이면 1분 가입 후, 고른 상품의 주문 화면으로 바로 돌아와요.

@@ -7,6 +7,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { CALCULATORS } from "@/lib/calc/registry";
+import { PRICING } from "@/lib/pricing";
+import { storeProducts } from "@/lib/store";
+
+const storeCount = storeProducts(PRICING).length;
 
 // Tween a number into an element's textContent with an ease-out curve.
 function tween(
@@ -147,6 +152,7 @@ export function Hero() {
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b35f", animation: "blink 1s infinite" }} />
           매장 데이터를 분석하고 있어요…
         </div>
+        <p style={{ margin: 0, fontSize: 11, color: "#8ba295" }}>* 화면 연출용 예시이며 실제 고객 성과가 아니에요.</p>
       </div>
       )}
 
@@ -214,20 +220,18 @@ export function Hero() {
                 서비스 둘러보기 →
               </a>
             </div>
+            {/* Facts anyone can check on the site (no unverified usage/growth numbers). */}
             <div className="hero-anim" style={{ display: "flex", gap: 26, marginTop: 38, animation: "rise .8s ease 1.55s both" }}>
               <div>
-                <div style={{ fontWeight: 800, fontSize: 24, color: "#0e7a44", letterSpacing: "-.02em" }}>12,800+</div>
-                <div style={{ fontSize: 13, color: "#6b8275", fontWeight: 600 }}>함께하는 사장님</div>
+                <div style={{ fontWeight: 800, fontSize: 24, color: "#0e7a44", letterSpacing: "-.02em" }}>{storeCount}종</div>
+                <div style={{ fontSize: 13, color: "#6b8275", fontWeight: 600 }}>상품 단가 공개</div>
               </div>
               <div style={{ width: 1, background: "#d9e7df" }} />
               <div>
-                <div style={{ fontWeight: 800, fontSize: 24, color: "#0e7a44", letterSpacing: "-.02em" }}>평균 +180%</div>
-                <div style={{ fontSize: 13, color: "#6b8275", fontWeight: 600 }}>매출 성장률</div>
+                <div style={{ fontWeight: 800, fontSize: 24, color: "#0e7a44", letterSpacing: "-.02em" }}>{CALCULATORS.length}종</div>
+                <div style={{ fontSize: 13, color: "#6b8275", fontWeight: 600 }}>무료 사장님 계산기</div>
               </div>
             </div>
-            <p className="hero-anim" style={{ margin: "10px 0 0", fontSize: 11, color: "#8ba295", animation: "rise .8s ease 1.55s both" }}>
-              * 정식 오픈 준비 중의 예시 수치이며, 실측 지표로 순차 교체됩니다.
-            </p>
           </div>
 
           {/* right 3D scene */}
@@ -278,7 +282,7 @@ export function Hero() {
             <div style={{ position: "absolute", top: "15%", right: "0%", padding: "16px 18px", borderRadius: 18, background: "#fff", boxShadow: "0 20px 44px rgba(20,40,30,.18)", animation: "floatB 6s ease-in-out .9s infinite" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
                 <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#10b35f", animation: "blink 1.3s infinite" }} />
-                <span style={{ fontWeight: 700, fontSize: 11, color: "#6b8275" }}>네이버 플레이스 순위</span>
+                <span style={{ fontWeight: 700, fontSize: 11, color: "#6b8275" }}>네이버 플레이스 순위 (예시)</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{ textAlign: "center" }}>

@@ -1,21 +1,18 @@
 // Landing page — storytelling composition (noahgroup-style narrative):
 // hero → empathy (owner's pains) → bridge (why we exist) → journey chapters
-// (get found → get sales → build trust & save) → proof numbers → full service
-// grid → channels → reviews → FAQ → free calculators → 3-step process →
+// (get found → get sales → build trust & save) → checkable facts → full service
+// grid → channels → FAQ → free calculators → 3-step process →
 // closing CTA.
 // Header/footer are provided by the page layout.
 
 import Link from "next/link";
 import { LANDING_CARDS } from "@/lib/products";
 import { CALCULATORS } from "@/lib/calc/registry";
-import { SUCCESS_STORIES } from "@/lib/successStories";
 import { TrackedCta } from "@/components/TrackedCta";
 import { Hero } from "@/components/Hero";
 import { Stats } from "@/components/Stats";
 import { Channels } from "@/components/Channels";
 import { ServicesGrid } from "@/components/ServicesGrid";
-import { SuccessStory } from "@/components/SuccessStory";
-import { Marquee } from "@/components/Marquee";
 import { Reveal } from "@/components/Reveal";
 import { StoryIntro, ProcessSection } from "@/components/StorySections";
 import { ScamNoticePopup } from "@/components/ScamNoticePopup";
@@ -34,7 +31,7 @@ export function Landing() {
       {/* Story: empathy → bridge → journey chapters (01 발견 → 02 판매 → 03 신뢰·절감) */}
       <StoryIntro />
 
-      {/* Proof — numbers count up on scroll */}
+      {/* Checkable facts (no unverified usage numbers) */}
       <Stats />
 
       {/* Full catalog for visitors who want to browse everything */}
@@ -54,29 +51,6 @@ export function Landing() {
 
       {/* Supported channels */}
       <Channels />
-
-      {/* Success stories — auto-scrolling banner */}
-      <section id="reviews" className="bg-slate-50 py-16 sm:py-20">
-        <div className="mx-auto max-w-2xl px-5 text-center">
-          <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-            마케팅방주와 함께한 고객 후기
-          </h2>
-          <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            업종별로 어떤 변화를 기대할 수 있는지, 예시로 보여드릴게요.
-          </p>
-          <p className="mt-2 text-xs text-slate-400">
-            * 정식 오픈 준비 중의 예시 사례이며, 검증된 실제 사례로 순차 교체됩니다.
-          </p>
-        </div>
-
-        <Marquee durationSec={24} className="mt-10 [--marquee-gap:1.25rem]">
-          {SUCCESS_STORIES.map((story) => (
-            <div key={story.industry} className="flex w-[300px] sm:w-[340px]">
-              <SuccessStory story={story} />
-            </div>
-          ))}
-        </Marquee>
-      </section>
 
       {/* FAQ — self-contained Q&A, mirrored as FAQPage structured data so
           search snippets and answer engines can quote a single item. */}

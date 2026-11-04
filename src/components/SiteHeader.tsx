@@ -32,7 +32,6 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/blog/", icon: "📰", label: "사장님 블로그" },
   { href: "/column/", icon: "🗂️", label: "칼럼 게시판" },
   { href: "/notice/", icon: "📢", label: "공지사항" },
-  { href: "/#reviews", icon: "💬", label: "고객후기" },
   { href: "/faq/", icon: "❓", label: "자주 묻는 질문" },
   { href: "/tools/blog-writer", icon: "📝", label: "AI 원고" },
 ];
@@ -80,7 +79,7 @@ export function SiteHeader() {
   // Members land on their own home (programs + products), so the landing's
   // story anchors are guest-only.
   const navItems = isAuthenticated
-    ? NAV_ITEMS.filter((it) => !["/#reviews", "/#services"].includes(it.href)).map((it) =>
+    ? NAV_ITEMS.filter((it) => !["/#services"].includes(it.href)).map((it) =>
         it.href === "/" ? { ...it, label: "내 홈" } : it,
       )
     : NAV_ITEMS;

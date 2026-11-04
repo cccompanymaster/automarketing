@@ -23,9 +23,9 @@ import {
 import { isSupabaseConfigured } from "@/lib/supabase";
 
 const STEPS = [
-  { no: 1, label: "주제 설정" },
-  { no: 2, label: "아웃라인 구성" },
-  { no: 3, label: "글쓰기 완료" },
+  { no: 1, label: "기본 정보", sub: "무료" },
+  { no: 2, label: "구성 확인", sub: "무료" },
+  { no: 3, label: "원고 완성", sub: `${BLOG_WRITE_COST}캐시` },
 ];
 
 export function BlogWriter() {
@@ -38,8 +38,6 @@ export function BlogWriter() {
   const [keywords, setKeywords] = useState<string[]>([]);
   const [draft, setDraft] = useState("");
   const [tone, setTone] = useState<BlogTone>("~해요");
-  const [useWeb, setUseWeb] = useState(true);
-  const [useImage, setUseImage] = useState(false);
   const [industry, setIndustry] = useState("");
   // Set once the server says no model is configured (free sample drafts).
   const [demo, setDemo] = useState(false);
@@ -57,8 +55,8 @@ export function BlogWriter() {
     title: title.trim() || undefined,
     keywords,
     tone,
-    useWeb,
-    useImage,
+    useWeb: false,
+    useImage: false,
     industry: industry || undefined,
   });
 
@@ -177,29 +175,30 @@ export function BlogWriter() {
           <h1 className="flex items-center gap-2 text-lg font-extrabold text-slate-900">
             <span aria-hidden="true">📝</span> 블로그 원고 작성
           </h1>
-          <ol className="flex items-center gap-2 sm:gap-4">
+          <ol aria-label="작성 단계" className="flex items-center gap-1.5 sm:gap-4">
             {STEPS.map((s, i) => (
-              <li key={s.no} className="flex items-center gap-2 sm:gap-4">
+              <li key={s.no} aria-current={step === s.no ? "step" : undefined} className="flex items-center gap-1.5 sm:gap-4">
                 <div className="flex items-center gap-2">
                   <span
-                    className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
+                    aria-hidden="true"
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold sm:h-8 sm:w-8 sm:text-sm ${
                       step >= s.no ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-400"
                     }`}
                   >
                     {s.no}
                   </span>
-                  <div className="hidden sm:block">
-                    <p className="text-[11px] font-semibold text-slate-400">Step {s.no}</p>
+                  <div>
                     <p
-                      className={`text-sm font-bold ${
+                      className={`text-xs font-bold sm:text-sm ${
                         step >= s.no ? "text-slate-800" : "text-slate-400"
                       }`}
                     >
                       {s.label}
                     </p>
+                    <p className="text-[10px] font-semibold text-slate-400 sm:text-[11px]">{s.sub}</p>
                   </div>
                 </div>
-                {i < STEPS.length - 1 && <span className="h-px w-6 bg-slate-200 sm:w-10" />}
+                {i < STEPS.length - 1 && <span className="h-px w-3 bg-slate-200 sm:w-10" />}
               </li>
             ))}
           </ol>
@@ -327,18 +326,19 @@ export function BlogWriter() {
               </div>
             </Field>
 
-            <Toggle
-              label="최신 검색정보 활용"
-              desc="주제와 관련된 최신 정보를 자동으로 반영해요."
-              on={useWeb}
-              onToggle={() => setUseWeb((v) => !v)}
-            />
-            <Toggle
-              label="이미지 생성"
-              desc="글 내용에 맞는 이미지를 함께 생성해요. (연결 시)"
-              on={useImage}
-              onToggle={() => setUseImage((v) => !v)}
-            />
+            {/* Not wired on the server yet — shown as 준비 중 so nobody expects them. */}
+            {[
+              ["최신 검색정보 활용", "주제와 관련된 최신 정보를 자동으로 반영하는 기능"],
+              ["이미지 생성", "글 내용에 맞는 이미지를 함께 만드는 기능"],
+            ].map(([label, desc]) => (
+              <div key={label} className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-slate-400">{label}</p>
+                  <p className="text-xs text-slate-400">{desc}이에요. 아직 준비 중이라 지금은 글만 만들어져요.</p>
+                </div>
+                <span className="shrink-0 rounded-full bg-slate-200 px-2.5 py-1 text-[11px] font-bold text-slate-500">준비 중</span>
+              </div>
+            ))}
 
             {/* Primary action */}
             <div className="mt-5 border-t border-slate-50 pt-4">
@@ -381,6 +381,11 @@ export function BlogWriter() {
               <p className="mt-2 text-center text-[11px] text-slate-400">
                 보유 캐시 {formatCash(balance)} · 원고 1건당 {formatCash(BLOG_WRITE_COST)}
               </p>
+              <ul className="mt-2 space-y-0.5 text-[11px] leading-relaxed text-slate-500">
+                <li>· 제목 추천과 구성(아웃라인) 만들기는 무료예요.</li>
+                <li>· 캐시는 [원고 생성]으로 원고가 완성됐을 때만 {formatCash(BLOG_WRITE_COST)} 빠져요. 생성에 실패하면 빠지지 않아요.</li>
+                <li>· 같은 주제로 원고를 다시 생성하면 1건으로 보고 다시 {formatCash(BLOG_WRITE_COST)} 빠져요.</li>
+              </ul>
             </div>
           </div>
         </section>
@@ -447,39 +452,6 @@ function Field({
         {count && <span className="text-[11px] text-slate-400">{count}</span>}
       </div>
       {children}
-    </div>
-  );
-}
-
-function Toggle({
-  label,
-  desc,
-  on,
-  onToggle,
-}: {
-  label: string;
-  desc: string;
-  on: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <div className="mb-4 flex items-center justify-between gap-3">
-      <div>
-        <p className="text-sm font-bold text-slate-800">{label}</p>
-        <p className="text-xs text-slate-400">{desc}</p>
-      </div>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={on}
-        aria-label={label}
-        onClick={onToggle}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition ${on ? "bg-emerald-600" : "bg-slate-200"}`}
-      >
-        <span
-          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${on ? "left-[22px]" : "left-0.5"}`}
-        />
-      </button>
     </div>
   );
 }

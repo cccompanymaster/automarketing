@@ -16,7 +16,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { StoreCard } from "@/components/StoreCard";
 import { ProductOptionsModal } from "@/components/ProductOptionsModal";
 import { PRICING, type PricingGroup, type PricingItem } from "@/lib/pricing";
-import { GOALS, PACKAGES, isOrderable, searchStore, sortStore, storeProducts, type StoreProduct, type StoreSort } from "@/lib/store";
+import { GOALS, PACKAGES, isOrderable, searchStore, searchableOf, sortStore, storeProducts, type StoreProduct, type StoreSort } from "@/lib/store";
 import { track } from "@/lib/analytics";
 import { SUGGESTED_QUERIES, suggest } from "@/lib/storeSearch";
 import Link from "next/link";
@@ -80,7 +80,7 @@ export default function PricingPage() {
   }, [hydrated, groups]);
 
   const all = useMemo(() => storeProducts(groups), [groups]);
-  const { shown, corrections } = useMemo(() => {
+  const { shown, fuzzy } = useMemo(() => {
     let list = channel ? all.filter((p) => p.group.key === channel) : all;
     const ids = pack ? PACKAGES.find((x) => x.key === pack)?.ids : goal ? GOALS.find((x) => x.key === goal)?.ids : null;
     if (ids) list = list.filter((p) => ids.includes(p.id)).sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
@@ -89,10 +89,10 @@ export default function PricingPage() {
     // Search results stay in relevance order unless a price sort is chosen;
     // a combo keeps its own order.
     const ordered = pack || (query.trim() && sort === "recommended") ? found.list : sortStore(found.list, sort);
-    return { shown: ordered, corrections: found.corrections };
+    return { shown: ordered, fuzzy: found.fuzzy };
   }, [all, channel, goal, pack, orderableOnly, query, sort]);
   const [searchFocused, setSearchFocused] = useState(false);
-  const suggestions = useMemo(() => suggest(all.map((p) => p.title), query), [all, query]);
+  const suggestions = useMemo(() => suggest(all.map(searchableOf), query), [all, query]);
   const browsing = !query && !goal && !pack && !channel;
   const activePack = PACKAGES.find((x) => x.key === pack);
   const activeGoal = GOALS.find((x) => x.key === goal);
@@ -338,10 +338,8 @@ export default function PricingPage() {
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-slate-600">
               <b className="num text-slate-900">{shown.length}</b>개 상품
-              {query.trim() && corrections.length > 0 && (
-                <span className="ml-2 text-xs text-slate-500">
-                  ‘{corrections.join(", ")}’(으)로 찾았어요
-                </span>
+              {query.trim() && fuzzy && (
+                <span className="ml-2 text-xs text-slate-500">비슷한 표현으로 찾은 상품도 함께 보여 드려요</span>
               )}
               {isSheetPricingConfigured && live && (
                 <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">

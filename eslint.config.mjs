@@ -15,6 +15,12 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  // Search engine handed off as a standalone module; kept close to the
+  // original (a few unused locals) so it can be diffed against the handoff.
+  {
+    files: ["src/lib/search/search-engine.mjs"],
+    rules: { "@typescript-eslint/no-unused-vars": "off" },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

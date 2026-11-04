@@ -4,7 +4,7 @@
 // Pure data helpers so the app can reuse the same listing.
 
 import { displayPrice, priceSortValue, type PricingGroup, type PricingItem } from "@/lib/pricing";
-import { rankSearch, type Searchable } from "@/lib/storeSearch";
+import { searchProducts, type SearchableProduct } from "@/lib/search/search-engine.mjs";
 
 export interface StoreProduct {
   id: string;
@@ -21,6 +21,10 @@ export interface StoreProduct {
   image?: string;
   /** Option whose price the card shows (the main product, not an add-on). Defaults to the cheapest. */
   lead?: PricingItem;
+  /** Search vocabulary: other names searchers type (네이버 지도 → 플레이스), phrases, broad tags. */
+  aliases: string[];
+  keywords: string[];
+  tags: string[];
 }
 
 /** Card thumbnail gradient per channel (literal classes for Tailwind). */
@@ -47,7 +51,24 @@ interface BundleDef {
   image?: string;
   /** Main product row, when the cheapest option is only an add-on (원고·이미지 등). */
   lead?: string;
+  aliases: string[];
+  keywords: string[];
+  tags: string[];
 }
+
+/** Search vocabulary for single-row products (keyed like STORE_IMAGES). */
+const SINGLE_TERMS: Record<string, Pick<StoreProduct, "aliases" | "keywords" | "tags">> = {
+  "blog-블로그용 원고 작성": {
+    aliases: ["원고", "원고 작성", "글쓰기", "대필", "블로그 원고", "AI 원고"],
+    keywords: ["블로그 글 작성", "포스팅 원고"],
+    tags: ["블로그", "콘텐츠"],
+  },
+  "cafe-카페 공식 제휴 마케팅": {
+    aliases: ["카페 제휴", "카페 배너", "맘카페 제휴"],
+    keywords: ["카페 공식 제휴"],
+    tags: ["카페", "광고"],
+  },
+};
 
 /** Product bundles, in display order within each channel. */
 export const BUNDLES: BundleDef[] = [
@@ -58,6 +79,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "통합검색 1페이지 노출을 24시간 또는 25일 보장",
     items: ["블로그 상위노출 24시간 보장", "블로그 상위노출 25일 보장"],
     detailHref: "/services/blog/",
+    aliases: ["상위노출 보장", "블로그 상위노출", "1페이지 보장", "통검 노출", "블로그 1페이지"],
+    keywords: ["블로그 상위 노출 보장", "통합검색 1페이지"],
+    tags: ["네이버", "블로그", "상위노출", "보장"],
   },
   {
     id: "blog-deploy",
@@ -73,6 +97,9 @@ export const BUNDLES: BundleDef[] = [
       "블로그 최적 배포 (병원·법률·금융)",
     ],
     detailHref: "/services/blog/",
+    aliases: ["블로그 배포", "블배", "준최", "준최블", "최블", "실명 배포", "포스팅 배포"],
+    keywords: ["준최적 블로그 배포", "최적 블로그 배포", "블로그 포스팅"],
+    tags: ["네이버", "블로그", "배포", "상위노출"],
   },
   {
     id: "blog-influencer",
@@ -81,6 +108,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "네이버 공식 인플루언서 블로그로 신뢰도 높은 배포",
     items: ["공식 인플루언서 블로그 배포 (준최적)", "공식 인플루언서 블로그 배포 (최적)"],
     detailHref: "/services/blog/",
+    aliases: ["인플", "인플루언서", "네이버 인플루언서", "인플 블로그", "공식인플"],
+    keywords: ["네이버 인플루언서 배포", "공식 블로그 배포"],
+    tags: ["네이버", "블로그", "배포", "상위노출"],
   },
   {
     id: "blog-neighbor",
@@ -89,6 +119,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "서로이웃 1명 단위부터, 이웃 추가 200명 패키지까지",
     items: ["블로그 서로이웃 추가", "블로그 이웃 추가"],
     detailHref: "/services/blog-neighbor/",
+    aliases: ["서이추", "서로이웃", "이웃추가", "블로그 이웃"],
+    keywords: ["서로이웃 늘리기", "이웃 늘리기"],
+    tags: ["네이버", "블로그", "SNS"],
   },
   {
     id: "place-reward",
@@ -97,6 +130,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "일반형·압축형 미션·고순도 리워드를 일 100타 단위로",
     items: ["일반형 리워드", "압축형 미션 리워드", "고순도 체류형 트래픽"],
     detailHref: "/services/place/",
+    aliases: ["네이버 지도", "네이버지도", "네이버맵", "스마트플레이스", "플레이스", "지도 상위노출", "맛집 상위노출", "리워드", "트래픽", "슬롯"],
+    keywords: ["플레이스 상위 노출", "지도 순위", "플레이스 트래픽"],
+    tags: ["네이버", "플레이스", "지도", "상위노출"],
   },
   {
     id: "place-basics",
@@ -105,6 +141,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "노출의 토대가 되는 정보 세팅과 방문 리뷰",
     items: ["플레이스 메타데이터 기반 SEO 전문 세팅", "플레이스 영수증 리뷰"],
     detailHref: "/services/place/",
+    aliases: ["스마트플레이스 세팅", "플레이스 세팅", "네이버 지도 세팅", "영수증 리뷰", "영수증리뷰", "SEO 세팅"],
+    keywords: ["플레이스 정보 세팅", "방문자 리뷰"],
+    tags: ["네이버", "플레이스", "지도", "후기", "리뷰"],
   },
   {
     id: "commerce",
@@ -113,6 +152,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "실구매 리워드와 트래픽으로 상품 순위 상승",
     items: ["C사 가구매", "C사 가구매 (택배대행 포함)", "C사 상위노출 트래픽", "쇼핑 리워드"],
     detailHref: "/services/shopping/",
+    aliases: ["쇼핑", "쇼핑몰", "스마트스토어", "스스", "네이버쇼핑", "오픈마켓", "상품 순위", "쿠팡"],
+    keywords: ["쇼핑 상위노출", "커머스 상위노출", "상품 순위 상승"],
+    tags: ["쇼핑", "커머스", "상위노출", "구매평"],
   },
   {
     id: "cafe-post",
@@ -122,6 +164,9 @@ export const BUNDLES: BundleDef[] = [
     items: ["카페 배포형 게시글 발행", "카페 노출용 게시글 발행", "카페 원고 작성 대행"],
     lead: "카페 배포형 게시글 발행",
     detailHref: "/services/cafe/",
+    aliases: ["맘카페", "카페 바이럴", "바이럴", "지역 카페", "커뮤니티", "까페"],
+    keywords: ["맘카페 홍보", "카페 게시글", "카페 원고"],
+    tags: ["카페", "바이럴", "후기"],
   },
   {
     id: "ai-aeo",
@@ -130,6 +175,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "챗GPT·AI 검색에 인용되도록 세팅하고 측정",
     items: ["AI 검색 최적화(AEO) 기본 세팅", "AI 인용 모니터링 리포트", "전문가 칼럼·인터뷰 콘텐츠", "인플루언서 성장 패키지"],
     detailHref: "/services/ai-influencer/",
+    aliases: ["AI 검색", "챗GPT", "챗지피티", "GPT", "AEO", "AI 브리핑", "생성형 AI"],
+    keywords: ["AI 검색 최적화", "AI 인용"],
+    tags: ["AI", "검색"],
   },
   {
     id: "instagram",
@@ -138,6 +186,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "팔로워·좋아요부터 댓글·저장까지",
     items: ["인스타 게시물 좋아요", "인스타 팔로워", "인스타 댓글·저장 등"],
     detailHref: "/services/instagram/",
+    aliases: ["인스타", "인스타그램", "팔로워", "좋아요", "릴스", "SNS"],
+    keywords: ["인스타 팔로워 늘리기", "인스타 좋아요"],
+    tags: ["SNS", "인스타그램"],
   },
   {
     id: "youtube",
@@ -146,6 +197,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "조회수·구독자·좋아요·재생시간",
     items: ["유튜브 조회수", "유튜브 구독자", "유튜브 좋아요·재생시간 등"],
     detailHref: "/services/youtube/",
+    aliases: ["유튜브", "유투브", "구독자", "조회수", "쇼츠"],
+    keywords: ["유튜브 구독자 늘리기", "유튜브 조회수"],
+    tags: ["SNS", "유튜브"],
   },
   {
     id: "kakaomap-trend",
@@ -154,6 +208,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "일 단위 또는 월 보장 패키지",
     items: ["트렌드랭킹 1~6위 보장 (일)", "트렌드랭킹 1~6위 보장 (월)"],
     detailHref: "/services/kakaomap/",
+    aliases: ["카카오 지도", "카카오지도", "카맵", "다음지도", "트렌드랭킹"],
+    keywords: ["카카오맵 상위노출", "카카오맵 순위"],
+    tags: ["카카오맵", "지도", "상위노출"],
   },
   {
     id: "kakaomap-review",
@@ -162,6 +219,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "별점·내용 리뷰와 지도 트래픽",
     items: ["카카오맵 트래픽", "카카오맵 별점 리뷰", "카카오맵 내용 리뷰"],
     detailHref: "/services/kakaomap/",
+    aliases: ["카카오맵 리뷰", "카카오 지도 리뷰", "카맵 리뷰", "별점"],
+    keywords: ["카카오맵 후기", "카카오맵 트래픽"],
+    tags: ["카카오맵", "지도", "후기", "리뷰"],
   },
   {
     id: "daangn-reaction",
@@ -170,6 +230,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "비즈프로필 반응을 건당 500원부터",
     items: ["비즈프로필 단골 추가", "비즈프로필 하트 찜", "소식글 관심"],
     detailHref: "/services/daangn/",
+    aliases: ["당근", "당근마켓", "비즈프로필", "단골", "찜", "동네"],
+    keywords: ["당근 단골 늘리기", "비즈프로필 단골"],
+    tags: ["당근", "SNS"],
   },
   {
     id: "daangn-review",
@@ -178,6 +241,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "일반·포토 후기와 소식글 채팅 문의",
     items: ["비즈프로필 일반 후기", "비즈프로필 포토 후기", "소식글 채팅 문의"],
     detailHref: "/services/daangn/",
+    aliases: ["당근 후기", "당근 리뷰", "비즈프로필 후기"],
+    keywords: ["당근 포토 후기"],
+    tags: ["당근", "후기", "리뷰"],
   },
   {
     id: "daangn-content",
@@ -186,6 +252,9 @@ export const BUNDLES: BundleDef[] = [
     summary: "동네생활 게시글, 숏폼, 로고·가격표 이미지, 비즈프로필·광고계정 세팅",
     items: ["동네생활 게시글 (바이럴)", "스토리(숏폼) 영상 제작", "업체로고 이미지", "가격표 이미지", "비즈프로필·광고계정 세팅", "전문가모드 광고세팅"],
     detailHref: "/services/daangn/",
+    aliases: ["당근 게시글", "동네생활", "숏폼", "당근 광고", "비즈프로필 세팅", "광고계정"],
+    keywords: ["당근 콘텐츠 제작", "당근 광고 세팅"],
+    tags: ["당근", "콘텐츠", "광고"],
   },
   {
     id: "daangn-project",
@@ -200,6 +269,9 @@ export const BUNDLES: BundleDef[] = [
       "프로젝트 S (6개월 관리)",
     ],
     detailHref: "/services/daangn/",
+    aliases: ["당근 관리", "당근 패키지", "당근 월관리"],
+    keywords: ["당근 30일 관리"],
+    tags: ["당근", "패키지"],
   },
   {
     id: "press",
@@ -209,6 +281,9 @@ export const BUNDLES: BundleDef[] = [
     items: ["보도자료 언론 송출 (일반)", "원고 대필", "이미지 제작", "원고 대필 + 이미지 제작"],
     lead: "보도자료 언론 송출 (일반)",
     detailHref: "/services/press/",
+    aliases: ["보도자료", "기사", "뉴스", "언론", "언론보도", "언론홍보", "신문", "PR"],
+    keywords: ["보도자료 배포", "기사 송출"],
+    tags: ["언론", "보도"],
   },
 ];
 
@@ -261,6 +336,9 @@ export function storeProducts(groups: PricingGroup[]): StoreProduct[] {
           badge: bestBadge(options),
           image: b.image ?? STORE_IMAGES[b.id],
           lead: b.lead ? byName.get(b.lead) : undefined,
+          aliases: b.aliases,
+          keywords: b.keywords,
+          tags: b.tags,
         },
       ];
     });
@@ -275,6 +353,7 @@ export function storeProducts(groups: PricingGroup[]): StoreProduct[] {
         detailHref: GROUP_DETAIL[group.key],
         badge: i.badge,
         image: STORE_IMAGES[`${group.key}-${i.name}`],
+        ...(SINGLE_TERMS[`${group.key}-${i.name}`] ?? { aliases: [], keywords: [], tags: [] }),
       }));
     return [...bundles, ...singles];
   });
@@ -305,18 +384,31 @@ export function sortStore(list: StoreProduct[], sort: StoreSort): StoreProduct[]
   return copy.sort((a, b) => (BADGE_RANK[a.badge ?? ""] ?? 9) - (BADGE_RANK[b.badge ?? ""] ?? 9));
 }
 
-/** Text the store search looks at for a product. */
-export function searchableOf(p: StoreProduct): Searchable {
+/** The product as the search engine sees it (title > aliases/keywords > summary > category/tags > options). */
+export function searchableOf(p: StoreProduct): SearchableProduct {
   return {
     title: p.title,
-    fields: [p.summary ?? "", p.group.title, p.group.description, ...p.options.flatMap((o) => [o.name, o.note ?? ""])],
+    aliases: p.aliases,
+    keywords: p.keywords,
+    tags: p.tags,
+    category: p.group.title,
+    summary: p.summary,
+    description: [p.group.description, ...p.options.flatMap((o) => [o.name, o.note ?? ""])].join(" "),
   };
 }
 
-/** Ranked search (synonyms, typos, 초성) — most relevant first. */
-export function searchStore(list: StoreProduct[], query: string): { list: StoreProduct[]; corrections: string[] } {
-  const { hits, corrections } = rankSearch(list, query, searchableOf);
-  return { list: hits.map((h) => h.item), corrections };
+/**
+ * Ranked search via lib/search/search-engine.mjs: partial words, spacing,
+ * 초성, synonyms, short typos. Empty query keeps the input order. `fuzzy`
+ * is true when some results matched only through typo tolerance.
+ */
+export function searchStore(list: StoreProduct[], query: string): { list: StoreProduct[]; fuzzy: boolean } {
+  const docs = list.map((p) => ({ ...searchableOf(p), product: p }));
+  const hits = searchProducts(docs, query);
+  return {
+    list: hits.map((h) => h.item.product),
+    fuzzy: hits.some((h) => h.matchedBy.some((m) => m.endsWith(":유사"))),
+  };
 }
 
 // --- Goal-first browsing ----------------------------------------------------

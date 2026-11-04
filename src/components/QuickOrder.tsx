@@ -20,13 +20,25 @@ import { useAuth } from "@/components/AuthProvider";
 import { OrderFlow } from "@/components/OrderFlow";
 import { InquiryModal } from "@/components/InquiryModal";
 import { track } from "@/lib/analytics";
-import { displayPrice, minOrderLabel, PRICING, productPricingItems, type PricingItem } from "@/lib/pricing";
+import { displayPrice, minOrderLabel, PRICING, productPricingItems, sortedItems, type PricingItem } from "@/lib/pricing";
 import { fetchLivePricing } from "@/lib/sheetPricing";
 import { isPriceAmount, type Product } from "@/lib/products";
 
 export const BUY_PARAM = "buy";
 
-export function QuickOrder({ product }: { product: Product }) {
+export function QuickOrder({
+  product,
+  rowNames,
+  label,
+  fromLabel,
+}: {
+  product: Product;
+  /** Store product pages: order exactly these price rows (live prices kept). */
+  rowNames?: string[];
+  /** Name / start price for the sticky bar when it isn't the service's own. */
+  label?: string;
+  fromLabel?: string;
+}) {
   const router = useRouter();
   const { isAuthenticated, hydrated } = useAuth();
   const authed = hydrated && isAuthenticated;
@@ -37,7 +49,9 @@ export function QuickOrder({ product }: { product: Product }) {
   const [barVisible, setBarVisible] = useState(false);
 
   const isBlogWrite = product.slug === "blogwrite";
-  const items = productPricingItems(product.slug, groups);
+  const items = rowNames
+    ? sortedItems({ key: "store", icon: "", title: "", description: "", items: groups.flatMap((g) => g.items).filter((i) => rowNames.includes(i.name)) })
+    : productPricingItems(product.slug, groups);
 
   // Orders must use the live (sheet) price when one is configured.
   useEffect(() => {
@@ -93,7 +107,7 @@ export function QuickOrder({ product }: { product: Product }) {
 
   const scrollToOrder = () => sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  const from = product.detail.fromPrice;
+  const from = fromLabel ?? product.detail.fromPrice;
   const orderable = items.some((it) => it.amountKrw != null && !it.inquiry);
 
   return (
@@ -199,7 +213,7 @@ export function QuickOrder({ product }: { product: Product }) {
       >
         <div className="mx-auto flex max-w-4xl items-center gap-3 px-5 py-3">
           <div className="min-w-0 flex-1">
-            <p className="truncate text-xs text-slate-500">{product.name}</p>
+            <p className="truncate text-xs text-slate-500">{label ?? product.name}</p>
             {from && (
               <p className="text-sm text-slate-600">
                 {isPriceAmount(from) && "최소 "}

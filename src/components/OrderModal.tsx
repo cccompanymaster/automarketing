@@ -332,7 +332,7 @@ export function OrderModal({
           <button
             type="button"
             onClick={() => {
-              onClose();
+              // Not onClose(): the order stays open underneath and comes back after the charge.
               onNeedCharge(totalCash - balance, { qty: quantity, request, form });
             }}
             className="mt-5 w-full rounded-xl bg-amber-500 py-3.5 text-sm font-semibold text-white transition hover:bg-amber-600"

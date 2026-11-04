@@ -30,6 +30,9 @@ export interface PressFaq {
   a: string;
 }
 
+/** Order row name for a category's starting-price distribution (press page). */
+export const pressOrderName = (category: string) => `보도자료 송출 (${category})`;
+
 /** Base distribution starting price (일반 카테고리 기준), VAT 별도. */
 export const PRESS_BASE_FROM = 50_000;
 

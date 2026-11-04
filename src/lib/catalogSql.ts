@@ -5,6 +5,7 @@
 // applied as a migration whenever prices change.
 
 import { PRICING, type PricingGroup } from "@/lib/pricing";
+import { PRESS_CATEGORIES, pressOrderName } from "@/lib/press";
 
 export interface CatalogRow {
   name: string;
@@ -19,7 +20,9 @@ export function catalogRows(groups: PricingGroup[] = PRICING): CatalogRow[] {
   return groups
     .flatMap((g) => g.items)
     .filter((i) => i.amountKrw != null && !i.inquiry)
-    .map((i) => ({ name: i.name, amountKrw: i.amountKrw!, unitBased: Boolean(i.unit), minQty: i.minQty ?? 1, step: i.step ?? 1 }));
+    .map((i) => ({ name: i.name, amountKrw: i.amountKrw!, unitBased: Boolean(i.unit), minQty: i.minQty ?? 1, step: i.step ?? 1 }))
+    // The press page orders each category at its starting price.
+    .concat(PRESS_CATEGORIES.map((c) => ({ name: pressOrderName(c.name), amountKrw: c.priceMin, unitBased: true, minQty: 1, step: 1 })));
 }
 
 const q = (s: string) => `'${s.replace(/'/g, "''")}'`;

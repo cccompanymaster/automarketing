@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { useWallet } from "@/components/WalletProvider";
 import { useOrders } from "@/components/OrdersProvider";
@@ -19,7 +20,11 @@ export function RightWing() {
   const { orders } = useOrders();
   const { pendingCount } = useDeliverables();
   const [chargeOpen, setChargeOpen] = useState(false);
-  const show = hydrated && isAuthenticated;
+  const pathname = usePathname();
+  // The store and product pages need the width; they show cash and orders in
+  // their own header, so the wing steps aside there.
+  const storePage = pathname.startsWith("/pricing") || pathname.startsWith("/store");
+  const show = hydrated && isAuthenticated && !storePage;
 
   useEffect(() => {
     if (!show) return;

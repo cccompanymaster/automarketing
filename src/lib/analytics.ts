@@ -30,7 +30,8 @@ export type AnalyticsEvent =
   | "view_item"
   | "begin_checkout"
   | "purchase"
-  | "charge_start";
+  | "charge_start"
+  | "search";
 
 /**
  * Push a conversion event into the dataLayer.

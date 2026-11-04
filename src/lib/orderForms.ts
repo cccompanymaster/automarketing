@@ -162,7 +162,17 @@ const DAANGN_ITEMS = [
 for (const name of DAANGN_ITEMS) FORMS[name] = DAANGN;
 
 export function orderFormFor(itemName: string): OrderForm | undefined {
-  return FORMS[itemName];
+  if (FORMS[itemName]) return FORMS[itemName];
+  // Press page: "보도자료 송출 (<카테고리>)" → that category's media list.
+  const cat = PRESS_CATEGORIES.find((c) => itemName === `보도자료 송출 (${c.name})`);
+  if (!cat) return undefined;
+  const base = FORMS["보도자료 언론 송출 (일반)"];
+  return {
+    notices: base.notices,
+    fields: base.fields.map((f) =>
+      f.key === "media" ? { ...f, options: ["추천받을게요|담당자가 업종에 맞는 매체를 추천", ...cat.samples.map((m) => `${cat.name}|${m}`)] } : f,
+    ),
+  };
 }
 
 /** Item names that have a form (for the catalog consistency test). */

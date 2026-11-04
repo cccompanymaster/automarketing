@@ -212,7 +212,7 @@ const TINT: Record<string, string> = {
 /** Light tint + outcome mock for a store product. */
 export function ResultMock({ groupKey, productId }: { groupKey: string; productId: string }) {
   const mock =
-    productId === "blog-블로그용 원고 작성" ? (
+    productId === "blog-write" ? (
       <DocMock />
     ) : productId === "blog-neighbor" ? (
       <FeedMock />

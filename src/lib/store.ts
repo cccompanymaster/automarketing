@@ -56,14 +56,22 @@ interface BundleDef {
   tags: string[];
 }
 
-/** Search vocabulary for single-row products (keyed like STORE_IMAGES). */
+/** URL ids for products that are a single price row (bundles use their own id). */
+const SINGLE_IDS: Record<string, string> = {
+  "블로그용 원고 작성": "blog-write",
+  "카페 공식 제휴 마케팅": "cafe-partnership",
+};
+const singleId = (groupKey: string, rowName: string) =>
+  SINGLE_IDS[rowName] ?? `${groupKey}-${[...rowName].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7).toString(36)}`;
+
+/** Search vocabulary for single-row products (keyed by product id). */
 const SINGLE_TERMS: Record<string, Pick<StoreProduct, "aliases" | "keywords" | "tags">> = {
-  "blog-블로그용 원고 작성": {
+  "blog-write": {
     aliases: ["원고", "원고 작성", "글쓰기", "대필", "블로그 원고", "AI 원고"],
     keywords: ["블로그 글 작성", "포스팅 원고"],
     tags: ["블로그", "콘텐츠"],
   },
-  "cafe-카페 공식 제휴 마케팅": {
+  "cafe-partnership": {
     aliases: ["카페 제휴", "카페 배너", "맘카페 제휴"],
     keywords: ["카페 공식 제휴"],
     tags: ["카페", "광고"],
@@ -289,7 +297,7 @@ export const BUNDLES: BundleDef[] = [
 
 /**
  * Thumbnail images by product id (bundle id, or `<group>-<row name>` for a
- * single). Drop the file in public/store/ and add it here — see
+ * single, e.g. "blog-write"). Drop the file in public/store/ and add it here — see
  * docs/STORE_THUMBNAILS.md for the concept and image prompts.
  */
 export const STORE_IMAGES: Record<string, string> = {};
@@ -345,15 +353,15 @@ export function storeProducts(groups: PricingGroup[]): StoreProduct[] {
     const singles: StoreProduct[] = group.items
       .filter((i) => !claimed.has(i.name))
       .map((i) => ({
-        id: `${group.key}-${i.name}`,
+        id: singleId(group.key, i.name),
         group,
         title: i.name,
         summary: i.note,
         options: [i],
         detailHref: GROUP_DETAIL[group.key],
         badge: i.badge,
-        image: STORE_IMAGES[`${group.key}-${i.name}`],
-        ...(SINGLE_TERMS[`${group.key}-${i.name}`] ?? { aliases: [], keywords: [], tags: [] }),
+        image: STORE_IMAGES[singleId(group.key, i.name)],
+        ...(SINGLE_TERMS[singleId(group.key, i.name)] ?? { aliases: [], keywords: [], tags: [] }),
       }));
     return [...bundles, ...singles];
   });
@@ -413,6 +421,30 @@ export function searchStore(list: StoreProduct[], query: string): { list: StoreP
   };
 }
 
+/**
+ * Search split for the store: `direct` products are what the words name —
+ * every word matches the product's own name, aliases or keywords (with the
+ * engine's partial / 초성 / typo / synonym handling) — and `related` are the
+ * rest of the ranked hits (matched only through tags, category or option
+ * text: 인스타 → 유튜브 via "SNS"). Both keep relevance order.
+ */
+export function searchStoreSplit(list: StoreProduct[], query: string): { direct: StoreProduct[]; related: StoreProduct[]; fuzzy: boolean } {
+  const all = searchStore(list, query);
+  const words = query.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return { direct: all.list, related: [], fuzzy: false };
+  const named = list.map((p) => ({ title: p.title, aliases: p.aliases, keywords: p.keywords, product: p }));
+  // Every word must name the product; the whole query is also tried, so
+  // "상위 노출" counts as the alias "상위노출".
+  const perWord = words.map((w) => new Set(searchProducts(named, w).map((h) => h.item.product.id)));
+  const whole = new Set(searchProducts(named, query.replace(/\s+/g, "")).map((h) => h.item.product.id));
+  const isDirect = (p: StoreProduct) => whole.has(p.id) || perWord.every((set) => set.has(p.id));
+  return {
+    direct: all.list.filter(isDirect),
+    related: all.list.filter((p) => !isDirect(p)),
+    fuzzy: all.fuzzy,
+  };
+}
+
 // --- Goal-first browsing ----------------------------------------------------
 
 /** "무엇이 필요한가" tabs: owners who don't know product names start here. */
@@ -433,7 +465,7 @@ export const GOALS: { key: string; icon: string; label: string; ids: string[] }[
     key: "content",
     icon: "✍️",
     label: "콘텐츠 만들기",
-    ids: ["blog-블로그용 원고 작성", "blog-deploy", "cafe-post", "daangn-content", "press"],
+    ids: ["blog-write", "blog-deploy", "cafe-post", "daangn-content", "press"],
   },
   { key: "sns", icon: "📸", label: "SNS·이웃 키우기", ids: ["instagram", "youtube", "blog-neighbor", "daangn-reaction"] },
   { key: "sales", icon: "🛒", label: "매출 늘리기", ids: ["commerce", "place-reward", "daangn-project", "kakaomap-trend"] },
@@ -441,10 +473,10 @@ export const GOALS: { key: string; icon: string; label: string; ids: string[] }[
 
 /** 목표별 추천 조합 — a starting set per situation (each product ordered separately). */
 export const PACKAGES: { key: string; title: string; who: string; ids: string[] }[] = [
-  { key: "new-store", title: "처음 시작하는 매장", who: "검색해도 잘 안 나오는 신규 매장", ids: ["place-basics", "blog-블로그용 원고 작성", "blog-deploy"] },
+  { key: "new-store", title: "처음 시작하는 매장", who: "검색해도 잘 안 나오는 신규 매장", ids: ["place-basics", "blog-write", "blog-deploy"] },
   { key: "local", title: "지역 매장 홍보", who: "동네 손님을 늘리고 싶은 매장", ids: ["place-reward", "kakaomap-review", "daangn-reaction"] },
   { key: "seller", title: "온라인 셀러 입문", who: "상품 순위와 후기가 필요한 셀러", ids: ["commerce", "blog-deploy", "instagram"] },
-  { key: "content", title: "콘텐츠 운영형", who: "글을 꾸준히 쌓고 싶은 사장님", ids: ["blog-블로그용 원고 작성", "blog-deploy", "blog-neighbor"] },
+  { key: "content", title: "콘텐츠 운영형", who: "글을 꾸준히 쌓고 싶은 사장님", ids: ["blog-write", "blog-deploy", "blog-neighbor"] },
 ];
 
 /** 함께 쓰면 좋은 상품 on service detail pages (service slug → related slugs). */

@@ -35,11 +35,14 @@ export function StoreCard({
   product: p,
   onOpen,
   onInquiry,
+  onView,
 }: {
   product: StoreProduct;
   /** Bundle: show options. Single orderable row: open its order window. */
   onOpen: () => void;
   onInquiry: () => void;
+  /** Leaving for the detail page (save list position, analytics). */
+  onView?: () => void;
 }) {
   const from = productFrom(p);
   const price = displayPrice(from);
@@ -51,11 +54,12 @@ export function StoreCard({
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 transition hover:-translate-y-0.5 hover:shadow-lg hover:ring-emerald-300">
-      {/* Outcome thumbnail */}
-      <button
-        type="button"
-        onClick={primary}
-        aria-label={`${p.title} ${bundle ? "옵션 보기" : orderable ? "주문" : "문의"}`}
+      {/* Outcome thumbnail → the product's own page */}
+      <Link
+        href={`/store/${p.id}/`}
+        onClick={onView}
+        tabIndex={-1}
+        aria-hidden="true"
         className="relative block aspect-[4/3] overflow-hidden border-b border-slate-100"
       >
         {p.image ? (
@@ -71,13 +75,17 @@ export function StoreCard({
             {p.badge}
           </span>
         )}
-      </button>
+      </Link>
 
       <div className="flex flex-1 flex-col p-3 sm:p-4">
         <span className={`w-fit rounded-md px-1.5 py-0.5 text-[11px] font-bold ${GROUP_CHIP[p.group.key] ?? "bg-slate-100 text-slate-600"}`}>
           {p.group.icon} {p.group.title}
         </span>
-        <h3 className="mt-1.5 line-clamp-2 text-[15px] font-extrabold leading-snug text-slate-900 sm:text-base">{p.title}</h3>
+        <h3 className="mt-1.5 line-clamp-2 text-[15px] font-extrabold leading-snug text-slate-900 sm:text-base">
+          <Link href={`/store/${p.id}/`} onClick={onView} className="hover:text-emerald-800 hover:underline">
+            {p.title}
+          </Link>
+        </h3>
         {p.summary && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-slate-500 sm:text-[13px]">{p.summary}</p>}
 
         <div className="mt-auto pt-3">
@@ -108,7 +116,7 @@ export function StoreCard({
                   : "border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100"
               }`}
             >
-              {bundle ? "옵션 선택" : orderable ? "주문하기" : "견적 문의"}
+              {bundle ? "빠른 주문" : orderable ? "빠른 주문" : "견적 문의"}
             </button>
           )}
           {isBlogWrite && (
@@ -119,12 +127,13 @@ export function StoreCard({
               AI로 직접 바로 쓰기 →
             </Link>
           )}
-          {p.detailHref && !isBlogWrite && (
+          {!isBlogWrite && (
             <Link
-              href={p.detailHref}
+              href={`/store/${p.id}/`}
+              onClick={onView}
               className="mt-1.5 flex h-8 items-center justify-center text-xs font-semibold text-slate-500 underline-offset-2 transition hover:text-emerald-700 hover:underline"
             >
-              상세 보기 →
+              상세 보기 · 옵션 비교 →
             </Link>
           )}
         </div>

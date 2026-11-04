@@ -83,5 +83,5 @@ a golden trophy with a ribbon standing on top of a smartphone that shows a simpl
 1. 만든 이미지를 1304×976 webp로 저장해 `public/store/`에 넣어요 (예: `public/store/blog-guarantee.webp`).
 2. `src/lib/store.ts`의 `STORE_IMAGES`에 한 줄 추가해요.
    - 묶음 상품: `"blog-guarantee": "/store/blog-guarantee.webp"`
-   - 단일 상품: `"blog-블로그용 원고 작성": "/store/blog-write.webp"`
+   - 단일 상품: `"blog-write": "/store/blog-write.webp"`, `"cafe-partnership": "/store/cafe-partnership.webp"`
 3. 이미지가 없으면 지금처럼 채널 색 그라데이션이 나와요. 이미지 위에는 사이트가 상품명·채널·배지를 자동으로 얹어요.

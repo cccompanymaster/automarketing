@@ -53,7 +53,15 @@ insert into public.catalog_items (name, amount_krw, unit_based, min_qty, step) v
   ('보도자료 언론 송출 (일반)', 50000, true, 1, 1),
   ('원고 대필', 10000, false, 1, 1),
   ('이미지 제작', 10000, false, 1, 1),
-  ('원고 대필 + 이미지 제작', 15000, false, 1, 1)
+  ('원고 대필 + 이미지 제작', 15000, false, 1, 1),
+  ('보도자료 송출 (일반)', 50000, true, 1, 1),
+  ('보도자료 송출 (창업)', 90000, true, 1, 1),
+  ('보도자료 송출 (부동산)', 90000, true, 1, 1),
+  ('보도자료 송출 (법률)', 90000, true, 1, 1),
+  ('보도자료 송출 (뷰티헬스)', 120000, true, 1, 1),
+  ('보도자료 송출 (메디컬)', 120000, true, 1, 1),
+  ('보도자료 송출 (건강식품)', 120000, true, 1, 1),
+  ('보도자료 송출 (블록체인)', 260000, true, 1, 1)
 on conflict (name) do update set
   amount_krw = excluded.amount_krw, unit_based = excluded.unit_based,
   min_qty = excluded.min_qty, step = excluded.step, active = true, updated_at = now();

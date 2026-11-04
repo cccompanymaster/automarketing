@@ -9,10 +9,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PRESS_CATEGORIES } from "@/lib/press";
+import { PRESS_CATEGORIES, pressOrderName } from "@/lib/press";
 import { useAuth } from "@/components/AuthProvider";
-import { OrderModal } from "@/components/OrderModal";
-import { ChargeModal } from "@/components/ChargeModal";
+import { OrderFlow } from "@/components/OrderFlow";
 import type { PricingItem } from "@/lib/pricing";
 
 const krw = (n: number) => `${n.toLocaleString("ko-KR")}원`;
@@ -22,7 +21,6 @@ export function PressRates() {
   const { isAuthenticated, hydrated } = useAuth();
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [orderItem, setOrderItem] = useState<PricingItem | null>(null);
-  const [chargeOpen, setChargeOpen] = useState(false);
   const allOpen = PRESS_CATEGORIES.every((c) => open[c.key]);
 
   const setAll = (v: boolean) =>
@@ -43,7 +41,7 @@ export function PressRates() {
       return;
     }
     setOrderItem({
-      name: `보도자료 송출 (${name})`,
+      name: pressOrderName(name),
       price: `${krw(priceMin)} ~`,
       unit: "1건",
       amountKrw: priceMin,
@@ -141,12 +139,7 @@ export function PressRates() {
         결제 전 별도 안내드립니다.
       </p>
 
-      <OrderModal
-        item={orderItem}
-        onClose={() => setOrderItem(null)}
-        onNeedCharge={() => setChargeOpen(true)}
-      />
-      <ChargeModal open={chargeOpen} onClose={() => setChargeOpen(false)} />
+      <OrderFlow item={orderItem} onClose={() => setOrderItem(null)} />
     </section>
   );
 }

@@ -25,6 +25,20 @@ export function vatApplies(at: number = Date.now()): boolean {
   return at >= VAT_START;
 }
 
+/** VAT start date as shown to people ("2026년 11월 6일"). */
+const VAT_START_LABEL = "2026년 11월 6일";
+
+/**
+ * One-line VAT explanation for the order / wallet screens, matching the date
+ * policy the charge screens and server use. Cash a member already holds is
+ * never taxed again — VAT is only ever added when topping up.
+ */
+export function vatNotice(at: number = Date.now()): string {
+  return vatApplies(at)
+    ? "상품 단가는 부가세 별도예요. 부가세는 캐시를 충전할 때 이미 함께 냈고, 주문할 때 다시 붙지 않아요."
+    : `상품 단가는 부가세 별도예요. ${VAT_START_LABEL}부터는 충전할 때 부가세 10%가 함께 결제되고, 이미 가진 캐시에는 붙지 않아요.`;
+}
+
 /** KRW to pay for a given amount of cash (VAT incl. from VAT_START). Cash is kept to multiples of 10, so this is exact. */
 export function paymentForCash(cash: number, at: number = Date.now()): number {
   return vatApplies(at) ? Math.round(cash * (1 + VAT_RATE)) : cash;

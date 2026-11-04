@@ -74,6 +74,23 @@ export function displayPrice(item: PricingItem): DisplayPrice {
   return { main: "견적", from: false, unit: item.unit, kind: "quote" };
 }
 
+/**
+ * Smallest amount (KRW = cash) one order of this row can cost: unit price ×
+ * minimum quantity. Undefined for quote-only rows.
+ */
+export function minOrderKrw(item: PricingItem): number | undefined {
+  if (item.amountKrw == null || item.inquiry) return undefined;
+  return item.amountKrw * (item.minQty ?? 1);
+}
+
+/** "최소 50건 · 25,000원부터" when a minimum makes the first order cost more than one unit. */
+export function minOrderLabel(item: PricingItem): string | null {
+  const min = minOrderKrw(item);
+  if (min == null || !item.minQty || item.minQty <= 1) return null;
+  const unit = item.unit?.replace(/^1/, "") ?? "";
+  return `최소 ${item.minQty.toLocaleString("ko-KR")}${unit} · ${min.toLocaleString("ko-KR")}원부터`;
+}
+
 /** Items sorted by price ascending (non-priced items last, original order kept). */
 export function sortedItems(group: PricingGroup): PricingItem[] {
   return [...group.items].sort((a, b) => priceSortValue(a) - priceSortValue(b));
@@ -164,7 +181,7 @@ export const PRICING: PricingGroup[] = [
         unit: "1명",
         amountKrw: 100,
         minQty: 50,
-        note: "최소 50명부터 · 계정 정보 공유 필수 · 클린 IP로 진행, 어뷰징 없음",
+        note: "계정 정보 공유 필수 · 클린 IP로 진행, 어뷰징 없음",
       },
       {
         name: "블로그 이웃 추가",
@@ -411,14 +428,14 @@ export const PRICING: PricingGroup[] = [
     title: "당근 비즈프로필",
     description: "단골·찜·후기·동네생활 바이럴까지 건당 단가로. 프로젝트는 관리 기간 포함 패키지입니다.",
     items: [
-      { name: "비즈프로필 단골 추가", price: "500원", unit: "1건", amountKrw: 500, note: "최소 50건부터 진행" },
-      { name: "비즈프로필 하트 찜", price: "500원", unit: "1건", amountKrw: 500, note: "최소 50건부터 진행" },
-      { name: "소식글 관심", price: "500원", unit: "1건", amountKrw: 500, note: "최소 50건부터 진행" },
-      { name: "비즈프로필 일반 후기", price: "5,000원", unit: "1건", amountKrw: 5_000, note: "최소 5건부터 진행" },
-      { name: "소식글 채팅 문의", price: "5,000원", unit: "1건", amountKrw: 5_000, note: "최소 5건부터 진행" },
-      { name: "비즈프로필 포토 후기", price: "6,000원", unit: "1건", amountKrw: 6_000, note: "최소 5건부터 진행" },
-      { name: "동네생활 게시글 (바이럴)", price: "20,000원", unit: "1건", amountKrw: 20_000, note: "최소 5건부터 진행" },
-      { name: "스토리(숏폼) 영상 제작", price: "75,000원", unit: "1건", amountKrw: 75_000, note: "최소 2건부터 진행" },
+      { name: "비즈프로필 단골 추가", price: "500원", unit: "1건", amountKrw: 500, minQty: 50 },
+      { name: "비즈프로필 하트 찜", price: "500원", unit: "1건", amountKrw: 500, minQty: 50 },
+      { name: "소식글 관심", price: "500원", unit: "1건", amountKrw: 500, minQty: 50 },
+      { name: "비즈프로필 일반 후기", price: "5,000원", unit: "1건", amountKrw: 5_000, minQty: 5 },
+      { name: "소식글 채팅 문의", price: "5,000원", unit: "1건", amountKrw: 5_000, minQty: 5 },
+      { name: "비즈프로필 포토 후기", price: "6,000원", unit: "1건", amountKrw: 6_000, minQty: 5 },
+      { name: "동네생활 게시글 (바이럴)", price: "20,000원", unit: "1건", amountKrw: 20_000, minQty: 5 },
+      { name: "스토리(숏폼) 영상 제작", price: "75,000원", unit: "1건", amountKrw: 75_000, minQty: 2 },
       { name: "업체로고 이미지", price: "50,000원", inquiry: true, note: "별도 문의" },
       { name: "가격표 이미지", price: "50,000원", inquiry: true, note: "별도 문의" },
       { name: "전문가모드 광고세팅", price: "100,000원", inquiry: true, note: "별도 문의" },

@@ -5,7 +5,7 @@
 
 import { useRef } from "react";
 import { useModal } from "@/components/useModal";
-import { displayPrice, type PricingItem } from "@/lib/pricing";
+import { displayPrice, minOrderLabel, type PricingItem } from "@/lib/pricing";
 import type { StoreProduct } from "@/lib/store";
 import { BADGE_STYLE } from "@/components/StoreCard";
 
@@ -63,6 +63,7 @@ export function ProductOptionsModal({
                     )}
                   </p>
                   {o.note && <p className="mt-0.5 text-xs leading-relaxed text-slate-500">{o.note}</p>}
+                  {minOrderLabel(o) && <p className="mt-0.5 text-xs font-semibold text-slate-600">{minOrderLabel(o)}</p>}
                   <p className="mt-1 text-sm">
                     {price.kind === "order" ? (
                       <>

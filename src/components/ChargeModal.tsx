@@ -68,13 +68,16 @@ export function ChargeModal({
   open,
   onClose: onCloseProp,
   shortfallCash,
+  orderCash,
 }: {
   open: boolean;
   onClose: (outcome: ChargeOutcome) => void;
   /** Cash missing for an order in progress — preselects an amount that covers it. */
   shortfallCash?: number;
+  /** Total cash of that order, to show what's left after ordering. */
+  orderCash?: number;
 }) {
-  const { charge, loading } = useWallet();
+  const { charge, loading, balance } = useWallet();
   const { user } = useAuth();
   const methods: Method[] = !isSupabaseConfigured ? ["card"] : isPgConfigured ? ["card", "bank"] : ["bank"];
   const [method, setMethod] = useState<Method>(methods[0]);
@@ -198,6 +201,23 @@ export function ChargeModal({
             ? "1캐시 = 1원 (부가세 별도) · 결제 금액에 부가세 10%가 더해져요"
             : "1원 = 1캐시 · 2026년 11월 6일부터는 충전 시 부가세 10%가 더해져요"}
         </p>
+
+        {shortfallCash && shortfallCash > 0 && !requested && (
+          <div className="mt-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900 ring-1 ring-emerald-100">
+            <p>
+              {orderCash ? <>주문 금액 <b className="num">{formatCash(orderCash)}</b> · </> : null}
+              보유 <b className="num">{formatCash(balance)}</b> · 부족 <b className="num">{formatCash(shortfallCash)}</b>
+            </p>
+            {amount >= shortfallCash ? (
+              <p className="mt-1 text-xs">
+                {formatCash(amount)}를 충전하면 주문 후 <b className="num">{formatCash(amount - shortfallCash)}</b>가 남아요. 충전이 끝나면
+                작성하던 주문서로 돌아가요.
+              </p>
+            ) : (
+              <p className="mt-1 text-xs font-semibold text-rose-700">선택한 금액으로는 부족해요. {formatCash(shortfallCash)} 이상 골라 주세요.</p>
+            )}
+          </div>
+        )}
 
         {/* ===== 무통장입금: request done → transfer guide ===== */}
         {requested ? (

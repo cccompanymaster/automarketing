@@ -3,7 +3,7 @@
 // products instead of 60 rows; rows no bundle claims stay single cards.
 // Pure data helpers so the app can reuse the same listing.
 
-import { displayPrice, priceSortValue, type PricingGroup, type PricingItem } from "@/lib/pricing";
+import { displayPrice, minOrderKrw, priceSortValue, type PricingGroup, type PricingItem } from "@/lib/pricing";
 import { searchProducts, type SearchableProduct } from "@/lib/search/search-engine.mjs";
 
 export interface StoreProduct {
@@ -116,7 +116,7 @@ export const BUNDLES: BundleDef[] = [
     id: "blog-neighbor",
     group: "blog",
     title: "블로그 이웃 늘리기",
-    summary: "서로이웃 1명 단위부터, 이웃 추가 200명 패키지까지",
+    summary: "서로이웃 최소 50명(1명 100원)부터, 이웃 추가 200명 패키지까지",
     items: ["블로그 서로이웃 추가", "블로그 이웃 추가"],
     detailHref: "/services/blog-neighbor/",
     aliases: ["서이추", "서로이웃", "이웃추가", "블로그 이웃"],
@@ -227,7 +227,7 @@ export const BUNDLES: BundleDef[] = [
     id: "daangn-reaction",
     group: "daangn",
     title: "당근 단골·찜·관심",
-    summary: "비즈프로필 반응을 건당 500원부터",
+    summary: "단골·찜·관심 1건 500원, 최소 50건부터",
     items: ["비즈프로필 단골 추가", "비즈프로필 하트 찜", "소식글 관심"],
     detailHref: "/services/daangn/",
     aliases: ["당근", "당근마켓", "비즈프로필", "단골", "찜", "동네"],
@@ -372,7 +372,9 @@ export type StoreSort = "recommended" | "price-asc" | "price-desc";
 
 export function sortStore(list: StoreProduct[], sort: StoreSort): StoreProduct[] {
   const copy = [...list];
-  const v = (p: StoreProduct) => priceSortValue(productFrom(p));
+  // Price sorts compare what a first order actually costs (unit × minimum),
+  // not the unit price: 500원 × 50건 sorts as 25,000원.
+  const v = (p: StoreProduct) => minOrderKrw(productFrom(p)) ?? priceSortValue(productFrom(p));
   if (sort === "price-asc") return copy.sort((a, b) => v(a) - v(b));
   if (sort === "price-desc")
     return copy.sort((a, b) => {

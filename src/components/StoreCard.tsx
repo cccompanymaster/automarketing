@@ -7,7 +7,7 @@
 
 import Link from "next/link";
 import { ResultMock } from "@/components/ResultMock";
-import { displayPrice } from "@/lib/pricing";
+import { displayPrice, minOrderLabel } from "@/lib/pricing";
 import { isOrderable, productFrom, type StoreProduct } from "@/lib/store";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -47,8 +47,7 @@ export function StoreCard({
   const isBlogWrite = !bundle && from.name === "블로그용 원고 작성";
   const orderable = isOrderable(p);
   const primary = bundle || orderable ? onOpen : onInquiry;
-  const minQty = from.minQty && from.minQty > 1 ? `최소 ${from.minQty.toLocaleString("ko-KR")}${from.unit?.replace(/^1/, "") ?? ""}` : null;
-  const meta = [minQty, bundle ? `옵션 ${p.options.length}개` : null].filter(Boolean).join(" · ");
+  const meta = [minOrderLabel(from), bundle ? `옵션 ${p.options.length}개` : null].filter(Boolean).join(" · ");
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 transition hover:-translate-y-0.5 hover:shadow-lg hover:ring-emerald-300">

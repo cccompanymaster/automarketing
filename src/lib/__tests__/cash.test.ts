@@ -28,3 +28,21 @@ describe("cash VAT split", () => {
     expect(cashForPayment(50_000, after)).toBe(45_454);
   });
 });
+
+describe("VAT notice follows the same date policy", () => {
+  it("before the start date it talks about the future, after it about the past", async () => {
+    const { vatNotice, VAT_START } = await import("@/lib/cash");
+    expect(vatNotice(VAT_START - 1)).toMatch(/11월 6일부터/);
+    expect(vatNotice(VAT_START)).toMatch(/이미 함께 냈고/);
+    expect(vatNotice(VAT_START)).toMatch(/다시 붙지 않아요/);
+  });
+
+  it("the KST boundary is midnight 2026-11-06 in Seoul (15:00 UTC on 11-05)", () => {
+    expect(new Date(VAT_START).toISOString()).toBe("2026-11-05T15:00:00.000Z");
+  });
+
+  it("50,000 cash after the start costs 55,000원", () => {
+    expect(paymentForCash(50_000, VAT_START)).toBe(55_000);
+    expect(cashForPayment(55_000, VAT_START)).toBe(50_000);
+  });
+});

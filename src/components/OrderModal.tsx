@@ -9,8 +9,8 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useWallet } from "@/components/WalletProvider";
 import { useOrders } from "@/components/OrdersProvider";
-import { formatCash, formatKrw, krwToCash } from "@/lib/cash";
-import type { PricingItem } from "@/lib/pricing";
+import { formatCash, formatKrw, krwToCash, vatNotice } from "@/lib/cash";
+import { displayPrice, type PricingItem } from "@/lib/pricing";
 import { track } from "@/lib/analytics";
 import Link from "next/link";
 import { formatRequest, orderFormFor, validateForm, type FormField, type FormValues } from "@/lib/orderForms";
@@ -88,6 +88,7 @@ export function OrderModal({
   draft,
   onClose,
   onNeedCharge,
+  onOrdered,
 }: {
   item: PricingItem | null;
   /** Restores quantity/request when reopening after a top-up. */
@@ -95,12 +96,16 @@ export function OrderModal({
   onClose: () => void;
   /** Called with the missing cash (and the draft) when the balance can't cover the order. */
   onNeedCharge: (shortfallCash: number, draft: OrderDraft) => void;
+  /** After the order is placed (e.g. to drop a saved draft). */
+  onOrdered?: () => void;
 }) {
   const { balance, loading, loadError, refresh: refreshWallet } = useWallet();
   const { placeOrder } = useOrders();
   const [qty, setQty] = useState(1);
   const [request, setRequest] = useState("");
   const [form, setForm] = useState<FormValues>({});
+  // Starting-price rows ("~"): the member confirms extra cost may follow.
+  const [ackVariable, setAckVariable] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const submittingRef = useRef(false);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -112,6 +117,7 @@ export function OrderModal({
     setQty(draft?.qty ?? item?.minQty ?? 1);
     setRequest(draft?.request ?? "");
     setForm(draft?.form ?? {});
+    setAckVariable(false);
     if (item) track("begin_checkout", { item_name: item.name, currency: "KRW", value: item.amountKrw });
   }, [item, draft]);
 
@@ -126,12 +132,13 @@ export function OrderModal({
   const totalCash = krwToCash(item.amountKrw * quantity);
   const enough = balance >= totalCash;
   const spec = orderFormFor(item.name);
+  const variable = displayPrice(item).from;
 
   const handleOrder = async () => {
     // Guard against double taps: the RPC deducts cash, so a second call would
     // place (and charge) a second order.
     if (submittingRef.current) return;
-    const problem = spec ? validateForm(spec, form) : null;
+    const problem = (spec ? validateForm(spec, form) : null) ?? (variable && !ackVariable ? "시작 금액 안내를 확인해 주세요." : null);
     if (problem) {
       toast.error(problem);
       return;
@@ -148,6 +155,7 @@ export function OrderModal({
         request: formatRequest(spec, form, request).slice(0, 4000),
       });
       track("purchase", { item_name: item.name, quantity, currency: "KRW", value: totalCash });
+      onOrdered?.();
       toast.success(`주문 완료 — ${formatCash(totalCash)} 차감되었습니다.`);
       onClose();
     } catch (e) {
@@ -261,6 +269,21 @@ export function OrderModal({
           />
         </div>
 
+        {variable && (
+          <label className="mt-4 flex cursor-pointer items-start gap-2.5 rounded-xl bg-sky-50 px-4 py-3 text-[13px] leading-relaxed text-sky-950 ring-1 ring-sky-200">
+            <input
+              type="checkbox"
+              checked={ackVariable}
+              onChange={(e) => setAckVariable(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-300 text-emerald-600"
+            />
+            <span>
+              <b>표시 금액은 시작 금액이에요.</b> {item.note ? `${item.note}. ` : ""}추가 금액이 생기면 작업 전에 따로 안내드려요.
+              확인했어요.
+            </span>
+          </label>
+        )}
+
         <div className="mt-4 space-y-2 rounded-xl bg-slate-50 px-4 py-3 text-sm">
           {hasUnit && (
             <div className="flex items-center justify-between text-xs text-slate-500">
@@ -323,7 +346,7 @@ export function OrderModal({
               이용약관
             </Link>
           </p>
-          <p className="mt-1 text-slate-400">상품 단가는 부가세 별도이며, 부가세는 캐시 충전 때 함께 결제돼요.</p>
+          <p className="mt-1 text-slate-400">{vatNotice()}</p>
         </div>
         <p className="mt-3 text-center text-[11px] text-slate-400">
           {/* TODO(backend): 주문을 실제 작업 의뢰/대시보드와 연동. */}

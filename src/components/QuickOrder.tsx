@@ -4,8 +4,8 @@
 // order button each, so a visitor can go from reading about a service to
 // paying for it without detouring through the full /pricing list.
 //
-// - Members: the button opens OrderModal right here; when cash runs short it
-//   hands over to ChargeModal (PG payment), then they come back to order.
+// - Members: the button opens the order window right here (OrderFlow); when
+//   cash runs short it tops up and comes back to the same order window.
 // - Guests: sent to /start with the chosen row (?buy=), skipping the story
 //   onboarding; after signup/login they land back here with that row's order
 //   window already open.
@@ -16,13 +16,11 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
-import { OrderModal, type OrderDraft } from "@/components/OrderModal";
-import { ChargeModal } from "@/components/ChargeModal";
+import { OrderFlow } from "@/components/OrderFlow";
 import { InquiryModal } from "@/components/InquiryModal";
 import { track } from "@/lib/analytics";
-import { displayPrice, PRICING, productPricingItems, type PricingItem } from "@/lib/pricing";
+import { displayPrice, minOrderLabel, PRICING, productPricingItems, type PricingItem } from "@/lib/pricing";
 import { fetchLivePricing } from "@/lib/sheetPricing";
 import { isPriceAmount, type Product } from "@/lib/products";
 
@@ -34,11 +32,6 @@ export function QuickOrder({ product }: { product: Product }) {
   const authed = hydrated && isAuthenticated;
   const [groups, setGroups] = useState(PRICING);
   const [orderItem, setOrderItem] = useState<PricingItem | null>(null);
-  const [chargeOpen, setChargeOpen] = useState(false);
-  // Row whose order was interrupted by a top-up; reopened after charging.
-  const [pending, setPending] = useState<{ item: PricingItem; draft: OrderDraft } | null>(null);
-  const [draft, setDraft] = useState<OrderDraft | null>(null);
-  const [shortfall, setShortfall] = useState(0);
   const [inquiryTopic, setInquiryTopic] = useState<string | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const [barVisible, setBarVisible] = useState(false);
@@ -145,6 +138,7 @@ export function QuickOrder({ product }: { product: Product }) {
                       {price.unit && <span className="num text-xs text-slate-400"> / {price.unit}</span>}
                     </p>
                     {item.note && <p className="mt-0.5 text-xs text-slate-400">{item.note}</p>}
+                    {minOrderLabel(item) && <p className="mt-0.5 text-xs font-semibold text-slate-600">{minOrderLabel(item)}</p>}
                   </div>
                   {price.kind === "order" ? (
                     <button
@@ -225,36 +219,7 @@ export function QuickOrder({ product }: { product: Product }) {
         </div>
       </div>
 
-      <OrderModal
-        item={orderItem}
-        draft={draft}
-        onClose={() => {
-          setOrderItem(null);
-          setDraft(null);
-        }}
-        onNeedCharge={(missing, d) => {
-          if (orderItem) setPending({ item: orderItem, draft: d });
-          setShortfall(missing);
-          setChargeOpen(true);
-        }}
-      />
-      <ChargeModal
-        open={chargeOpen}
-        shortfallCash={shortfall}
-        onClose={(outcome) => {
-          setChargeOpen(false);
-          // Card top-up credits immediately → resume the order. A bank-transfer
-          // request credits only after the owner confirms the deposit, so
-          // reopening "캐시가 부족합니다" now would look like the charge failed.
-          if (pending && outcome === "charged") {
-            setDraft(pending.draft);
-            setOrderItem(pending.item);
-          } else if (outcome === "bank_requested") {
-            toast.info("입금이 확인되면 캐시가 들어와요. 그때 이 페이지에서 다시 주문해 주세요.", { duration: 8000 });
-          }
-          setPending(null);
-        }}
-      />
+      <OrderFlow item={orderItem} onClose={() => setOrderItem(null)} />
       <InquiryModal
         open={inquiryTopic !== null}
         topic={inquiryTopic ?? ""}

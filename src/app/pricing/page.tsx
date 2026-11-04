@@ -10,7 +10,9 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { useWallet } from "@/components/WalletProvider";
 import { ChargeModal } from "@/components/ChargeModal";
-import { OrderModal } from "@/components/OrderModal";
+import { OrderFlow } from "@/components/OrderFlow";
+import type { OrderDraft } from "@/components/OrderModal";
+import { ResumeOrderBanner } from "@/components/ResumeOrderBanner";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { StoreCard } from "@/components/StoreCard";
@@ -37,6 +39,7 @@ export default function PricingPage() {
   const { balance } = useWallet();
   const [orderItem, setOrderItem] = useState<PricingItem | null>(null);
   const [chargeOpen, setChargeOpen] = useState(false);
+  const [resumeDraft, setResumeDraft] = useState<OrderDraft | null>(null);
   const [inquiryTopic, setInquiryTopic] = useState<string | null>(null);
   // Built-in catalog first; live sheet prices override once fetched.
   const [groups, setGroups] = useState<PricingGroup[]>(PRICING);
@@ -259,6 +262,13 @@ export default function PricingPage() {
         </section>
 
         <div className="mx-auto max-w-6xl px-5 pb-14">
+          <ResumeOrderBanner
+            groups={groups}
+            onResume={(item, d) => {
+              setResumeDraft(d);
+              setOrderItem(item);
+            }}
+          />
           {/* Channel chips */}
           <nav aria-label="카테고리" className="-mx-5 mt-6 overflow-x-auto px-5 pb-2">
             <ul className="flex w-max gap-2">
@@ -450,11 +460,10 @@ export default function PricingPage() {
           setInquiryTopic(item.name);
         }}
       />
-      <OrderModal
-        item={orderItem}
-        onClose={() => setOrderItem(null)}
-        onNeedCharge={() => setChargeOpen(true)}
-      />
+      <OrderFlow item={orderItem} initialDraft={resumeDraft} onClose={() => {
+        setOrderItem(null);
+        setResumeDraft(null);
+      }} />
       <ChargeModal open={chargeOpen} onClose={() => setChargeOpen(false)} />
       <InquiryModal
         open={inquiryTopic !== null}

@@ -1,6 +1,7 @@
 "use client";
 
 // Order a pricing item with cash (1원 = 1캐시). Handles per-unit quantity,
+// the product's order form (lib/orderForms — 원고 가이드, URL, 키워드…),
 // shows balance, and blocks when the balance is insufficient.
 
 import { useModal } from "@/components/useModal";
@@ -12,10 +13,74 @@ import { formatCash, formatKrw, krwToCash } from "@/lib/cash";
 import type { PricingItem } from "@/lib/pricing";
 import { track } from "@/lib/analytics";
 import Link from "next/link";
+import { formatRequest, orderFormFor, validateForm, type FormField, type FormValues } from "@/lib/orderForms";
+
+const INPUT =
+  "mt-1.5 w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-base outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100";
+
+function FieldInput({ f, value, onChange }: { f: FormField; value: string; onChange: (v: string) => void }) {
+  const id = `order-f-${f.key}`;
+  return (
+    <div>
+      <label htmlFor={f.type === "radio" ? undefined : id} className="block text-xs font-semibold text-slate-600">
+        {f.label}
+        {f.required && <span className="ml-0.5 text-rose-500">*</span>}
+      </label>
+      {f.type === "textarea" ? (
+        <textarea id={id} rows={2} maxLength={500} value={value} onChange={(e) => onChange(e.target.value)} placeholder={f.placeholder} className={INPUT} />
+      ) : f.type === "radio" ? (
+        <div role="radiogroup" aria-label={f.label} className="mt-1.5 flex flex-wrap gap-1.5">
+          {f.options!.map((o) => (
+            <label
+              key={o}
+              className="flex min-h-10 cursor-pointer items-center rounded-lg border border-slate-200 px-3 py-2 text-sm leading-snug text-slate-700 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 has-[:checked]:font-semibold has-[:checked]:text-emerald-800 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-400"
+            >
+              <input type="radio" name={id} value={o} checked={value === o} onChange={() => onChange(o)} className="sr-only" />
+              {o}
+            </label>
+          ))}
+        </div>
+      ) : f.type === "select" ? (
+        <select id={id} value={value} onChange={(e) => onChange(e.target.value)} className={`${INPUT} bg-white`}>
+          <option value="">선택해 주세요</option>
+          {Object.entries(
+            f.options!.reduce<Record<string, string[]>>((acc, o) => {
+              const [g, v] = o.includes("|") ? o.split("|") : ["", o];
+              (acc[g] ??= []).push(v);
+              return acc;
+            }, {}),
+          ).map(([g, vs]) => (
+            <optgroup key={g} label={g || "선택"}>
+              {vs.map((v) => (
+                <option key={`${g}|${v}`} value={g ? `${g}|${v}` : v}>
+                  {v}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+      ) : (
+        <input
+          id={id}
+          type={f.type === "url" ? "url" : "text"}
+          inputMode={f.type === "url" ? "url" : undefined}
+          maxLength={300}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={f.placeholder}
+          className={INPUT}
+        />
+      )}
+      {f.hint && <p className="mt-1 text-[11px] text-slate-400">{f.hint}</p>}
+    </div>
+  );
+}
 
 export interface OrderDraft {
   qty: number;
   request: string;
+  /** Order-form answers, kept across a top-up. */
+  form?: FormValues;
 }
 
 export function OrderModal({
@@ -35,6 +100,7 @@ export function OrderModal({
   const { placeOrder } = useOrders();
   const [qty, setQty] = useState(1);
   const [request, setRequest] = useState("");
+  const [form, setForm] = useState<FormValues>({});
   const [submitting, setSubmitting] = useState(false);
   const submittingRef = useRef(false);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -45,6 +111,7 @@ export function OrderModal({
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setQty(draft?.qty ?? item?.minQty ?? 1);
     setRequest(draft?.request ?? "");
+    setForm(draft?.form ?? {});
     if (item) track("begin_checkout", { item_name: item.name, currency: "KRW", value: item.amountKrw });
   }, [item, draft]);
 
@@ -58,11 +125,17 @@ export function OrderModal({
   const quantity = hasUnit ? fitQty(qty) : 1;
   const totalCash = krwToCash(item.amountKrw * quantity);
   const enough = balance >= totalCash;
+  const spec = orderFormFor(item.name);
 
   const handleOrder = async () => {
     // Guard against double taps: the RPC deducts cash, so a second call would
     // place (and charge) a second order.
     if (submittingRef.current) return;
+    const problem = spec ? validateForm(spec, form) : null;
+    if (problem) {
+      toast.error(problem);
+      return;
+    }
     submittingRef.current = true;
     setSubmitting(true);
     try {
@@ -72,7 +145,7 @@ export function OrderModal({
         productName: item.name,
         amountCash: totalCash,
         qty: quantity,
-        request: request.trim().slice(0, 1000),
+        request: formatRequest(spec, form, request).slice(0, 4000),
       });
       track("purchase", { item_name: item.name, quantity, currency: "KRW", value: totalCash });
       toast.success(`주문 완료 — ${formatCash(totalCash)} 차감되었습니다.`);
@@ -157,17 +230,33 @@ export function OrderModal({
           </div>
         )}
 
+        {spec && (
+          <section aria-label="주문 정보" className="mt-5 rounded-2xl border border-slate-100 p-4">
+            <h3 className="text-sm font-extrabold text-slate-900">주문 정보</h3>
+            {spec.notices?.map((n) => (
+              <p key={n} className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900">
+                {n}
+              </p>
+            ))}
+            <div className="mt-3 space-y-3">
+              {spec.fields.map((f) => (
+                <FieldInput key={f.key} f={f} value={form[f.key] ?? ""} onChange={(v) => setForm((prev) => ({ ...prev, [f.key]: v }))} />
+              ))}
+            </div>
+          </section>
+        )}
+
         <div className="mt-4">
           <label htmlFor="order-request" className="block text-xs font-medium text-slate-500">
-            요청사항·전달 자료 <span className="text-slate-400">(선택)</span>
+            {spec ? "추가 요청사항" : "요청사항·전달 자료"} <span className="text-slate-400">(선택)</span>
           </label>
           <textarea
             id="order-request"
             value={request}
             onChange={(e) => setRequest(e.target.value)}
             rows={3}
-            maxLength={300}
-            placeholder="블로그 주소, 매장 소개, 키워드, 참고 링크 등 작업에 필요한 자료를 적어 주세요."
+            maxLength={1000}
+            placeholder={spec ? "위에 없는 내용이 있으면 적어 주세요." : "블로그 주소, 매장 소개, 키워드, 참고 링크 등 작업에 필요한 자료를 적어 주세요."}
             className="mt-1.5 w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-base outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
           />
         </div>
@@ -216,7 +305,7 @@ export function OrderModal({
             type="button"
             onClick={() => {
               onClose();
-              onNeedCharge(totalCash - balance, { qty: quantity, request });
+              onNeedCharge(totalCash - balance, { qty: quantity, request, form });
             }}
             className="mt-5 w-full rounded-xl bg-amber-500 py-3.5 text-sm font-semibold text-white transition hover:bg-amber-600"
           >

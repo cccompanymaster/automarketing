@@ -191,7 +191,7 @@ export default function AdminPage() {
                             {o.qty > 1 && <span className="ml-1 text-slate-400">×{o.qty}</span>}
                           </p>
                           {o.request && (
-                            <p className="mt-1 max-w-xs whitespace-pre-wrap rounded-lg bg-slate-50 px-2.5 py-1.5 text-xs text-slate-600">
+                            <p className="mt-1 max-w-md whitespace-pre-wrap rounded-lg bg-slate-50 px-2.5 py-1.5 text-xs leading-relaxed text-slate-600">
                               요청: {o.request}
                             </p>
                           )}

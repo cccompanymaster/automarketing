@@ -749,3 +749,7 @@ create trigger charge_requests_notify
 alter table public.charge_requests add column if not exists cash_amount bigint;
 -- (migration "charge_vat_start_date") VAT applies from 2026-11-06 KST, the
 -- revised terms' effective date; before that cash_amount = amount (1:1).
+
+-- (migration "place_order_request_4000") place_order keeps up to 4,000 chars
+-- of the request: per-product order forms (원고 가이드 등) write "[항목] 값"
+-- lines into it.

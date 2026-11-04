@@ -423,6 +423,12 @@ export const PRICING: PricingGroup[] = [
       { name: "가격표 이미지", price: "50,000원", inquiry: true, note: "별도 문의" },
       { name: "전문가모드 광고세팅", price: "100,000원", inquiry: true, note: "별도 문의" },
       {
+        name: "비즈프로필·광고계정 세팅",
+        price: "견적 문의",
+        inquiry: true,
+        note: "비즈프로필 개설·정보 세팅, 당근 광고계정 생성·연결",
+      },
+      {
         name: "프로젝트 A (30일 관리)",
         price: "150,000원",
         unit: "1개월",

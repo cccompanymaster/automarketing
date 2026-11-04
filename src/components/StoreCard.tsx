@@ -97,14 +97,7 @@ export function StoreCard({
             부가세 별도{meta ? ` · ${meta}` : ""}
           </p>
 
-          {isBlogWrite ? (
-            <Link
-              href="/tools/blog-writer"
-              className="mt-3 flex h-10 w-full items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white transition hover:bg-emerald-700"
-            >
-              AI로 작성하기
-            </Link>
-          ) : price.kind === "soon" && !bundle ? (
+          {price.kind === "soon" && !bundle ? (
             <span className="mt-3 flex h-10 w-full items-center justify-center rounded-xl bg-slate-100 text-sm font-semibold text-slate-400">준비 중</span>
           ) : (
             <button
@@ -119,7 +112,15 @@ export function StoreCard({
               {bundle ? "옵션 선택" : orderable ? "주문하기" : "견적 문의"}
             </button>
           )}
-          {p.detailHref && (
+          {isBlogWrite && (
+            <Link
+              href="/tools/blog-writer"
+              className="mt-1.5 flex h-8 items-center justify-center text-xs font-semibold text-emerald-700 hover:underline"
+            >
+              AI로 직접 바로 쓰기 →
+            </Link>
+          )}
+          {p.detailHref && !isBlogWrite && (
             <Link
               href={p.detailHref}
               className="mt-1.5 flex h-8 items-center justify-center text-xs font-semibold text-slate-500 underline-offset-2 transition hover:text-emerald-700 hover:underline"

@@ -4,7 +4,6 @@
 // its own action (주문 · 견적 문의 · 준비 중).
 
 import { useRef } from "react";
-import Link from "next/link";
 import { useModal } from "@/components/useModal";
 import { displayPrice, type PricingItem } from "@/lib/pricing";
 import type { StoreProduct } from "@/lib/store";
@@ -78,11 +77,7 @@ export function ProductOptionsModal({
                     )}
                   </p>
                 </div>
-                {o.name === "블로그용 원고 작성" ? (
-                  <Link href="/tools/blog-writer" className="flex h-10 shrink-0 items-center rounded-xl bg-emerald-600 px-4 text-sm font-bold text-white">
-                    AI로 작성
-                  </Link>
-                ) : price.kind === "order" ? (
+                {price.kind === "order" ? (
                   <button
                     type="button"
                     onClick={() => onOrder(o)}

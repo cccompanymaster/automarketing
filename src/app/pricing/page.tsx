@@ -167,7 +167,7 @@ export default function PricingPage() {
                 role="combobox"
                 aria-expanded={searchFocused && suggestions.length > 0}
                 aria-controls="store-suggest"
-                placeholder="네이버 지도, 블로그, 쿠팡, 맘카페… 편하게 쳐 보세요"
+                placeholder="네이버 지도, 블로그, 맘카페… 편하게 쳐 보세요"
                 className="h-12 min-w-0 flex-1 bg-transparent px-1 text-base text-slate-900 outline-none placeholder:text-slate-400 [&::-webkit-search-cancel-button]:hidden"
               />
               {query && (

@@ -31,7 +31,14 @@ export const SYNONYMS: Record<string, string[]> = {
 };
 
 /** Popular searches shown under the box. */
-export const SUGGESTED_QUERIES = ["네이버 지도", "블로그 배포", "맘카페", "쿠팡", "당근", "인스타 팔로워", "보도자료", "AI 검색"];
+export const SUGGESTED_QUERIES = ["네이버 지도", "블로그 배포", "맘카페", "스마트스토어", "당근", "인스타 팔로워", "보도자료", "AI 검색"];
+
+/**
+ * Words the search understands but never displays (placeholder, popular
+ * searches, typeahead) — the store names that platform only as "C사".
+ */
+const HIDDEN_WORDS = ["쿠팡"];
+const isHidden = (w: string) => HIDDEN_WORDS.some((h) => w.includes(h));
 
 // --- Normalization -------------------------------------------------------------
 
@@ -203,6 +210,7 @@ export function suggest(titles: string[], query: string, limit = 6): string[] {
   });
   const fromWords = Object.entries(SYNONYMS)
     .flatMap(([canon, aliases]) => [canon, ...aliases])
+    .filter((w) => !isHidden(w))
     .filter((w) => {
       const n = normalize(w);
       return n !== q && (qc ? choseong(n).startsWith(q) : n.startsWith(q));

@@ -61,3 +61,12 @@ describe("suggestions", () => {
     expect(new Set(keys).size).toBe(keys.length);
   });
 });
+
+describe("hidden words", () => {
+  it("쿠팡 still searches but is never shown as a suggestion", async () => {
+    const { SUGGESTED_QUERIES } = await import("@/lib/storeSearch");
+    expect(top("쿠팡")).toContain("commerce");
+    expect(SUGGESTED_QUERIES.join()).not.toContain("쿠팡");
+    expect(suggest(all.map((p) => p.title), "쿠").join()).not.toContain("쿠팡");
+  });
+});

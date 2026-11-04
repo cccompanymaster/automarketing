@@ -18,6 +18,7 @@ import { ProductOptionsModal } from "@/components/ProductOptionsModal";
 import { PRICING, type PricingGroup, type PricingItem } from "@/lib/pricing";
 import { GOALS, PACKAGES, isOrderable, searchStore, sortStore, storeProducts, type StoreProduct, type StoreSort } from "@/lib/store";
 import { track } from "@/lib/analytics";
+import { SUGGESTED_QUERIES, suggest } from "@/lib/storeSearch";
 import Link from "next/link";
 import { COMPANY } from "@/lib/company";
 import { fetchLivePricing, isSheetPricingConfigured } from "@/lib/sheetPricing";
@@ -79,14 +80,19 @@ export default function PricingPage() {
   }, [hydrated, groups]);
 
   const all = useMemo(() => storeProducts(groups), [groups]);
-  const shown = useMemo(() => {
+  const { shown, corrections } = useMemo(() => {
     let list = channel ? all.filter((p) => p.group.key === channel) : all;
     const ids = pack ? PACKAGES.find((x) => x.key === pack)?.ids : goal ? GOALS.find((x) => x.key === goal)?.ids : null;
     if (ids) list = list.filter((p) => ids.includes(p.id)).sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
     if (orderableOnly) list = list.filter(isOrderable);
-    // A combo keeps its own order; everything else follows the chosen sort.
-    return pack ? searchStore(list, query) : sortStore(searchStore(list, query), sort);
+    const found = searchStore(list, query);
+    // Search results stay in relevance order unless a price sort is chosen;
+    // a combo keeps its own order.
+    const ordered = pack || (query.trim() && sort === "recommended") ? found.list : sortStore(found.list, sort);
+    return { shown: ordered, corrections: found.corrections };
   }, [all, channel, goal, pack, orderableOnly, query, sort]);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const suggestions = useMemo(() => suggest(all.map((p) => p.title), query), [all, query]);
   const browsing = !query && !goal && !pack && !channel;
   const activePack = PACKAGES.find((x) => x.key === pack);
   const activeGoal = GOALS.find((x) => x.key === goal);
@@ -155,8 +161,14 @@ export default function PricingPage() {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="플레이스, 블로그, 맘카페…"
-                className="h-12 min-w-0 flex-1 bg-transparent px-1 text-base text-slate-900 outline-none placeholder:text-slate-400"
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
+                autoComplete="off"
+                role="combobox"
+                aria-expanded={searchFocused && suggestions.length > 0}
+                aria-controls="store-suggest"
+                placeholder="네이버 지도, 블로그, 쿠팡, 맘카페… 편하게 쳐 보세요"
+                className="h-12 min-w-0 flex-1 bg-transparent px-1 text-base text-slate-900 outline-none placeholder:text-slate-400 [&::-webkit-search-cancel-button]:hidden"
               />
               {query && (
                 <button
@@ -168,6 +180,45 @@ export default function PricingPage() {
                 </button>
               )}
             </div>
+            {searchFocused && suggestions.length > 0 && (
+              <ul
+                id="store-suggest"
+                role="listbox"
+                className="relative z-20 -mt-1 overflow-hidden rounded-b-2xl bg-white text-slate-800 shadow-xl ring-1 ring-slate-200"
+              >
+                {suggestions.map((sg) => (
+                  <li key={sg} role="option" aria-selected={false}>
+                    <button
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => {
+                        setQuery(sg);
+                        setSearchFocused(false);
+                      }}
+                      className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm hover:bg-emerald-50"
+                    >
+                      <span aria-hidden="true" className="text-slate-400">🔍</span>
+                      {sg}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {!query && (
+              <p className="mt-3 flex flex-wrap items-center gap-1.5 text-xs">
+                <span className="font-semibold text-emerald-100">많이 찾는 검색어</span>
+                {SUGGESTED_QUERIES.map((sq) => (
+                  <button
+                    key={sq}
+                    type="button"
+                    onClick={() => setQuery(sq)}
+                    className="rounded-full bg-white/10 px-2.5 py-1 font-semibold text-white transition hover:bg-white/20"
+                  >
+                    {sq}
+                  </button>
+                ))}
+              </p>
+            )}
 
             {/* Goal-first browsing: what do you need? */}
             <p className="mt-6 text-sm font-bold text-emerald-100">무엇이 필요하세요?</p>
@@ -287,6 +338,11 @@ export default function PricingPage() {
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-slate-600">
               <b className="num text-slate-900">{shown.length}</b>개 상품
+              {query.trim() && corrections.length > 0 && (
+                <span className="ml-2 text-xs text-slate-500">
+                  ‘{corrections.join(", ")}’(으)로 찾았어요
+                </span>
+              )}
               {isSheetPricingConfigured && live && (
                 <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" aria-hidden="true" />
@@ -340,7 +396,20 @@ export default function PricingPage() {
           ) : (
             <div className="mt-8 rounded-2xl bg-white p-10 text-center ring-1 ring-slate-100">
               <p className="text-base font-bold text-slate-800">찾는 상품이 없어요</p>
-              <p className="mt-1 text-sm text-slate-500">다른 검색어를 넣거나, 원하는 마케팅을 문의해 주세요.</p>
+              <p className="mt-1 text-sm text-slate-500">이런 검색어는 어떠세요?</p>
+              <p className="mt-3 flex flex-wrap justify-center gap-1.5">
+                {SUGGESTED_QUERIES.map((sq) => (
+                  <button
+                    key={sq}
+                    type="button"
+                    onClick={() => setQuery(sq)}
+                    className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-emerald-50"
+                  >
+                    {sq}
+                  </button>
+                ))}
+              </p>
+              <p className="mt-3 text-sm text-slate-500">원하는 마케팅이 없다면 문의해 주세요.</p>
               <button
                 type="button"
                 onClick={() => setInquiryTopic(query || "상품 문의")}

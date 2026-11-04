@@ -4,6 +4,7 @@
 // Pure data helpers so the app can reuse the same listing.
 
 import { displayPrice, priceSortValue, type PricingGroup, type PricingItem } from "@/lib/pricing";
+import { rankSearch, type Searchable } from "@/lib/storeSearch";
 
 export interface StoreProduct {
   id: string;
@@ -304,16 +305,18 @@ export function sortStore(list: StoreProduct[], sort: StoreSort): StoreProduct[]
   return copy.sort((a, b) => (BADGE_RANK[a.badge ?? ""] ?? 9) - (BADGE_RANK[b.badge ?? ""] ?? 9));
 }
 
-export function searchStore(list: StoreProduct[], query: string): StoreProduct[] {
-  const q = query.trim().toLowerCase().replace(/\s+/g, "");
-  if (!q) return list;
-  return list.filter((p) =>
-    [p.title, p.summary ?? "", p.group.title, p.group.description, ...p.options.flatMap((o) => [o.name, o.note ?? ""])]
-      .join("")
-      .toLowerCase()
-      .replace(/\s+/g, "")
-      .includes(q),
-  );
+/** Text the store search looks at for a product. */
+export function searchableOf(p: StoreProduct): Searchable {
+  return {
+    title: p.title,
+    fields: [p.summary ?? "", p.group.title, p.group.description, ...p.options.flatMap((o) => [o.name, o.note ?? ""])],
+  };
+}
+
+/** Ranked search (synonyms, typos, 초성) — most relevant first. */
+export function searchStore(list: StoreProduct[], query: string): { list: StoreProduct[]; corrections: string[] } {
+  const { hits, corrections } = rankSearch(list, query, searchableOf);
+  return { list: hits.map((h) => h.item), corrections };
 }
 
 // --- Goal-first browsing ----------------------------------------------------

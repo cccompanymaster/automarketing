@@ -18,6 +18,7 @@ import { getSupabase } from "@/lib/supabase";
 import { useAuth } from "@/components/AuthProvider";
 import { useWallet } from "@/components/WalletProvider";
 import type { Order, OrderStatus } from "@/lib/orders";
+import type { OrderFile } from "@/lib/orderForms";
 
 interface PlaceOrderInput {
   productName: string;
@@ -27,6 +28,10 @@ interface PlaceOrderInput {
   request?: string;
   /** Same key for retries of one order: the server charges it once. */
   clientKey?: string;
+  /** Uploaded attachments (order-files bucket). */
+  files?: OrderFile[];
+  /** Account password for login-based work; stored apart from the order. */
+  secret?: string | null;
 }
 
 interface OrdersContextValue {
@@ -72,6 +77,8 @@ export function orderErrorMessage(err: { message?: string; code?: string }): str
   if (m.includes("price_changed")) return "그사이 가격이 바뀌었어요. 페이지를 새로고침해 바뀐 금액을 확인한 뒤 다시 주문해 주세요.";
   if (m.includes("below_min_qty")) return "최소 주문 수량보다 적어요. 수량을 늘려 주세요.";
   if (m.includes("bad_step")) return "주문 단위에 맞지 않는 수량이에요. 수량을 다시 확인해 주세요.";
+  if (m.includes("bad_files")) return "첨부 파일을 확인하지 못했어요. 파일을 다시 올린 뒤 주문해 주세요.";
+  if (m.includes("bad_secret")) return "비밀번호를 다시 확인해 주세요.";
   if (m.includes("unknown_product")) return "지금은 바로 주문할 수 없는 상품이에요. 견적·문의로 남겨 주세요.";
   if (/JWT|not authenticated|401/i.test(m)) return "로그인이 만료됐어요. 다시 로그인한 뒤 주문해 주세요.";
   if (err.code === "network" || /Failed to fetch|NetworkError|network/i.test(m))
@@ -129,13 +136,19 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       if (supabase) {
         let error: { message?: string; code?: string } | null = null;
         try {
-          ({ error } = await supabase.rpc("place_order", {
+          const args = {
             p_product_name: input.productName,
             p_amount: input.amountCash,
             p_qty: input.qty,
             p_request: request ?? null,
             p_client_key: input.clientKey ?? newId(),
-          }));
+          };
+          // Attachments / a password go through place_order_v2 (same pricing
+          // and dedup, plus the extras in the same transaction).
+          ({ error } =
+            input.files?.length || input.secret
+              ? await supabase.rpc("place_order_v2", { ...args, p_files: input.files ?? [], p_secret: input.secret ?? null })
+              : await supabase.rpc("place_order", args));
         } catch (e) {
           error = { message: e instanceof Error ? e.message : String(e), code: "network" };
         } finally {

@@ -13,7 +13,9 @@ import { useAuth } from "@/components/AuthProvider";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { formatCash } from "@/lib/cash";
+import { orderFileUrl } from "@/lib/orderFiles";
 import {
+  adminOrderSecret,
   getAdminOverview,
   isAdminUser,
   isAdminBackendConfigured,
@@ -199,6 +201,7 @@ export default function AdminPage() {
                               요청: {o.request}
                             </p>
                           )}
+                          <OrderExtras order={o} />
                         </td>
                         <td className="px-3 py-3 text-slate-500">{o.userEmail}</td>
                         <td className="px-3 py-3 font-semibold tabular-nums text-slate-700">
@@ -472,6 +475,48 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
       </h2>
       <div className="overflow-x-auto">{children}</div>
     </section>
+  );
+}
+
+/** Attachments (signed links on click) and the account password, when the order has them. */
+function OrderExtras({ order }: { order: AdminOverview["recentOrders"][number] }) {
+  const [secret, setSecret] = useState<string | null>(null);
+  const files = order.attachments ?? [];
+  if (!files.length && !order.hasSecret) return null;
+  const open = async (path: string) => {
+    try {
+      window.open(await orderFileUrl(path), "_blank", "noopener");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "파일을 열지 못했어요.");
+    }
+  };
+  const reveal = async () => {
+    if (secret !== null) return setSecret(null);
+    try {
+      const s = await adminOrderSecret(order.id);
+      setSecret(s ?? "(이미 삭제됨)");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "불러오지 못했어요.");
+    }
+  };
+  return (
+    <div className="mt-1.5 flex max-w-md flex-wrap gap-1.5 text-xs">
+      {files.map((f) => (
+        <button
+          key={f.path}
+          type="button"
+          onClick={() => void open(f.path)}
+          className="max-w-[14rem] truncate rounded-lg border border-slate-200 bg-white px-2 py-1 text-slate-600 hover:border-emerald-300 hover:text-emerald-700"
+        >
+          📎 {f.name}
+        </button>
+      ))}
+      {order.hasSecret && (
+        <button type="button" onClick={() => void reveal()} className="rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 font-semibold text-amber-800">
+          {secret === null ? "🔑 계정 비밀번호 보기" : <span className="font-mono">{secret}</span>}
+        </button>
+      )}
+    </div>
   );
 }
 

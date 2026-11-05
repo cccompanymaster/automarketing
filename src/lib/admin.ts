@@ -5,6 +5,7 @@
 // admin_overview / admin_update_order_status are security-definer RPCs that
 // refuse anyone not in public.admin_users (is_admin()).
 
+import type { OrderFile } from "@/lib/orderForms";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import { socialProviderFromSupabase } from "@/lib/socialAuth";
 import type { User } from "@/components/AuthProvider";
@@ -40,6 +41,19 @@ export interface AdminOrder {
   request: string | null;
   status: OrderStatus;
   createdAt: string; // ISO
+  /** Uploaded 원고·사진 files. */
+  attachments?: OrderFile[];
+  /** An account password is held for this order (read with adminOrderSecret). */
+  hasSecret?: boolean;
+}
+
+/** The account password the member left for a login-based order (deleted when done/canceled). */
+export async function adminOrderSecret(orderId: string): Promise<string | null> {
+  const supabase = getSupabase();
+  if (!supabase) return null;
+  const { data, error } = await supabase.rpc("admin_order_secret", { p_order_id: orderId });
+  if (error) throw new Error(error.message.includes("forbidden") ? "관리자 권한이 없어요." : error.message);
+  return (data as string | null) ?? null;
 }
 
 export interface AdminCharge {

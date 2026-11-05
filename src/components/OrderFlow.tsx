@@ -12,6 +12,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { OrderModal, type OrderDraft } from "@/components/OrderModal";
 import { ChargeModal } from "@/components/ChargeModal";
 import { clearOrderDraft, saveOrderDraft } from "@/lib/orderDraft";
+import { orderFormFor, orderVariant, withoutSecrets } from "@/lib/orderForms";
 import { krwToCash } from "@/lib/cash";
 import type { PricingItem } from "@/lib/pricing";
 
@@ -43,9 +44,11 @@ export function OrderFlow({
         onOrdered={() => user && clearOrderDraft(user.id)}
         onNeedCharge={(missing, d) => {
           if (!item) return;
-          const total = krwToCash((item.amountKrw ?? 0) * d.qty);
+          const spec = orderFormFor(item.name);
+          const total = krwToCash(orderVariant(item.name, item.amountKrw ?? 0, spec, d.form ?? {}).unitKrw * d.qty);
           setDraft(d);
-          if (user) saveOrderDraft(user.id, { itemName: item.name, qty: d.qty, request: d.request, form: d.form, totalCash: total });
+          // Never persist a password; the member types it again after the top-up.
+          if (user) saveOrderDraft(user.id, { itemName: item.name, qty: d.qty, request: d.request, form: withoutSecrets(spec, d.form ?? {}), totalCash: total });
           setCharging({ shortfall: missing, total });
         }}
       />

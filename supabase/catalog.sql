@@ -10,7 +10,7 @@ insert into public.catalog_items (name, amount_krw, unit_based, min_qty, step) v
   ('공식 인플루언서 블로그 배포 (최적)', 99900, true, 1, 1),
   ('플레이스용 준최적 블로그 배포', 3000, true, 1, 1),
   ('고품질 준최적 블로그 배포', 10000, true, 1, 1),
-  ('신로직 준최적 블로그 배포', 25000, true, 1, 1),
+  ('신로직 맞춤 블로그 배포', 25000, true, 1, 1),
   ('블로그 실명 배포', 1200, true, 1, 1),
   ('블로그용 원고 작성', 500, true, 1, 1),
   ('블로그 서로이웃 추가', 100, true, 50, 1),
@@ -61,7 +61,9 @@ insert into public.catalog_items (name, amount_krw, unit_based, min_qty, step) v
   ('보도자료 송출 (뷰티헬스)', 120000, true, 1, 1),
   ('보도자료 송출 (메디컬)', 120000, true, 1, 1),
   ('보도자료 송출 (건강식품)', 120000, true, 1, 1),
-  ('보도자료 송출 (블록체인)', 260000, true, 1, 1)
+  ('보도자료 송출 (블록체인)', 260000, true, 1, 1),
+  ('공식 인플루언서 블로그 배포 (준최적) + 카테고리 지정', 69900, true, 1, 1),
+  ('공식 인플루언서 블로그 배포 (최적) + 카테고리 지정', 119900, true, 1, 1)
 on conflict (name) do update set
   amount_krw = excluded.amount_krw, unit_based = excluded.unit_based,
   min_qty = excluded.min_qty, step = excluded.step, active = true, updated_at = now();

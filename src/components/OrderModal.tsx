@@ -13,16 +13,103 @@ import { formatCash, formatKrw, krwToCash, vatNotice } from "@/lib/cash";
 import { displayPrice, type PricingItem } from "@/lib/pricing";
 import { track } from "@/lib/analytics";
 import Link from "next/link";
-import { formatRequest, orderFormFor, validateForm, type FormField, type FormValues } from "@/lib/orderForms";
+import {
+  NOTE_MAX,
+  REQUEST_MAX,
+  filesOf,
+  formatRequest,
+  orderFormFor,
+  orderVariant,
+  parseFiles,
+  secretOf,
+  validateForm,
+  visibleFields,
+  type FormField,
+  type FormValues,
+} from "@/lib/orderForms";
+import { ORDER_FILE_ACCEPT, fileProblem, formatBytes, removeOrderFile, uploadOrderFile } from "@/lib/orderFiles";
 
 const INPUT =
   "mt-1.5 w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-base outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100";
 
+const CHOICE =
+  "flex min-h-10 cursor-pointer items-center rounded-lg border border-slate-200 px-3 py-2 text-sm leading-snug text-slate-700 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 has-[:checked]:font-semibold has-[:checked]:text-emerald-800 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-400";
+
+/** File picker: uploads right away and keeps the list (JSON) in the form value. */
+function FilesInput({ id, value, onChange }: { id: string; value: string; onChange: (v: string) => void }) {
+  const files = parseFiles(value);
+  const [busy, setBusy] = useState(false);
+  const pick = async (list: FileList | null) => {
+    if (!list?.length) return;
+    setBusy(true);
+    const next = [...files];
+    try {
+      for (const file of Array.from(list)) {
+        const problem = fileProblem(file, next.length);
+        if (problem) {
+          toast.error(problem);
+          continue;
+        }
+        try {
+          next.push(await uploadOrderFile(file));
+          onChange(JSON.stringify(next));
+        } catch (e) {
+          toast.error(e instanceof Error ? e.message : "파일을 올리지 못했어요.");
+        }
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+  const remove = (path: string) => {
+    onChange(JSON.stringify(files.filter((f) => f.path !== path)));
+    void removeOrderFile(path).catch(() => {});
+  };
+  return (
+    <div className="mt-1.5">
+      <label
+        htmlFor={id}
+        className={`flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-dashed border-slate-300 px-3 text-sm font-semibold text-slate-600 hover:border-emerald-400 hover:bg-emerald-50/40 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-400 ${busy ? "pointer-events-none opacity-60" : ""}`}
+      >
+        {busy ? "올리는 중…" : "📎 파일 선택 (여러 개 가능)"}
+        <input
+          id={id}
+          type="file"
+          multiple
+          accept={ORDER_FILE_ACCEPT}
+          className="sr-only"
+          onChange={(e) => {
+            void pick(e.target.files);
+            e.target.value = "";
+          }}
+        />
+      </label>
+      {files.length > 0 && (
+        <ul className="mt-2 space-y-1">
+          {files.map((f) => (
+            <li key={f.path} className="flex items-center justify-between gap-2 rounded-lg bg-slate-50 px-3 py-1.5 text-xs text-slate-700">
+              <span className="min-w-0 truncate">{f.name}</span>
+              <span className="flex shrink-0 items-center gap-2 text-slate-400">
+                {formatBytes(f.size)}
+                <button type="button" onClick={() => remove(f.path)} aria-label={`${f.name} 빼기`} className="rounded px-1 text-slate-400 hover:text-rose-600">
+                  ✕
+                </button>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function FieldInput({ f, value, onChange }: { f: FormField; value: string; onChange: (v: string) => void }) {
   const id = `order-f-${f.key}`;
+  const grouped = f.options?.some((o) => o.includes("|"));
+  const checked = new Set(value ? value.split(", ") : []);
   return (
     <div>
-      <label htmlFor={f.type === "radio" ? undefined : id} className="block text-xs font-semibold text-slate-600">
+      <label htmlFor={f.type === "radio" || f.type === "checkbox" ? undefined : id} className="block text-xs font-semibold text-slate-600">
         {f.label}
         {f.required && <span className="ml-0.5 text-rose-500">*</span>}
       </label>
@@ -31,11 +118,28 @@ function FieldInput({ f, value, onChange }: { f: FormField; value: string; onCha
       ) : f.type === "radio" ? (
         <div role="radiogroup" aria-label={f.label} className="mt-1.5 flex flex-wrap gap-1.5">
           {f.options!.map((o) => (
-            <label
-              key={o}
-              className="flex min-h-10 cursor-pointer items-center rounded-lg border border-slate-200 px-3 py-2 text-sm leading-snug text-slate-700 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 has-[:checked]:font-semibold has-[:checked]:text-emerald-800 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-400"
-            >
+            <label key={o} className={CHOICE}>
               <input type="radio" name={id} value={o} checked={value === o} onChange={() => onChange(o)} className="sr-only" />
+              {o}
+            </label>
+          ))}
+        </div>
+      ) : f.type === "checkbox" ? (
+        <div role="group" aria-label={f.label} className="mt-1.5 flex flex-wrap gap-1.5">
+          {f.options!.map((o) => (
+            <label key={o} className={CHOICE}>
+              <input
+                type="checkbox"
+                checked={checked.has(o)}
+                onChange={(e) => {
+                  const next = new Set(checked);
+                  if (e.target.checked) next.add(o);
+                  else next.delete(o);
+                  onChange(f.options!.filter((x) => next.has(x)).join(", "));
+                }}
+                className="sr-only"
+              />
+              {checked.has(o) ? "✓ " : ""}
               {o}
             </label>
           ))}
@@ -43,28 +147,37 @@ function FieldInput({ f, value, onChange }: { f: FormField; value: string; onCha
       ) : f.type === "select" ? (
         <select id={id} value={value} onChange={(e) => onChange(e.target.value)} className={`${INPUT} bg-white`}>
           <option value="">선택해 주세요</option>
-          {Object.entries(
-            f.options!.reduce<Record<string, string[]>>((acc, o) => {
-              const [g, v] = o.includes("|") ? o.split("|") : ["", o];
-              (acc[g] ??= []).push(v);
-              return acc;
-            }, {}),
-          ).map(([g, vs]) => (
-            <optgroup key={g} label={g || "선택"}>
-              {vs.map((v) => (
-                <option key={`${g}|${v}`} value={g ? `${g}|${v}` : v}>
-                  {v}
+          {grouped
+            ? Object.entries(
+                f.options!.reduce<Record<string, string[]>>((acc, o) => {
+                  const [g, v] = o.includes("|") ? o.split("|") : ["", o];
+                  (acc[g] ??= []).push(v);
+                  return acc;
+                }, {}),
+              ).map(([g, vs]) => (
+                <optgroup key={g} label={g || "선택"}>
+                  {vs.map((v) => (
+                    <option key={`${g}|${v}`} value={g ? `${g}|${v}` : v}>
+                      {v}
+                    </option>
+                  ))}
+                </optgroup>
+              ))
+            : f.options!.map((o) => (
+                <option key={o} value={o}>
+                  {o}
                 </option>
               ))}
-            </optgroup>
-          ))}
         </select>
+      ) : f.type === "files" ? (
+        <FilesInput id={id} value={value} onChange={onChange} />
       ) : (
         <input
           id={id}
-          type={f.type === "url" ? "url" : "text"}
+          type={f.type === "url" ? "url" : f.type === "secret" ? "password" : "text"}
           inputMode={f.type === "url" ? "url" : undefined}
-          maxLength={300}
+          autoComplete={f.type === "secret" ? "off" : undefined}
+          maxLength={f.type === "secret" ? 200 : 300}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={f.placeholder}
@@ -127,22 +240,29 @@ export function OrderModal({
 
   if (!item || item.amountKrw == null) return null;
 
+  const spec = orderFormFor(item.name);
+  // Paid options (e.g. 인플루언서 카테고리 지정) switch to their own catalog row.
+  const variant = orderVariant(item.name, item.amountKrw, spec, form);
   const hasUnit = Boolean(item.unit);
   const minQty = item.minQty ?? 1;
   const step = item.step ?? 1;
   // Clamp to the minimum and round up to the item's ordering step.
   const fitQty = (n: number) => Math.max(minQty, Math.ceil(n / step) * step);
   const quantity = hasUnit ? fitQty(qty) : 1;
-  const totalCash = krwToCash(item.amountKrw * quantity);
+  const totalCash = krwToCash(variant.unitKrw * quantity);
   const enough = balance >= totalCash;
-  const spec = orderFormFor(item.name);
   const variable = displayPrice(item).from;
+  const noteMax = spec?.note?.maxLength ?? NOTE_MAX;
 
   const handleOrder = async () => {
     // Guard against double taps: the RPC deducts cash, so a second call would
     // place (and charge) a second order.
     if (submittingRef.current) return;
-    const problem = (spec ? validateForm(spec, form) : null) ?? (variable && !ackVariable ? "시작 금액 안내를 확인해 주세요." : null);
+    const requestText = formatRequest(spec, form, request);
+    const problem =
+      (spec ? validateForm(spec, form, request) : null) ??
+      (variable && !ackVariable ? "시작 금액 안내를 확인해 주세요." : null) ??
+      (requestText.length > REQUEST_MAX ? `주문 내용이 너무 길어요. 요청사항을 ${(requestText.length - REQUEST_MAX).toLocaleString("ko-KR")}자 줄여 주세요.` : null);
     if (problem) {
       toast.error(problem);
       return;
@@ -153,13 +273,15 @@ export function OrderModal({
       // One call: cash is deducted and the order (with the request note) is
       // recorded together, so a paid order can't go missing.
       await placeOrder({
-        productName: item.name,
+        productName: variant.name,
         amountCash: totalCash,
         qty: quantity,
-        request: formatRequest(spec, form, request).slice(0, 4000),
+        request: requestText,
         clientKey: orderKey.current || undefined,
+        files: filesOf(spec, form),
+        secret: secretOf(spec, form),
       });
-      track("purchase", { item_name: item.name, quantity, currency: "KRW", value: totalCash });
+      track("purchase", { item_name: variant.name, quantity, currency: "KRW", value: totalCash });
       onOrdered?.();
       toast.success(`주문 완료 — ${formatCash(totalCash)} 차감되었습니다.`);
       onClose();
@@ -197,8 +319,9 @@ export function OrderModal({
           </button>
         </div>
         <p className="mt-1 text-sm text-slate-500">
-          {formatKrw(item.amountKrw)}
+          {formatKrw(variant.unitKrw)}
           {item.unit ? ` / ${item.unit}` : ""}
+          {variant.name !== item.name && <span className="ml-1 text-emerald-700">({variant.name.slice(item.name.length + 3)} 포함)</span>}
         </p>
 
         {hasUnit && (
@@ -252,7 +375,7 @@ export function OrderModal({
               </p>
             ))}
             <div className="mt-3 space-y-3">
-              {spec.fields.map((f) => (
+              {visibleFields(spec, form).map((f) => (
                 <FieldInput key={f.key} f={f} value={form[f.key] ?? ""} onChange={(v) => setForm((prev) => ({ ...prev, [f.key]: v }))} />
               ))}
             </div>
@@ -260,16 +383,25 @@ export function OrderModal({
         )}
 
         <div className="mt-4">
-          <label htmlFor="order-request" className="block text-xs font-medium text-slate-500">
-            {spec ? "추가 요청사항" : "요청사항·전달 자료"} <span className="text-slate-400">(선택)</span>
-          </label>
+          <div className="flex items-baseline justify-between gap-2">
+            <label htmlFor="order-request" className="block text-xs font-medium text-slate-500">
+              {spec?.note?.label ?? (spec ? "추가 요청사항" : "요청사항·전달 자료")}{" "}
+              {spec?.note?.required ? <span className="text-rose-500">*</span> : <span className="text-slate-400">(선택)</span>}
+            </label>
+            <span className="num text-[11px] text-slate-400">
+              {request.length.toLocaleString("ko-KR")}/{noteMax.toLocaleString("ko-KR")}자
+            </span>
+          </div>
           <textarea
             id="order-request"
             value={request}
             onChange={(e) => setRequest(e.target.value)}
-            rows={3}
-            maxLength={1000}
-            placeholder={spec ? "위에 없는 내용이 있으면 적어 주세요." : "블로그 주소, 매장 소개, 키워드, 참고 링크 등 작업에 필요한 자료를 적어 주세요."}
+            rows={spec?.note?.maxLength && spec.note.maxLength > NOTE_MAX ? 6 : 3}
+            maxLength={noteMax}
+            placeholder={
+              spec?.note?.placeholder ??
+              (spec ? "위에 없는 내용이 있으면 적어 주세요." : "블로그 주소, 매장 소개, 키워드, 참고 링크 등 작업에 필요한 자료를 적어 주세요.")
+            }
             className="mt-1.5 w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-base outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
           />
         </div>
@@ -294,7 +426,7 @@ export function OrderModal({
             <div className="flex items-center justify-between text-xs text-slate-500">
               <span>단가 × 수량</span>
               <span className="num">
-                {formatKrw(item.amountKrw)} × {quantity.toLocaleString("ko-KR")}
+                {formatKrw(variant.unitKrw)} × {quantity.toLocaleString("ko-KR")}
                 {item.unit?.replace(/^1/, "") ?? ""}
               </span>
             </div>

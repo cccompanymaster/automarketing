@@ -5,7 +5,7 @@
 //
 // Two kinds of answers never go into the request text:
 // - "files": uploaded to the order-files bucket and attached to the order.
-// - "secret": an account password, stored apart from the order (admin-only,
+// - "secret": an account password (블로그 서로이웃·이웃 추가), stored apart from the order (admin-only,
 //   deleted when the order is done or canceled) and never saved in drafts.
 // A radio field can carry an add-on price (`addOn`): choosing it orders the
 // "<상품명> + <suffix>" catalog row, which the server prices on its own.
@@ -196,6 +196,13 @@ const PRESS_MEDIA: string[] = [
   ...PRESS_CATEGORIES.flatMap((c) => c.samples.map((m) => `${c.name}|${m}`)),
 ];
 
+const PASSWORD_NOTICE =
+  "비밀번호는 주문 내용과 따로 보관해 관리자만 볼 수 있고, 작업이 끝나거나 취소되면 바로 지워져요. 작업이 끝나면 비밀번호를 꼭 바꿔 주세요.";
+const NAVER_ACCOUNT: FormField[] = [
+  { key: "naverId", label: "네이버 아이디", type: "text", required: true, placeholder: "네이버 로그인 아이디" },
+  { key: "naverPw", label: "네이버 비밀번호", type: "secret", required: true },
+];
+
 const PRODUCT_URL: FormField = { key: "productUrl", label: "제품 정보 URL", type: "url", required: true, placeholder: "판매 중인 상품 페이지 주소" };
 
 const FORMS: Record<string, OrderForm> = {
@@ -211,18 +218,12 @@ const FORMS: Record<string, OrderForm> = {
   "블로그 상위노출 25일 보장": TOP_GUARANTEE,
   "블로그용 원고 작성": { fields: CONTENT_GUIDE },
   "블로그 서로이웃 추가": {
-    notices: [
-      "작업은 10:00~22:00 사이에 진행돼요. 이 시간에 로그인 알림이 올 수 있어요.",
-      "비밀번호는 주문 내용과 따로 보관해 관리자만 볼 수 있고, 작업이 끝나거나 취소되면 바로 지워져요. 작업이 끝나면 비밀번호를 꼭 바꿔 주세요.",
-    ],
-    fields: [
-      { key: "naverId", label: "네이버 아이디", type: "text", required: true, placeholder: "네이버 로그인 아이디" },
-      { key: "naverPw", label: "네이버 비밀번호", type: "secret", required: true },
-    ],
+    notices: ["작업은 10:00~22:00 사이에 진행돼요. 이 시간에 로그인 알림이 올 수 있어요.", PASSWORD_NOTICE],
+    fields: NAVER_ACCOUNT,
   },
   "블로그 이웃 추가": {
-    notices: ["작업은 10:00~22:00 사이에 일별로 나눠 진행돼요."],
-    fields: [{ key: "blogUrl", label: "블로그 주소", type: "url", required: true, placeholder: "https://blog.naver.com/아이디" }],
+    notices: ["작업은 10:00~22:00 사이에 일별로 나눠 진행돼요. 이 시간에 로그인 알림이 올 수 있어요.", PASSWORD_NOTICE],
+    fields: [{ key: "blogUrl", label: "블로그 주소", type: "url", required: true, placeholder: "https://blog.naver.com/아이디" }, ...NAVER_ACCOUNT],
   },
   "일반형 리워드": PLACE_REWARD,
   "압축형 미션 리워드": PLACE_REWARD,

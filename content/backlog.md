@@ -42,5 +42,9 @@
 | 연장·야간·휴일 가산수당 | 추정 (근로기준법 질문) | question | scheduled 2026-11-07 | /blog/overtime-night-holiday-pay/ |
 | 소상공인 마케팅 예산 | 칼럼 (상품 조합·공개 단가) | comparison | scheduled 2026-11-07 | /column/marketing-budget-plan/ |
 | 보도자료 쓰는 법 | 칼럼 (상품 연결: 원고 대필) | question | scheduled 2026-11-07 | /column/press-release-writing/ |
+| 공휴일 유급휴일 | 추정 (근로기준법 질문) | question | scheduled 2026-11-08 | /blog/public-holiday-paid-leave/ |
+| 수습기간 최저임금 | 추정 (최저임금법 질문) | question | scheduled 2026-11-08 | /blog/probation-minimum-wage/ |
+| 가게 블로그 글 쓰는 법 | 칼럼 (상품 연결: AI 원고·배포) | question | scheduled 2026-11-08 | /column/blog-post-writing-guide/ |
+| 마케팅 대행 환불 | 칼럼 (이용약관 제8·9조) | question | scheduled 2026-11-08 | /column/marketing-refund-policy/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

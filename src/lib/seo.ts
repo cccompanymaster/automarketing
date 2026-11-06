@@ -96,7 +96,7 @@ export function organizationLd(): Json {
     address: {
       "@type": "PostalAddress",
       addressCountry: "KR",
-      addressLocality: "인천광역시 연수구",
+      addressLocality: COMPANY.addressLocality,
       streetAddress: COMPANY.address,
     },
     areaServed: { "@type": "Country", name: "대한민국" },

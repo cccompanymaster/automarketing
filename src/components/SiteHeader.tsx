@@ -28,6 +28,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { href: "/", icon: "🏠", label: "홈" },
   { href: "/#services", icon: "🧩", label: "전체 서비스" },
+  { href: "/pricing", icon: "🛍️", label: "상품 구경하기" },
   { href: "/tools/", icon: "🧮", label: "무료 계산기" },
   { href: "/blog/", icon: "📰", label: "사장님 블로그" },
   { href: "/column/", icon: "🗂️", label: "칼럼 게시판" },
@@ -79,7 +80,7 @@ export function SiteHeader() {
   // Members land on their own home (programs + products), so the landing's
   // story anchors are guest-only.
   const navItems = isAuthenticated
-    ? NAV_ITEMS.filter((it) => !["/#services"].includes(it.href)).map((it) =>
+    ? NAV_ITEMS.filter((it) => !["/#services", "/pricing"].includes(it.href)).map((it) =>
         it.href === "/" ? { ...it, label: "내 홈" } : it,
       )
     : NAV_ITEMS;

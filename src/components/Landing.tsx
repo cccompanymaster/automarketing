@@ -110,22 +110,29 @@ export function Landing() {
       {/* How it starts — 3 steps, 3 minutes */}
       <ProcessSection />
 
-      {/* Closing CTA — board the ship into the operating screen */}
+      {/* Closing CTA — two clear doors: sign up now, or look at the products first */}
       <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
         <div className="impact rounded-hero px-6 py-14 text-center sm:px-12 sm:py-20">
-          <h2 className="text-2xl font-bold text-white sm:text-4xl">
-            이제, 마케팅방주에 승선할 시간이에요
-          </h2>
+          <h2 className="text-2xl font-bold text-white sm:text-4xl">이제, 마케팅방주에 승선할 시간이에요</h2>
           <p className="mx-auto mt-4 max-w-md text-sm text-slate-300 sm:text-base">
-            가입하면 바로 내 운영 화면에서 진단·주문·원고 작성까지 시작할 수 있어요.
+            상품과 단가는 가입 없이 먼저 둘러볼 수 있어요. 주문할 때만 무료로 가입하면 돼요.
           </p>
-          <TrackedCta
-            href="/start"
-            authedHref="/mypage"
-            className="mt-9 inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-10 py-5 text-lg font-extrabold text-emerald-700 shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-50 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white sm:px-14 sm:py-6 sm:text-xl"
-          >
-            🚢 마케팅방주 승선하기!
-          </TrackedCta>
+          <div className="mx-auto mt-9 grid max-w-xl gap-3 sm:grid-cols-2">
+            <TrackedCta
+              href="/start"
+              authedHref="/mypage"
+              className="flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-white px-6 text-lg font-extrabold text-emerald-700 shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              🚢 바로 시작하기
+            </TrackedCta>
+            <Link
+              href="/pricing/"
+              className="flex min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-white/70 px-6 text-lg font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              🛍️ 상품 구경하기
+            </Link>
+          </div>
+          <p className="mt-4 text-xs text-slate-400">바로 시작하기: 무료 회원가입 · 상품 구경하기: 가입 없이 전체 상품·단가 보기</p>
         </div>
       </section>
     </main>

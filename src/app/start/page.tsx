@@ -6,7 +6,8 @@
 // CTAs) keeps the chosen product visible through the funnel and routes the
 // new member to that product's order rows after signup. With `&buy=<row>`
 // (a detail page's order button) new visitors skip the story onboarding and
-// return to that page with the row's order window open.
+// return to that page with the row's order window open. The store sends
+// `?signup=1&next=<path>`: straight to the signup form, then back to `next`.
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -23,19 +24,33 @@ import { BUY_PARAM } from "@/components/QuickOrder";
 
 type Stage = "entry" | "onboarding" | "signup" | "login";
 
+/** Only same-site paths ("/store/x/?buy=…"), never "//host" or a full URL. */
+function safeNext(v: string | null): string | undefined {
+  if (!v || !v.startsWith("/") || v.startsWith("//") || v.includes("\\")) return undefined;
+  return v;
+}
+
 function StartFunnel() {
-  const [stage, setStage] = useState<Stage>("entry");
+  const searchParamsForStage = useSearchParams();
+  // Coming from a store 주문하기: open the signup form right away.
+  const [stage, setStage] = useState<Stage>(searchParamsForStage.get("signup") === "1" ? "signup" : "entry");
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Product carried over from a service-detail CTA (may be absent).
   const searchParams = useSearchParams();
   const service = getProduct(searchParams.get("service") ?? "");
   const buy = searchParams.get(BUY_PARAM);
-  const afterHref = service
-    ? buy
-      ? `/services/${service.slug}/?${BUY_PARAM}=${encodeURIComponent(buy)}`
-      : pricingHref(service.slug)
-    : undefined;
+  // `next`: an internal page to return to (the store's 주문하기); `signup=1` skips the story.
+  const next = safeNext(searchParams.get("next"));
+  const nextBuy = next ? new URL(next, "https://selfmarketing.ai.kr").searchParams.get(BUY_PARAM) : null;
+  const straightToSignup = Boolean(buy) || searchParams.get("signup") === "1";
+  const afterHref =
+    next ??
+    (service
+      ? buy
+        ? `/services/${service.slug}/?${BUY_PARAM}=${encodeURIComponent(buy)}`
+        : pricingHref(service.slug)
+      : undefined);
 
   // Already signed in (e.g. Back after signup, or an old bookmark) → don't
   // greet a member with "처음 이용하시나요?"; send them where they were going.
@@ -63,6 +78,13 @@ function StartFunnel() {
           <span>{COMPANY.serviceName}</span>
         </Link>
 
+        {!service && nextBuy && (
+          <div className="mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900 ring-1 ring-emerald-100">
+            주문할 상품: <b>{nextBuy}</b>
+            <span className="mt-0.5 block text-xs text-emerald-700">가입하면 바로 이 상품 주문 화면으로 돌아가요.</span>
+          </div>
+        )}
+
         {service && (
           <div className="mb-4 flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3 text-sm ring-1 ring-emerald-100">
             <span aria-hidden="true">{service.icon}</span>
@@ -80,7 +102,7 @@ function StartFunnel() {
         >
           {stage === "entry" && (
             <AuthEntry
-              onNew={() => setStage(buy ? "signup" : "onboarding")}
+              onNew={() => setStage(straightToSignup ? "signup" : "onboarding")}
               onReturning={() => setStage("login")}
             />
           )}

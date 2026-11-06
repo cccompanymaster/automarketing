@@ -7,7 +7,7 @@ export const dynamic = "force-static";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.example";
 
 // Logged-in skeleton — no value in search indexes.
-const PRIVATE = ["/mypage", "/admin", "/pricing", "/auth"];
+const PRIVATE = ["/mypage", "/admin", "/auth"];
 
 // AI crawlers, listed explicitly so the policy is a decision, not an accident:
 // training, AI-search indexing and live fetch are all allowed because being

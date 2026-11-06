@@ -19,7 +19,8 @@ import type { OrderDraft } from "@/components/OrderModal";
 import { ResumeOrderBanner } from "@/components/ResumeOrderBanner";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { StoreCard } from "@/components/StoreCard";
+import { ConsultCard, GUEST_CONSULT_TOPIC, StoreCard } from "@/components/StoreCard";
+import { BUY_PARAM } from "@/components/QuickOrder";
 import { ProductOptionsModal } from "@/components/ProductOptionsModal";
 import { ProductFinder } from "@/components/ProductFinder";
 import { InquiryModal } from "@/components/InquiryModal";
@@ -91,10 +92,13 @@ export default function PricingPage() {
 
   const authed = hydrated && isAuthenticated;
 
-  // Members only: send guests into the funnel once the session is restored.
-  useEffect(() => {
-    if (hydrated && !isAuthenticated) router.replace("/start");
-  }, [hydrated, isAuthenticated, router]);
+  // Guests browse the same store; ordering sends them straight to signup and
+  // back to that product's page with its order window open.
+  const signupThen = (next: string) => router.push(`/start?signup=1&next=${encodeURIComponent(next)}`);
+  const orderOrSignup = (p: StoreProduct, item: PricingItem) => {
+    if (authed) setOrderItem(item);
+    else signupThen(`/store/${p.id}/?${BUY_PARAM}=${encodeURIComponent(item.name)}`);
+  };
 
   // Restore the view from the URL (?q=&cat=&goal=&combo=&sort=&only=1, or an older #<group>).
   useEffect(() => {
@@ -149,7 +153,7 @@ export default function PricingPage() {
   // Back from a product page: return to the same spot in the list.
   const restoredScroll = useRef(false);
   useEffect(() => {
-    if (!authed || !restored || restoredScroll.current) return;
+    if (!restored || restoredScroll.current) return;
     restoredScroll.current = true;
     try {
       const saved = JSON.parse(sessionStorage.getItem(SCROLL_KEY) ?? "null") as { url: string; y: number } | null;
@@ -160,7 +164,7 @@ export default function PricingPage() {
     } catch {
       /* ignore */
     }
-  }, [authed, restored]);
+  }, [restored]);
   const rememberScroll = useCallback(() => {
     try {
       sessionStorage.setItem(SCROLL_KEY, JSON.stringify({ url: window.location.pathname + window.location.search, y: window.scrollY }));
@@ -182,7 +186,7 @@ export default function PricingPage() {
     if (p.options.length > 1) {
       track("view_item", { item_id: p.id, item_name: p.title });
       setOpenProduct(p);
-    } else setOrderItem(p.options[0]);
+    } else orderOrSignup(p, p.options[0]);
   };
 
   const pickSuggestion = (sg: string) => {
@@ -199,11 +203,14 @@ export default function PricingPage() {
     setOrderableOnly(false);
   };
 
-  if (!authed) return null;
-
-  const renderGrid = (list: StoreProduct[]) => (
+  const renderGrid = (list: StoreProduct[], withConsult = false) => (
     <div className="@container mt-4">
       <ul className="grid grid-cols-2 gap-3 @3xl:grid-cols-3 @5xl:grid-cols-4 sm:gap-4">
+        {withConsult && !authed && (
+          <li>
+            <ConsultCard onOpen={() => setInquiryTopic(GUEST_CONSULT_TOPIC)} />
+          </li>
+        )}
         {list.map((p) => (
           <li key={p.id}>
             <StoreCard product={p} onOpen={() => openCard(p)} onInquiry={() => setInquiryTopic(p.title)} onView={rememberScroll} />
@@ -225,6 +232,7 @@ export default function PricingPage() {
                 마케팅방주 스토어
                 <span className="ml-2 hidden text-sm font-semibold text-emerald-100 sm:inline">모든 단가 공개 · 작업 전 전액 환불</span>
               </h1>
+              {authed ? (
               <div className="flex gap-1.5">
                 <button
                   type="button"
@@ -240,6 +248,14 @@ export default function PricingPage() {
                   내 주문
                 </Link>
               </div>
+              ) : (
+                <Link
+                  href="/start?signup=1&next=%2Fpricing%2F"
+                  className="inline-flex min-h-10 items-center rounded-xl bg-white px-3.5 text-xs font-extrabold text-emerald-800 transition hover:bg-emerald-50 sm:text-sm"
+                >
+                  무료 가입하고 주문하기
+                </Link>
+              )}
             </div>
 
             <div className="relative mt-4">
@@ -460,7 +476,7 @@ export default function PricingPage() {
           </div>
 
           {shown.length > 0 ? (
-            renderGrid(shown)
+            renderGrid(shown, true)
           ) : (
             <div className="mt-6 rounded-2xl bg-white p-8 text-center ring-1 ring-slate-100">
               <p className="text-base font-bold text-slate-800">
@@ -557,8 +573,9 @@ export default function PricingPage() {
         product={openProduct}
         onClose={() => setOpenProduct(null)}
         onOrder={(item) => {
+          const p = openProduct;
           setOpenProduct(null);
-          setOrderItem(item);
+          if (p) orderOrSignup(p, item);
         }}
         onInquiry={(item) => {
           setOpenProduct(null);

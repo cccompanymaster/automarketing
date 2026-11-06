@@ -141,3 +141,42 @@ export function StoreCard({
     </article>
   );
 }
+
+/** Inquiry topic for the guest-only consult card. */
+export const GUEST_CONSULT_TOPIC = "회원가입 전 마케팅 상담";
+
+/**
+ * Guest-only card at the head of the store grid: talk to someone before
+ * signing up (opens the inquiry form, no account needed).
+ */
+export function ConsultCard({ onOpen }: { onOpen: () => void }) {
+  return (
+    <article className="flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-2 ring-emerald-300 transition hover:-translate-y-0.5 hover:shadow-lg">
+      <button type="button" onClick={onOpen} tabIndex={-1} aria-hidden="true" className="relative block aspect-[4/3] overflow-hidden border-b border-emerald-100">
+        <span className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-emerald-50 via-white to-sky-50">
+          <span className="text-4xl sm:text-5xl">💬</span>
+          <span className="rounded-full bg-white px-3 py-1 text-[11px] font-bold text-emerald-700 shadow-sm ring-1 ring-emerald-100">무료 · 가입 없이</span>
+        </span>
+        <span className={`absolute right-2 top-2 rounded-full px-2 py-0.5 text-[11px] font-extrabold shadow ${BADGE_STYLE["추천"]}`}>추천</span>
+      </button>
+      <div className="flex flex-1 flex-col p-3 sm:p-4">
+        <span className="w-fit rounded-md bg-emerald-50 px-1.5 py-0.5 text-[11px] font-bold text-emerald-700">🧭 상담</span>
+        <h3 className="mt-1.5 text-[15px] font-extrabold leading-snug text-slate-900 sm:text-base">회원가입 전 마케팅 상담하기!</h3>
+        <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-slate-500 sm:text-[13px]">
+          어떤 상품이 맞을지 모르겠다면, 업종과 목표만 남겨 주세요. 담당자가 맞는 상품과 예산을 안내해요.
+        </p>
+        <div className="mt-auto pt-3">
+          <p className="text-xl font-extrabold text-emerald-700">무료</p>
+          <p className="mt-0.5 min-h-4 text-[11px] text-slate-400">회원가입 없이 신청</p>
+          <button
+            type="button"
+            onClick={onOpen}
+            className="mt-3 flex h-10 w-full items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white transition hover:bg-emerald-700"
+          >
+            상담 신청하기
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+}

@@ -25,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${SITE_URL}/services/${slug}/`,
       priority: 0.8,
     })),
+    { url: `${SITE_URL}/pricing/`, priority: 0.9 },
     { url: `${SITE_URL}/tools/blog-writer/`, priority: 0.7 },
     ...storeProducts(PRICING).map((p) => ({ url: `${SITE_URL}/store/${p.id}/`, priority: 0.7 })),
     // lastmod only where we know the real change date (no fake freshness).

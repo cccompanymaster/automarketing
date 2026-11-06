@@ -38,5 +38,9 @@
 | 종합소득세 중간예납 | 추정 (11월 납부 시즌) | question | scheduled 2026-11-05 | /blog/income-tax-interim-prepayment/ |
 | 네이버 인플루언서 블로그 배포 비용 | 칼럼 (상품 연결: 공식 인플루언서 배포) | comparison | scheduled 2026-11-05 | /column/naver-influencer-blog-cost/ |
 | 마케팅 원고 작성 비용 | 칼럼 (상품 연결: 원고 작성·대필) | comparison | scheduled 2026-11-05 | /column/content-writing-cost/ |
+| 해고예고수당 | 추정 (근로기준법 질문) | question | scheduled 2026-11-07 | /blog/dismissal-notice-pay/ |
+| 연장·야간·휴일 가산수당 | 추정 (근로기준법 질문) | question | scheduled 2026-11-07 | /blog/overtime-night-holiday-pay/ |
+| 소상공인 마케팅 예산 | 칼럼 (상품 조합·공개 단가) | comparison | scheduled 2026-11-07 | /column/marketing-budget-plan/ |
+| 보도자료 쓰는 법 | 칼럼 (상품 연결: 원고 대필) | question | scheduled 2026-11-07 | /column/press-release-writing/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

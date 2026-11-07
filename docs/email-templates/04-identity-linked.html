@@ -1,0 +1,39 @@
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">계정에 간편로그인이 연결되었어요. 본인이 아니라면 바로 알려 주세요.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f3f6f4">
+  <tr><td align="center" style="padding:28px 12px">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;font-family:'Apple SD Gothic Neo','Malgun Gothic',Pretendard,'Noto Sans KR',sans-serif;color:#0f172a">
+      <tr><td align="center" style="padding:0 0 16px">
+        <a href="https://selfmarketing.ai.kr" style="text-decoration:none"><img src="https://selfmarketing.ai.kr/email/logo.png" width="168" alt="마케팅방주" style="display:block;width:168px;max-width:56%;height:auto;border:0"></a>
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e3ebe6;border-radius:20px;overflow:hidden">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr><td style="height:6px;line-height:6px;font-size:0;background:#059669;background-image:linear-gradient(90deg,#34d399,#047857)">&nbsp;</td></tr>
+          <tr><td style="padding:28px 28px 30px">
+          <span style="display:inline-block;padding:5px 12px;border-radius:999px;background:#ecfdf5;color:#047857;font-size:12px;font-weight:800">🔗 보안 알림</span>
+          <h1 style="margin:14px 0 10px;font-size:22px;line-height:1.4;font-weight:800;color:#0f172a">{{ if eq .Provider "kakao" }}카카오{{ else if eq .Provider "custom:naver" }}네이버{{ else }}{{ .Provider }}{{ end }} 로그인이 연결되었어요</h1>
+          <p style="margin:0 0 22px;font-size:15px;line-height:1.75;color:#475569"><b style="color:#0f172a">{{ .Email }}</b> 계정에 <b style="color:#0f172a">{{ if eq .Provider "kakao" }}카카오{{ else if eq .Provider "custom:naver" }}네이버{{ else }}{{ .Provider }}{{ end }}</b> 간편로그인이 연결되었어요.<br>이제 {{ if eq .Provider "kakao" }}카카오{{ else if eq .Provider "custom:naver" }}네이버{{ else }}{{ .Provider }}{{ end }}로도 같은 계정에 로그인할 수 있어요.</p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:20px"><tr>
+            <td style="background:#fff1f2;border-radius:14px;padding:16px 18px;font-size:13px;line-height:1.7;color:#881337"><b style="color:#9f1239">본인이 하지 않았다면</b><br>
+            다른 사람이 계정에 로그인 수단을 연결했을 수 있어요. 아래 버튼으로 바로 비밀번호를 바꾸고, 카카오톡 1:1 상담으로 알려 주세요.</td>
+          </tr></table>
+          <div style="height:18px;line-height:18px;font-size:0">&nbsp;</div>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+            <td align="center" style="border-radius:14px;background:#0f172a">
+              <a href="https://selfmarketing.ai.kr/start/" style="display:block;padding:16px 24px;font-size:16px;font-weight:800;color:#ffffff;text-decoration:none;border-radius:14px">로그인 화면에서 비밀번호 다시 설정 →</a>
+            </td>
+          </tr></table>
+          </td></tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:22px 12px 0;text-align:center;font-size:13px;line-height:1.7;color:#475569">
+        궁금한 점은 <a href="https://pf.kakao.com/_RjRSxj/chat" style="color:#047857;font-weight:700;text-decoration:underline">카카오톡 1:1 상담</a>으로 편하게 물어보세요.
+      </td></tr>
+      <tr><td style="padding:12px 12px 0;text-align:center;font-size:11px;line-height:1.75;color:#94a3b8">
+            본 메일은 {{ .Email }} 주소로 보내 드린 발신 전용 메일이에요.<br>
+            마케팅방주 · 노아데이터베이스 · 대표 채희준 · 사업자등록번호 224-73-00560<br>
+            통신판매업 제2026-인천서해-1228호 · 인천광역시 서해구 청라한내로100번길 10<br>
+            cccompanymaster@gmail.com · 0507-1933-6482
+      </td></tr>
+    </table>
+  </td></tr>
+</table>

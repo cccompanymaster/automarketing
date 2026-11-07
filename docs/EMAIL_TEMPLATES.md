@@ -50,7 +50,7 @@
           <tr><td style="padding:22px 8px 0;text-align:center;font-size:11px;line-height:1.7;color:#94a3b8">
             마케팅방주를 이용해 주셔서 감사합니다.<br>가입을 신청하지 않으셨다면 이 메일을 무시해 주세요.<br>본 메일은 {{ .Email }} 주소로 발송된 발신 전용 메일입니다.<br>
             마케팅방주 · 노아데이터베이스 · 사업자등록번호 224-73-00560<br>
-            인천광역시 서해구 청라한내로100번길 10, 4층 411,412-L044호 · cccompanymaster@gmail.com
+            인천광역시 서해구 청라한내로100번길 10 · cccompanymaster@gmail.com
           </td></tr>
     </table>
   </td></tr>
@@ -93,7 +93,7 @@
           <tr><td style="padding:22px 8px 0;text-align:center;font-size:11px;line-height:1.7;color:#94a3b8">
             항상 마케팅방주를 이용해 주셔서 감사합니다.<br>본 메일은 {{ .Email }} 주소로 발송된 발신 전용 메일입니다.<br>
             마케팅방주 · 노아데이터베이스 · 사업자등록번호 224-73-00560<br>
-            인천광역시 서해구 청라한내로100번길 10, 4층 411,412-L044호 · cccompanymaster@gmail.com
+            인천광역시 서해구 청라한내로100번길 10 · cccompanymaster@gmail.com
           </td></tr>
     </table>
   </td></tr>
@@ -141,7 +141,7 @@
           <tr><td style="padding:22px 8px 0;text-align:center;font-size:11px;line-height:1.7;color:#94a3b8">
             항상 마케팅방주를 이용해 주셔서 감사합니다.<br>본 메일은 {{ .Email }} 주소로 발송된 발신 전용 메일입니다.<br>
             마케팅방주 · 노아데이터베이스 · 사업자등록번호 224-73-00560<br>
-            인천광역시 서해구 청라한내로100번길 10, 4층 411,412-L044호 · cccompanymaster@gmail.com
+            인천광역시 서해구 청라한내로100번길 10 · cccompanymaster@gmail.com
           </td></tr>
     </table>
   </td></tr>
@@ -190,7 +190,7 @@
           <tr><td style="padding:22px 8px 0;text-align:center;font-size:11px;line-height:1.7;color:#94a3b8">
             항상 마케팅방주를 이용해 주셔서 감사합니다.<br>본 메일은 {{ .Email }} 주소로 발송된 발신 전용 메일입니다.<br>
             마케팅방주 · 노아데이터베이스 · 사업자등록번호 224-73-00560<br>
-            인천광역시 서해구 청라한내로100번길 10, 4층 411,412-L044호 · cccompanymaster@gmail.com
+            인천광역시 서해구 청라한내로100번길 10 · cccompanymaster@gmail.com
           </td></tr>
     </table>
   </td></tr>

@@ -9,6 +9,7 @@ import { useWallet } from "@/components/WalletProvider";
 import { ActivePrograms } from "@/components/ActivePrograms";
 import { ServicesGrid } from "@/components/ServicesGrid";
 import { LANDING_CARDS } from "@/lib/products";
+import { isAdminUser } from "@/lib/admin";
 
 export function MemberHome() {
   const { user } = useAuth();
@@ -29,6 +30,19 @@ export function MemberHome() {
             내 캐시 <span className="text-emerald-700">{balance.toLocaleString("ko-KR")}</span>
           </Link>
         </div>
+
+        {isAdminUser(user) && (
+          <Link
+            href="/admin"
+            className="mt-5 flex items-center justify-between gap-3 rounded-2xl bg-slate-900 px-5 py-4 text-white shadow-sm transition hover:bg-slate-800"
+          >
+            <span>
+              <span className="block text-xs font-semibold text-slate-300">관리자 계정</span>
+              <span className="block text-base font-extrabold">📊 관리자 대시보드 열기 — 처리할 일·매출·순이익</span>
+            </span>
+            <span aria-hidden="true" className="text-xl">→</span>
+          </Link>
+        )}
 
         <div className="mt-6">
           <ActivePrograms />

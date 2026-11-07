@@ -23,7 +23,7 @@ export function RightWing() {
   const pathname = usePathname();
   // The store and product pages need the width; they show cash and orders in
   // their own header, so the wing steps aside there.
-  const storePage = pathname.startsWith("/pricing") || pathname.startsWith("/store");
+  const storePage = pathname.startsWith("/pricing") || pathname.startsWith("/store") || pathname.startsWith("/admin");
   const show = hydrated && isAuthenticated && !storePage;
 
   useEffect(() => {

@@ -3,6 +3,7 @@
 // Email + social (Kakao/Naver) login. On success fires `login_success` and routes to /mypage.
 // Provides a switch to the signup view (same screen, no URL change).
 
+import { adminEmails } from "@/lib/admin";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -47,7 +48,9 @@ export function LoginForm({
   const finish = () => {
     track("login_success");
     toast.success("로그인되었습니다.");
-    router.push(afterHref ?? "/mypage");
+    // Admin accounts open the admin dashboard unless they were heading somewhere.
+    const isAdmin = adminEmails().includes(email.trim().toLowerCase());
+    router.push(afterHref ?? (isAdmin ? "/admin" : "/mypage"));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

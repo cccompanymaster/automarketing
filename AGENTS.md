@@ -34,7 +34,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 | `/services/[slug]` | 상품 상세 (스토리: 불편→해결→이럴땐이렇게 + 절차·비용·조건·준비자료 + `QuickOrder` 바로 주문(해당 상품 단가 행 → 주문창·충전, 하단 고정 바). 게스트는 `/start?service=&buy=`로 온보딩 생략 가입 후 주문창 자동 오픈). 15개 상품 slug + 그룹 `place-map`, `blog-pack`(탭, URL 해시 딥링크) |
 | `/pricing` | 공개 스토어(검색·카테고리·URL 상태). 게스트도 열람·색인 가능, 주문하기는 `/start?signup=1&next=/store/<id>/?buy=<행>`로 바로 가입 후 복귀. 게스트 전용 "회원가입 전 마케팅 상담하기!" 카드 |
 | `/mypage` | 지갑·주문·컨펌요청(산출물 승인/수정요청). 미인증 시 `/start` 리다이렉트 |
-| `/admin` | 관리자 대시보드(이메일 allowlist) — 주문/충전/회원 + 산출물 업로드·컨펌 현황 |
+| `/admin` | 관리자 대시보드(이메일 allowlist, 로그인 시 관리자는 여기로) — 탭(`#orders` 등): 대시보드(처리할 일·매출·예상 순이익·14일 추이·상품별 매출, `admin_dashboard` RPC) / 주문 / 충전·입금 / 문의 / 회원 / 산출물 / 상품·마진(실비는 관리자 전용 `product_costs` 테이블 — 코드에 넣지 말 것) / 콘텐츠 / 바로가기 |
 | `/tools/blog-writer` | AI 원고 작성 도구 (1건 500캐시) |
 | `/auth/callback` | 카카오·네이버 로그인 복귀 지점 → 가입 전 보던 페이지로 이동 (`docs/SOCIAL_LOGIN.md`) |
 | `/tools/`, `/delivery/`, `/tools/<slug>/` | 자영업자 무료 계산기 26종 허브·페이지 (`docs/CALCULATORS.md`). 계산은 `src/lib/calc/*` 순수 함수 + 테스트, 요율은 `src/lib/calc/rates/*`(출처·확인일·basis), 입력값은 서버 미전송, 댓글만 Supabase RPC |

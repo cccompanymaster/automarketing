@@ -766,3 +766,9 @@ alter table public.charge_requests add column if not exists cash_amount bigint;
 -- Whenever prices change: edit pricing.ts → npm run catalog:sql → apply
 -- supabase/catalog.sql as a migration (the test suite fails until the file
 -- matches pricing.ts).
+
+-- Admin dashboard (applied as migration "admin_dashboard_and_product_costs"):
+--   public.product_costs(name pk, cost_min, cost_max, note, updated_at) — per-unit 실비,
+--     RLS on with no policies; read/write only via admin_product_costs() /
+--     admin_set_product_cost(name, min, max, note). Never ship costs in the site bundle.
+--   public.admin_dashboard() — KPIs, 14-day trend, this month's sales by product (KST).

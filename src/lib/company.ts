@@ -11,7 +11,9 @@ export const COMPANY = {
   businessType: "정보통신업", // 업태
   businessItem: "데이터베이스 및 온라인 정보 제공업", // 종목
   // 인천 서구는 2026년 서해구로 바뀌어 최신 서류(통신판매업 신고증) 표기를 따름.
-  address: "인천광역시 서해구 청라한내로100번길 10, 4층 411,412-L044호(청라동, 청라 큐브시그니처 1차 오피스텔)", // 사업장 소재지
+  // Shown on the site up to the building number (owner's choice); the full
+  // registered address is "…10, 4층 411,412-L044호(청라동, 청라 큐브시그니처 1차 오피스텔)".
+  address: "인천광역시 서해구 청라한내로100번길 10", // 사업장 소재지
   addressLocality: "인천광역시 서해구",
   email: "cccompanymaster@gmail.com", // 대표 문의 이메일
   // 전자상거래법 제10조 표시 항목 — 비어 있으면 푸터에서 숨김.

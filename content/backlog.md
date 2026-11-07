@@ -46,5 +46,9 @@
 | 수습기간 최저임금 | 추정 (최저임금법 질문) | question | scheduled 2026-11-08 | /blog/probation-minimum-wage/ |
 | 가게 블로그 글 쓰는 법 | 칼럼 (상품 연결: AI 원고·배포) | question | scheduled 2026-11-08 | /column/blog-post-writing-guide/ |
 | 마케팅 대행 환불 | 칼럼 (이용약관 제8·9조) | question | scheduled 2026-11-08 | /column/marketing-refund-policy/ |
+| 현금영수증 의무발행업종 | 추정 (소득세법 질문) | question | scheduled 2026-11-09 | /blog/cash-receipt-mandatory/ |
+| 사업용 신용카드 등록 | 추정 (부가세 신고 준비) | question | scheduled 2026-11-09 | /blog/business-credit-card-registration/ |
+| 마케팅 맡길 때 준비 자료 | 칼럼 (상품별 주문서 항목) | question | scheduled 2026-11-09 | /column/marketing-order-checklist/ |
+| 마케팅 비용 세금계산서 | 칼럼 (충전 증빙) | question | scheduled 2026-11-09 | /column/marketing-tax-invoice/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

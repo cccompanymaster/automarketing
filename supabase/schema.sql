@@ -772,3 +772,14 @@ alter table public.charge_requests add column if not exists cash_amount bigint;
 --     RLS on with no policies; read/write only via admin_product_costs() /
 --     admin_set_product_cost(name, min, max, note). Never ship costs in the site bundle.
 --   public.admin_dashboard() — KPIs, 14-day trend, this month's sales by product (KST).
+
+-- Security hardening (applied as migration "security_hardening_20261108"):
+--   * is_admin() checks the signed-in account (auth.uid()) with a verified email
+--     against admin_users — a forged/unverified email claim no longer counts.
+--   * order_secrets stores only a Supabase Vault secret id; the password is
+--     encrypted in vault.secrets, read only by admin_order_secret(), and both are
+--     deleted when the order becomes done/canceled (purge_order_secret trigger).
+--   * Least-privilege grants: anon reads only catalog_items; members can SELECT
+--     their own orders / cash_transactions / deliverables / charge_requests /
+--     consent_logs (RLS) and INSERT consent_logs. All other writes go through
+--     SECURITY DEFINER RPCs that check auth.uid() / is_admin().

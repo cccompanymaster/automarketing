@@ -18,6 +18,7 @@ drop policy if exists "order files: owner delete" on storage.objects;
 create policy "order files: owner delete" on storage.objects for delete to authenticated
   using (bucket_id = 'order-files' and (storage.foldername(name))[1] = auth.uid()::text);
 
+-- (Superseded: passwords now live encrypted in Supabase Vault — see schema.sql notes.)
 -- Credentials live apart from the order text (never in request, email or
 -- analytics), are readable only through an admin RPC, and are deleted as soon
 -- as the order is done or canceled.

@@ -25,7 +25,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${SITE_URL}/services/${slug}/`,
       priority: 0.8,
     })),
-    { url: `${SITE_URL}/pricing/`, priority: 0.9 },
+    // Store opened to guests / FAQ page added on these dates (real changes, not freshness bait).
+    { url: `${SITE_URL}/pricing/`, priority: 0.9, lastModified: "2026-11-06" },
     { url: `${SITE_URL}/tools/blog-writer/`, priority: 0.7 },
     ...storeProducts(PRICING).map((p) => ({ url: `${SITE_URL}/store/${p.id}/`, priority: 0.7 })),
     // lastmod only where we know the real change date (no fake freshness).
@@ -35,7 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...postEntries(BLOG),
     ...postEntries(COLUMN),
     { url: `${SITE_URL}/terms/`, priority: 0.2, lastModified: TERMS.updatedAt },
-    { url: `${SITE_URL}/faq/`, priority: 0.6 },
+    { url: `${SITE_URL}/faq/`, priority: 0.6, lastModified: "2026-11-06" },
     { url: `${SITE_URL}${NOTICE_PATH}`, priority: 0.3, lastModified: NOTICES[0]?.date },
     ...NOTICES.map((n) => ({ url: `${SITE_URL}${NOTICE_PATH}${n.slug}/`, priority: 0.3, lastModified: n.date })),
     { url: `${SITE_URL}/privacy/`, priority: 0.2, lastModified: PRIVACY.updatedAt },

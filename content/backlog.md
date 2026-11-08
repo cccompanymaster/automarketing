@@ -50,5 +50,9 @@
 | 사업용 신용카드 등록 | 추정 (부가세 신고 준비) | question | scheduled 2026-11-09 | /blog/business-credit-card-registration/ |
 | 마케팅 맡길 때 준비 자료 | 칼럼 (상품별 주문서 항목) | question | scheduled 2026-11-09 | /column/marketing-order-checklist/ |
 | 마케팅 비용 세금계산서 | 칼럼 (충전 증빙) | question | scheduled 2026-11-09 | /column/marketing-tax-invoice/ |
+| 원천세 신고 기한 | 추정 (소득세법 질문) | data | scheduled 2026-11-10 | /blog/withholding-tax-filing-schedule/ |
+| 근로계약서 보관 기간 | 추정 (근로기준법 질문) | question | scheduled 2026-11-10 | /blog/employee-records-retention/ |
+| 블로그 키워드 고르는 법 | 칼럼 (상품 연결: AI 원고·배포) | question | scheduled 2026-11-10 | /column/blog-keyword-guide/ |
+| 카페 홍보글 쓰는 법 | 칼럼 (상품 연결: 카페 원고·게시글) | question | scheduled 2026-11-10 | /column/cafe-post-writing-guide/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

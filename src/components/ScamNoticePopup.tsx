@@ -78,7 +78,7 @@ export function ScamNoticePopup() {
         <button
           type="button"
           onClick={close}
-          className="mt-6 w-full rounded-xl bg-emerald-600 py-3.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
+          className="mt-6 w-full rounded-xl bg-emerald-700 py-3.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
         >
           확인했어요
         </button>

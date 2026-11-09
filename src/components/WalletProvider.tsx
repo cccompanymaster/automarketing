@@ -25,7 +25,7 @@ interface WalletContextValue {
   loading: boolean;
   /** Top up the given KRW amount (credits 1캐시 per 1원 on success). */
   charge: (krw: number) => Promise<void>;
-  /** Spend cash on a product. Throws when the balance is insufficient. */
+  /** Local stub wallet only: spend cash. Throws when the balance is insufficient. */
   spend: (amountCash: number, memo: string) => Promise<void>;
   /** Re-read the balance/ledger (e.g. after a server-side deduction). */
   refresh: () => Promise<void>;
@@ -238,30 +238,18 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     [supabase, user, refresh, waitForCredit],
   );
 
+  // Local stub wallet only. With Supabase every deduction is server-side
+  // (place_order, the blog-writer function); the client never charges itself.
   const spend = useCallback(
     async (amountCash: number, memo: string) => {
       if (!user) throw new Error("로그인이 필요합니다.");
+      if (supabase) throw new Error("spend() is for the local stub wallet only");
       if (amountCash <= 0) throw new Error("금액이 올바르지 않습니다.");
-      setLoading(true);
-      try {
-        if (supabase) {
-          const { error } = await supabase.rpc("use_cash", {
-            p_amount: amountCash,
-            p_memo: memo,
-          });
-          if (error) throw new Error(error.message);
-          await refresh();
-          return;
-        }
-
-        const w = loadStub(user.id);
-        if (w.balance < amountCash) throw new Error("캐시가 부족합니다.");
-        applyStub(appendStubTxn(user.id, w, "use", -amountCash, memo));
-      } finally {
-        setLoading(false);
-      }
+      const w = loadStub(user.id);
+      if (w.balance < amountCash) throw new Error("캐시가 부족합니다.");
+      applyStub(appendStubTxn(user.id, w, "use", -amountCash, memo));
     },
-    [supabase, user, refresh],
+    [supabase, user],
   );
 
   const value = useMemo<WalletContextValue>(

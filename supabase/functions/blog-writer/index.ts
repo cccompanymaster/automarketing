@@ -10,7 +10,7 @@
 //   둘 다 없으면 503 { code: "not_configured" } → 사이트는 데모 원고(무료)로 동작.
 // 사이트는 NEXT_PUBLIC_BLOG_API_URL 이 없으면 <SUPABASE_URL>/functions/v1/blog-writer 를 씁니다.
 //
-// 요청: { mode: "titles"|"outline"|"article", input: { topic, title?, keywords[], tone, writer?, outline?[] } }
+// 요청: { mode: "titles"|"outline"|"article", input: { topic, title?, keywords[], tone, industry?, outline?[] } }
 
 import Anthropic from "npm:@anthropic-ai/sdk@^0.69.0";
 import { createClient } from "npm:@supabase/supabase-js@^2.108.2";
@@ -37,13 +37,11 @@ function json(body: unknown, status = 200): Response {
 }
 
 interface BlogInput {
-  writer?: string;
   topic: string;
   title?: string;
   keywords?: string[];
   tone?: string;
   outline?: string[];
-  useWeb?: boolean;
   /** Industry preset key (see INDUSTRY_GUIDES). */
   industry?: string;
 }
@@ -174,8 +172,19 @@ Deno.serve(async (req: Request) => {
   if (authError || !user) return json({ error: "로그인이 필요합니다." }, 401);
 
   try {
-    const { mode, input } = (await req.json()) as { mode: string; input: BlogInput };
-    if (!input?.topic) return json({ error: "topic is required" }, 400);
+    const { mode, input: raw } = (await req.json()) as { mode: string; input?: Partial<BlogInput> };
+    // Trust boundary: cap what reaches the paid model (titles/outline are free).
+    const cut = (v: unknown, n: number) => (typeof v === "string" ? v.slice(0, n) : undefined);
+    const list = (v: unknown, n: number, len: number) => (Array.isArray(v) ? v.slice(0, n).map((x) => String(x).slice(0, len)) : []);
+    const input: BlogInput = {
+      topic: cut(raw?.topic, 200) ?? "",
+      title: cut(raw?.title, 200),
+      tone: cut(raw?.tone, 30),
+      industry: cut(raw?.industry, 30),
+      keywords: list(raw?.keywords, 10, 50),
+      outline: list(raw?.outline, 12, 200),
+    };
+    if (!input.topic) return json({ error: "topic is required" }, 400);
 
     // titles / outline are free; only a full article costs cash.
     if (mode === "titles") return json({ titles: await genTitles(input) });

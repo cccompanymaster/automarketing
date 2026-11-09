@@ -73,7 +73,9 @@ Deno.serve(async (req: Request) => {
   if (origin && !ALLOWED_ORIGINS.includes(origin)) return json({ error: "forbidden" }, 403);
   if (!OLLAMA_BASE_URL) return json({ code: "not_configured" }, 503);
 
-  const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
+  // Cloudflare sets cf-connecting-ip and a client can't forge it; the first
+  // x-forwarded-for entry is whatever the client sent (same order as calc_comment_caller).
+  const ip = req.headers.get("cf-connecting-ip") || (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
   if (limited(ip)) return json({ reply: "질문이 많아 잠시 쉬어 갈게요. 급하시면 상담원에게 바로 물어봐 주세요.", handoff: true }, 429);
 
   let messages: Msg[];

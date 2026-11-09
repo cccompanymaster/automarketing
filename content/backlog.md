@@ -54,5 +54,9 @@
 | 근로계약서 보관 기간 | 추정 (근로기준법 질문) | question | scheduled 2026-11-10 | /blog/employee-records-retention/ |
 | 블로그 키워드 고르는 법 | 칼럼 (상품 연결: AI 원고·배포) | question | scheduled 2026-11-10 | /column/blog-keyword-guide/ |
 | 카페 홍보글 쓰는 법 | 칼럼 (상품 연결: 카페 원고·게시글) | question | scheduled 2026-11-10 | /column/cafe-post-writing-guide/ |
+| 4대보험 취득신고 기한 | 추정 (4대보험 질문) | question | scheduled 2026-11-11 | /blog/four-insurance-enrollment-deadline/ |
+| 사업자등록 업종 추가 | 추정 (부가세법 질문) | question | scheduled 2026-11-11 | /blog/business-registration-correction/ |
+| 블로그 글 노출 확인 방법 | 칼럼 (상품 연결: 블로그 배포) | question | scheduled 2026-11-11 | /column/blog-exposure-check/ |
+| 보도자료 기사 활용 방법 | 칼럼 (상품 연결: 언론 송출) | question | scheduled 2026-11-11 | /column/press-article-reuse/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

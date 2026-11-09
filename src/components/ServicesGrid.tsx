@@ -14,7 +14,6 @@
 // consulting); any other slug falls back to a 1×1 tile.
 
 import { ServiceCard } from "@/components/ServiceCard";
-import { Reveal } from "@/components/Reveal";
 import type { ServiceCardData } from "@/lib/products";
 
 type Tile = {
@@ -23,6 +22,7 @@ type Tile = {
   featured?: boolean;
   wide?: boolean;
   ribbon?: string;
+  mock?: { groupKey: string; productId: string };
 };
 
 const TILES: Record<string, Tile> = {
@@ -30,12 +30,13 @@ const TILES: Record<string, Tile> = {
     cls: "@xl:col-span-2 @4xl:row-span-2",
     hero: true,
     featured: true,
-    ribbon: "인기 묶음 ⭐",
+    ribbon: "인기 묶음",
+    mock: { groupKey: "place", productId: "place" },
   },
   "blog-pack": {
     cls: "@xl:col-span-2",
     featured: true,
-    ribbon: "인기 묶음 ⭐",
+    ribbon: "인기 묶음",
   },
   refund: { cls: "@xl:col-span-2", featured: true },
   consulting: { cls: "@xl:col-span-2 @4xl:col-span-4", wide: true },
@@ -45,20 +46,19 @@ export function ServicesGrid({ cards }: { cards: ServiceCardData[] }) {
   return (
     <div className="@container mt-10">
       <div className="grid grid-cols-1 gap-4 @xl:grid-cols-2 @4xl:grid-flow-dense @4xl:grid-cols-4">
-        {cards.map((card, i) => {
+        {cards.map((card) => {
           const t = TILES[card.trackId] ?? { cls: "" };
           return (
-            <Reveal key={card.href} delayMs={(i % 4) * 70} className={t.cls}>
-              <div className="h-full">
-                <ServiceCard
-                  card={card}
-                  hero={t.hero}
-                  featured={t.featured}
-                  wide={t.wide}
-                  ribbon={t.ribbon}
-                />
-              </div>
-            </Reveal>
+            <div key={card.href} className={t.cls}>
+              <ServiceCard
+                card={card}
+                hero={t.hero}
+                featured={t.featured}
+                wide={t.wide}
+                ribbon={t.ribbon}
+                mock={t.mock}
+              />
+            </div>
           );
         })}
       </div>

@@ -1,148 +1,126 @@
-// Storytelling sections for the landing page (noahgroup-style narrative):
-// empathy (owner's pains) → bridge (why we built this) → three chapters that
-// follow the customer journey (get found → get sales → build trust & save) →
-// "3 minutes to start" process. Scroll-reveal via <Reveal>; copy is Korean.
+// Story sections for the landing page:
+// 1) Compare — what owners hear from agencies → how it works here (each
+//    answer is a feature that exists today, linked to where to check it).
+// 2) Journey — the order a customer meets a store (find → compare → trust),
+//    a real sequence, so the steps are numbered. Visuals are outcome mocks
+//    (no numeric claims).
+// 3) Closing — the only dark band: 3 steps to start + the two doors.
 
 import Link from "next/link";
-import { Reveal } from "@/components/Reveal";
 import { TrackedCta } from "@/components/TrackedCta";
+import { ResultMock } from "@/components/ResultMock";
+import { PRICING } from "@/lib/pricing";
+import { storeProducts } from "@/lib/store";
 
-// --- 1) Empathy: the owner's day -------------------------------------------
+const storeCount = storeProducts(PRICING).length;
 
-const PAINS = [
+// --- 1) Compare --------------------------------------------------------------
+
+const PAINS: { quote: string; who: string; answer: string; link: { label: string; href: string } }[] = [
+  {
+    quote: "견적을 받을 때마다 가격이 달라서 불안해요.",
+    who: "온라인 셀러",
+    answer: `상품 ${storeCount}종의 단가와 최소 주문금액을 가입 전에도 공개해요.`,
+    link: { label: "가격표 보기", href: "/pricing/" },
+  },
   {
     quote: "대행사에 맡겼는데, 뭘 해줬는지 모르겠어요.",
     who: "카페 사장님",
-    emoji: "☕",
+    answer: "주문마다 진행 상황과 결과물을 마이페이지에서 직접 확인하고 승인해요.",
+    link: { label: "진행 방식 보기", href: "/faq/" },
   },
   {
     quote: "광고비는 매달 나가는데 손님은 그대로예요.",
     who: "음식점 사장님",
-    emoji: "🍜",
+    answer: "월 고정비 없이 필요한 만큼만 주문하고, 네이버·카카오에 쓴 광고비 일부는 매월 환급받아요.",
+    link: { label: "광고비 환급 보기", href: "/services/refund" },
   },
   {
     quote: "플레이스, 블로그, 인스타… 뭐부터 해야 하죠?",
     who: "네일샵 원장님",
-    emoji: "💅",
-  },
-  {
-    quote: "견적을 받을 때마다 가격이 달라서 불안해요.",
-    who: "온라인 셀러",
-    emoji: "📦",
+    answer: "무료 상담에서 우리 매장에 맞는 순서를 같이 정해 드려요.",
+    link: { label: "무료 상담 받기", href: "/services/consulting" },
   },
 ];
 
-function PainSection() {
+function ArrowRight({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path d="M4 12h15m-5-6 6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CompareSection() {
   return (
     <section className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
-      <Reveal className="mx-auto max-w-2xl text-center">
-        <p className="text-sm font-bold tracking-widest text-emerald-700">사장님의 하루</p>
-        <h2 className="mt-3 text-2xl font-extrabold leading-snug text-slate-900 sm:text-4xl">
-          장사만 해도 하루가 모자란데,
+      <div className="max-w-2xl">
+        <h2 className="text-[clamp(1.75rem,3.6vw,2.6rem)] font-extrabold leading-tight tracking-[-0.035em] text-forest-900">
+          대행사에 맡기면 흔히 생기는 고민,
           <br />
-          마케팅까지 직접 하라고요?
+          여기서는 이렇게 풀어요
         </h2>
-        <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
-          그래서 다들 대행사부터 찾아가죠. 그런데 막상 맡겨 보면… 이런 얘기, 한 번쯤 들어보셨을 거예요.
+        <p className="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
+          장사만 해도 하루가 모자라죠. 사장님들이 가장 많이 털어놓는 이야기부터 정리했어요.
         </p>
-      </Reveal>
+      </div>
 
-      <div className="mt-12 grid gap-4 sm:grid-cols-2">
-        {PAINS.map((p, i) => (
-          <Reveal key={p.quote} delayMs={i * 90}>
-            <figure className="flex h-full items-start gap-4 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
-              <span
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-50 text-xl"
-                aria-hidden="true"
-              >
-                {p.emoji}
-              </span>
-              <div>
-                <blockquote className="text-[15px] font-semibold leading-relaxed text-slate-800">
-                  “{p.quote}”
-                </blockquote>
-                <figcaption className="mt-2 text-xs text-slate-400">{p.who}</figcaption>
-              </div>
+      <ul className="mt-12 border-t border-mint-200">
+        {PAINS.map((p) => (
+          <li
+            key={p.quote}
+            className="grid gap-4 border-b border-mint-200 py-7 md:grid-cols-[minmax(0,24rem)_2.5rem_minmax(0,1fr)] lg:gap-10 md:items-center md:gap-6 md:py-8"
+          >
+            <figure className="min-w-0">
+              <blockquote className="inline-block rounded-2xl rounded-bl-md bg-slate-100 px-5 py-3.5 text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base">
+                “{p.quote}”
+              </blockquote>
+              <figcaption className="mt-2 pl-1 text-sm text-slate-500">{p.who}</figcaption>
             </figure>
-          </Reveal>
+            <ArrowRight className="hidden h-6 w-6 text-emerald-600 md:block" />
+            <div className="min-w-0">
+              <p className="text-lg font-bold leading-snug text-forest-900 sm:text-xl">{p.answer}</p>
+              <Link
+                href={p.link.href}
+                className="mt-2.5 inline-flex min-h-11 items-center text-[15px] font-semibold text-emerald-800 underline decoration-emerald-800/30 underline-offset-4 transition-colors hover:decoration-emerald-800"
+              >
+                {p.link.label}
+              </Link>
+            </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
 
-// --- 2) Bridge: why we built this (dark full-bleed statement) ---------------
+// --- 2) Journey --------------------------------------------------------------
 
-function BridgeSection() {
-  return (
-    <section className="impact">
-      <div className="mx-auto max-w-4xl px-5 py-24 text-center sm:py-32">
-        <Reveal>
-          <p className="text-sm font-bold tracking-widest text-emerald-400">그래서 저희가 만들었어요</p>
-          <h2 className="mt-5 text-3xl font-extrabold leading-tight text-white sm:text-5xl">
-            대행사 없이도,
-            <br />
-            사장님 손으로 직접.
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-slate-300 sm:text-lg">
-            마케팅방주는 필요한 것만 골라 쓰는 셀프 마케팅 플랫폼이에요.
-            <br className="hidden sm:block" />
-            상품마다 예상 비용을 미리 공개하고, 가입하면 전체 단가표가 열려요. 주문 진행 상황도 내 화면에서 바로 확인할 수 있고요.
-          </p>
-        </Reveal>
-        <Reveal delayMs={150}>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-semibold text-slate-200">
-            <span className="flex items-center gap-2">
-              <span className="text-emerald-400" aria-hidden="true">✓</span> 예상 비용, 미리 알려드려요
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="text-emerald-400" aria-hidden="true">✓</span> 필요한 만큼만 주문해요
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="text-emerald-400" aria-hidden="true">✓</span> 진행 상황은 실시간으로 보여요
-            </span>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-// --- 3) Chapters: the customer journey --------------------------------------
-// A real sequence (how a customer meets a store), so the numbering carries
-// meaning: get found → get sales → build trust & stop wasting budget.
-
-interface Chapter {
-  no: string;
-  eyebrow: string;
+interface Stage {
+  moment: string;
   title: string;
   desc: string;
+  mock: { groupKey: string; productId: string };
   links: { label: string; href: string }[];
-  emoji: string;
-  metric: { label: string; value: string };
-  panelClass: string;
 }
 
-const CHAPTERS: Chapter[] = [
+const STAGES: Stage[] = [
   {
-    no: "01",
-    eyebrow: "첫 번째, 일단 눈에 띄어야죠",
-    title: "‘근처 맛집’ 검색한 손님한테\n우리 가게부터 보이게 해요",
-    desc: "요즘 손님들, 열에 아홉은 지도부터 켜요. 네이버 플레이스랑 카카오맵에서 우리 매장이 위쪽에 보이게 — 무료 진단부터 트래픽까지 한 번에 챙겨드릴게요.",
+    moment: "찾을 때",
+    title: "지도 검색에서 우리 가게부터 보이게",
+    desc: "‘근처 맛집’을 검색한 손님이 가장 먼저 보는 네이버 플레이스와 카카오맵, 그 위쪽에 올려요.",
+    mock: { groupKey: "place", productId: "place" },
     links: [
       { label: "플레이스·지도 상위노출", href: "/services/place-map" },
       { label: "카카오맵 평판 굳히기", href: "/services/place-map#kakaomap" },
       { label: "당근 단골 만들기", href: "/services/daangn" },
     ],
-    emoji: "📍",
-    metric: { label: "지도에서 매장을 찾는 손님", value: "10명 중 8명*" },
-    panelClass: "from-emerald-100 via-emerald-50 to-white",
   },
   {
-    no: "02",
-    eyebrow: "두 번째, 보이면 팔려야죠",
-    title: "손님은 검색 첫 페이지에서\n살지 말지 정해요",
-    desc: "쇼핑 검색 상위 노출에 블로그 후기, SNS 반응까지. 손님이 ‘살까 말까’ 망설이는 그 순간마다 우리 상품이 눈에 들어오게 해드려요.",
+    moment: "비교할 때",
+    title: "검색 첫 페이지에서 고르게",
+    desc: "쇼핑 상위 노출, 블로그 후기, SNS 반응까지. 살까 말까 망설이는 순간에 우리 상품이 보이게 해요.",
+    mock: { groupKey: "commerce", productId: "shopping" },
     links: [
       { label: "쇼핑 상위노출", href: "/services/shopping" },
       { label: "블로그 마케팅", href: "/services/blog-pack" },
@@ -150,129 +128,125 @@ const CHAPTERS: Chapter[] = [
       { label: "유튜브", href: "/services/youtube" },
       { label: "카페 입소문", href: "/services/cafe" },
     ],
-    emoji: "🛒",
-    metric: { label: "첫 페이지에서 멈추는 검색", value: "대부분*" },
-    panelClass: "from-orange-100 via-orange-50 to-white",
   },
   {
-    no: "03",
-    eyebrow: "세 번째, 믿음은 쌓고 낭비는 줄이고",
-    title: "후기랑 기사로 믿음을 쌓고,\n새는 광고비는 돌려받아요",
-    desc: "처음 온 손님 마음속 ‘여기 괜찮은 데 맞나?’ 하는 의심, 체험단 후기랑 언론 기사가 지워줘요. 원고는 AI가 대신 써주고요. 이미 쓰고 있는 광고비는 환급으로 돌려받으세요.",
+    moment: "믿고 고를 때",
+    title: "후기와 기사로 믿음을 쌓게",
+    desc: "처음 온 손님의 ‘여기 괜찮은 데 맞나?’ 하는 의심을 체험단 후기와 언론 기사로 줄여요. 원고는 AI가 도와요.",
+    mock: { groupKey: "press", productId: "press" },
     links: [
       { label: "체험단·후기", href: "/services/experience" },
       { label: "언론보도", href: "/services/press" },
       { label: "AI 원고", href: "/services/blogwrite" },
       { label: "AI 인용·인플루언서", href: "/services/blog-pack#ai-influencer" },
-      { label: "광고비 환급", href: "/services/refund" },
     ],
-    emoji: "🤝",
-    metric: { label: "가입비 0원 광고비 환급", value: "매월 정산" },
-    panelClass: "from-sky-100 via-sky-50 to-white",
   },
 ];
 
-function ChapterSection({ chapter, flip }: { chapter: Chapter; flip: boolean }) {
+function JourneySection() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
-      <div
-        className={`flex flex-col items-center gap-10 lg:gap-16 ${
-          flip ? "lg:flex-row-reverse" : "lg:flex-row"
-        }`}
-      >
-        {/* Copy */}
-        <Reveal className="min-w-0 flex-1">
-          <div className="flex items-baseline gap-3">
-            <span className="num text-4xl font-extrabold text-slate-200 sm:text-6xl" aria-hidden="true">
-              {chapter.no}
-            </span>
-            <p className="text-sm font-bold tracking-widest text-emerald-700">{chapter.eyebrow}</p>
-          </div>
-          <h2 className="mt-4 whitespace-pre-line text-2xl font-extrabold leading-snug text-slate-900 sm:text-4xl">
-            {chapter.title}
+    <section className="bg-mint-50">
+      <div className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
+        <div className="max-w-2xl">
+          <h2 className="text-[clamp(1.75rem,3.6vw,2.6rem)] font-extrabold leading-tight tracking-[-0.035em] text-forest-900">
+            손님이 가게를 고르는 순서대로
+            <br />
+            상품을 나눠 뒀어요
           </h2>
-          <p className="mt-5 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            {chapter.desc}
+          <p className="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
+            지금 우리 가게에 부족한 단계만 골라서 시작하면 돼요.
           </p>
-          <div className="mt-7 flex flex-wrap gap-2">
-            {chapter.links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-              >
-                {l.label}
-                <span aria-hidden="true">→</span>
-              </Link>
-            ))}
-          </div>
-        </Reveal>
+        </div>
 
-        {/* Visual panel */}
-        <Reveal delayMs={120} className="w-full max-w-md flex-1">
-          <div
-            className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${chapter.panelClass} p-10 shadow-sm ring-1 ring-slate-100`}
-          >
-            <span className="block text-7xl sm:text-8xl" aria-hidden="true">
-              {chapter.emoji}
-            </span>
-            <div className="mt-8 inline-flex flex-col gap-1 rounded-2xl bg-white/90 px-5 py-4 shadow-sm ring-1 ring-slate-100">
-              <span className="text-xs font-semibold text-slate-500">{chapter.metric.label}</span>
-              <span className="text-xl font-extrabold text-slate-900">{chapter.metric.value}</span>
-            </div>
-            <span
-              className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/50 blur-2xl"
-              aria-hidden="true"
-            />
-          </div>
-        </Reveal>
+        <ol className="mt-12 grid gap-5 md:grid-cols-3">
+          {STAGES.map((s, i) => (
+            <li key={s.moment} className="flex flex-col overflow-hidden rounded-3xl border border-mint-200 bg-white">
+              <div className="h-44 border-b border-mint-200">
+                <ResultMock groupKey={s.mock.groupKey} productId={s.mock.productId} />
+              </div>
+              <div className="flex flex-1 flex-col p-6 sm:p-7">
+                <p className="flex items-center gap-2.5 text-sm font-bold text-emerald-800">
+                  <span className="num flex h-6 w-6 items-center justify-center rounded-full bg-forest-900 text-xs text-white">
+                    {i + 1}
+                  </span>
+                  손님이 {s.moment}
+                </p>
+                <h3 className="mt-3 text-xl font-extrabold leading-snug tracking-tight text-forest-900">{s.title}</h3>
+                <p className="mt-2.5 flex-1 text-[15px] leading-relaxed text-slate-600">{s.desc}</p>
+                <ul className="mt-5 flex flex-wrap gap-2">
+                  {s.links.map((l) => (
+                    <li key={l.href}>
+                      <Link
+                        href={l.href}
+                        className="inline-flex min-h-10 items-center rounded-full border border-mint-200 bg-white px-3.5 text-sm font-semibold text-forest-700 transition-colors hover:border-emerald-600 hover:text-emerald-800"
+                      >
+                        {l.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
 }
 
-// --- 4) Process: 3 minutes to start -----------------------------------------
+// --- 3) Closing: 3 steps + the two doors -------------------------------------
 
 const STEPS = [
-  { no: "1", title: "3분이면 가입 끝", desc: "카카오 버튼 하나면 끝나요. 이메일로 해도 3분이면 충분해요." },
-  { no: "2", title: "필요한 것만 담기", desc: "가격이 다 공개돼 있으니까, 필요한 항목이랑 수량만 고르면 돼요." },
-  { no: "3", title: "결과를 눈으로 확인", desc: "어디까지 진행됐는지, 잔액이 얼마인지 마이페이지에서 바로 보여요." },
+  { title: "3분이면 가입 끝", desc: "카카오·네이버 버튼 하나면 돼요. 이메일로 해도 3분이면 충분해요." },
+  { title: "필요한 것만 담기", desc: "가격이 다 공개돼 있으니, 항목이랑 수량만 고르면 돼요." },
+  { title: "결과는 내 화면에서", desc: "어디까지 진행됐는지, 잔액이 얼마인지 마이페이지에서 바로 보여요." },
 ];
 
-function ProcessSection() {
+export function ClosingSection() {
   return (
-    <section className="bg-slate-50">
+    <section className="bg-forest-900 text-white">
       <div className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
-        <Reveal className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-bold tracking-widest text-emerald-700">시작은 진짜 간단해요</p>
-          <h2 className="mt-3 text-2xl font-extrabold text-slate-900 sm:text-4xl">
-            오늘 저녁, 마감하고 3분이면 충분해요
-          </h2>
-        </Reveal>
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
+          <div>
+            <h2 className="text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-tight tracking-[-0.035em]">
+              오늘 저녁 마감하고,
+              <br />
+              3분이면 시작해요
+            </h2>
+            <p className="mt-5 max-w-md text-base leading-relaxed text-white/75 sm:text-lg">
+              가격표는 가입 없이 먼저 볼 수 있어요. 주문할 때만 무료로 가입하면 돼요.
+            </p>
+            <div className="mt-9 flex max-w-md flex-col gap-3 sm:flex-row">
+              <TrackedCta
+                href="/start"
+                authedHref="/mypage"
+                className="flex min-h-14 flex-1 items-center justify-center rounded-2xl bg-white px-7 text-[17px] font-extrabold text-emerald-800 transition-colors hover:bg-emerald-50 focus-visible:outline-white"
+              >
+                무료로 시작하기
+              </TrackedCta>
+              <Link
+                href="/pricing/"
+                className="flex min-h-14 flex-1 items-center justify-center rounded-2xl border-2 border-white/35 px-7 text-[17px] font-bold text-white transition-colors hover:border-white/70 focus-visible:outline-white"
+              >
+                가격표 먼저 보기
+              </Link>
+            </div>
+          </div>
 
-        <ol className="mt-12 grid gap-5 sm:grid-cols-3">
-          {STEPS.map((s, i) => (
-            <Reveal key={s.no} delayMs={i * 110}>
-              <li className="h-full rounded-2xl border border-slate-100 bg-white p-7 shadow-sm">
-                <span className="num flex h-10 w-10 items-center justify-center rounded-full bg-emerald-700 text-base font-extrabold text-white">
-                  {s.no}
+          <ol className="space-y-3">
+            {STEPS.map((s, i) => (
+              <li key={s.title} className="flex gap-5 rounded-2xl bg-white/[0.06] p-5 sm:p-6">
+                <span className="num flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-base font-extrabold text-forest-900">
+                  {i + 1}
                 </span>
-                <h3 className="mt-4 text-lg font-bold text-slate-900">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{s.desc}</p>
+                <div>
+                  <h3 className="text-lg font-bold">{s.title}</h3>
+                  <p className="mt-1 text-[15px] leading-relaxed text-white/70">{s.desc}</p>
+                </div>
               </li>
-            </Reveal>
-          ))}
-        </ol>
-
-        <Reveal className="mt-10 text-center">
-          <TrackedCta
-            href="/start"
-            authedHref="/mypage"
-            className="inline-flex min-h-12 items-center justify-center rounded-xl bg-emerald-700 px-10 py-4 text-base font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
-          >
-            무료로 시작하기
-          </TrackedCta>
-        </Reveal>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   );
@@ -283,16 +257,8 @@ function ProcessSection() {
 export function StoryIntro() {
   return (
     <>
-      <PainSection />
-      <BridgeSection />
-      {CHAPTERS.map((c, i) => (
-        <ChapterSection key={c.no} chapter={c} flip={i % 2 === 1} />
-      ))}
-      <p className="mx-auto max-w-6xl px-5 pb-4 text-xs text-slate-400">
-        * 일반적인 소비자 행동 경향을 표현한 문구로, 특정 조사 수치가 아닙니다.
-      </p>
+      <CompareSection />
+      <JourneySection />
     </>
   );
 }
-
-export { ProcessSection };

@@ -97,7 +97,7 @@ export function SiteFooter({
             >
               {items.map((item) => (
                 <div key={item.label} className="flex gap-2">
-                  <dt className="shrink-0 font-medium text-slate-400">
+                  <dt className="shrink-0 font-medium text-slate-500">
                     {item.label}
                   </dt>
                   <dd>
@@ -129,7 +129,7 @@ export function SiteFooter({
             </dl>
 
             <p className="mt-6 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500">
-              <span className="font-medium text-slate-400">공식 채널</span>
+              <span className="font-medium text-slate-500">공식 채널</span>
               {COMPANY.channels.map((c) => (
                 <a
                   key={c.url}
@@ -163,7 +163,7 @@ export function SiteFooter({
           </p>
         )}
 
-        <p className="mt-8 text-xs text-slate-400">
+        <p className="mt-8 text-xs text-slate-500">
           © {new Date().getFullYear()} {COMPANY.companyName}. All rights
           reserved.
         </p>

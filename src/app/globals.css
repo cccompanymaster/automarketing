@@ -25,6 +25,16 @@
   --color-primary-700: #047857;
   --color-primary-900: #064e3b;
 
+  /* ---- Landing (price-board concept) ----
+     forest: headings + the single dark band · mint: quiet section ground ·
+     tag: shop price-sticker yellow, reserved for prices so it always means
+     "this is what it costs". */
+  --color-forest-900: #0e2a1f;
+  --color-forest-700: #2f5a46;
+  --color-mint-50: #f1f7f3;
+  --color-mint-200: #d8e8de;
+  --color-tag: #ffe066;
+
   /* ---- Neutral roles (slate) ---- */
   --color-ink: #0a0f1a; /* high-contrast impact blocks */
   --color-text-strong: #0f172a; /* headings */
@@ -391,9 +401,12 @@
   }
 }
 
-/* Reserve room for the always-open left wing nav (SiteHeader adds .has-wing
-   to <body> while mounted; funnel pages without the wing stay full-width). */
+/* Reserve room for the always-open left wing nav. :has() applies it on first
+   paint from the server-rendered nav (no layout shift at hydration);
+   SiteHeader's .has-wing class is the fallback. Funnel pages without the
+   wing stay full-width. */
 @media (min-width: 1024px) {
+  body:has([data-wing]),
   body.has-wing {
     padding-left: 16rem; /* full-height wing w-64 */
   }
@@ -434,100 +447,70 @@ html.is-member [data-guest-only] {
   }
 }
 
-/* ===== Hero intro: loading splash -> hero reveal animations ===== */
-@keyframes loaderOut {
-  0%,
-  72% {
-    opacity: 1;
-    visibility: visible;
-  }
-  100% {
-    opacity: 0;
-    visibility: hidden;
-  }
+/* ===== Landing hero: price board =====
+   One orchestrated load moment: the board's rows settle in once and each
+   price tag lands a beat later. Nothing loops; reduced motion shows the
+   finished board immediately. The H1 is never animated (it is the LCP). */
+.price-tag {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  padding: 0.3rem 0.65rem 0.3rem 1.15rem;
+  border-radius: 0.4rem;
+  background: var(--color-tag);
+  color: var(--color-forest-900);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  box-shadow: 0 1px 0 rgba(14, 42, 31, 0.12);
 }
-@keyframes barGrow {
-  from {
-    transform: scaleY(0.04);
-  }
-  to {
-    transform: scaleY(1);
-  }
+/* Punched hole of a paper price tag. */
+.price-tag::before {
+  content: "";
+  position: absolute;
+  left: 0.42rem;
+  top: 50%;
+  width: 0.36rem;
+  height: 0.36rem;
+  margin-top: -0.18rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 1px 1px rgba(14, 42, 31, 0.25);
 }
-@keyframes barBob {
-  0%,
-  100% {
-    transform: scaleY(1);
-  }
-  50% {
-    transform: scaleY(0.92);
-  }
+.price-tag small {
+  font-size: 0.72em;
+  font-weight: 700;
+  opacity: 0.75;
 }
-@keyframes floatA {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-3deg);
-  }
-  50% {
-    transform: translateY(-18px) rotate(-3deg);
-  }
+.pb-row {
+  animation: pbRowIn 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms + 120ms);
 }
-@keyframes floatB {
-  0%,
-  100% {
-    transform: translateY(0) rotate(4deg);
-  }
-  50% {
-    transform: translateY(-26px) rotate(4deg);
-  }
+.pb-row .price-tag {
+  animation: pbTagIn 0.35s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms + 380ms);
 }
-@keyframes floatC {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-13px);
-  }
-}
-@keyframes arrowFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-22px);
-  }
-}
-@keyframes coinFlip {
-  from {
-    transform: rotateY(0);
-  }
-  to {
-    transform: rotateY(360deg);
-  }
-}
-@keyframes glowPulse {
-  0%,
-  100% {
-    opacity: 0.55;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.9;
-    transform: scale(1.12);
-  }
-}
-@keyframes rise {
+@keyframes pbRowIn {
   from {
     opacity: 0;
-    transform: translateY(26px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+    transform: translateY(10px);
   }
 }
+@keyframes pbTagIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) rotate(-4deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pb-row,
+  .pb-row .price-tag {
+    animation: none;
+  }
+}
+
+/* Used by ScamNoticePopup. */
 @keyframes popIn {
   0% {
     opacity: 0;
@@ -541,50 +524,6 @@ html.is-member [data-guest-only] {
     transform: scale(1);
   }
 }
-@keyframes drift {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(8px);
-  }
-}
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
-}
-@keyframes sheen {
-  0% {
-    transform: translateX(-120%) skewX(-18deg);
-  }
-  100% {
-    transform: translateX(220%) skewX(-18deg);
-  }
-}
-
-/* Repeat visits (splash already shown this session): no entrance delay,
-   content visible immediately — perpetual motion (float/glow) still runs. */
-.no-intro .hero-anim {
-  animation-delay: 0s !important;
-}
-
-/* Respect reduced-motion: drop the splash quickly, no perpetual motion. */
-@media (prefers-reduced-motion: reduce) {
-  .hero-loader {
-    animation-duration: 0.4s !important;
-  }
-  .hero-anim {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-}
 
 /* ===== Calculator documents: print only the preview (.print-area) ===== */
 @media print {
@@ -592,6 +531,7 @@ html.is-member [data-guest-only] {
     size: A4;
     margin: 12mm;
   }
+  body:has([data-wing]),
   body.has-wing {
     padding-left: 0 !important;
   }

@@ -10,6 +10,13 @@ import type { ServiceCardData } from "@/lib/products";
 import { isPriceAmount, type ProductSlug } from "@/lib/products";
 import { track } from "@/lib/analytics";
 import { BrandLogo } from "@/components/BrandLogo";
+import { ResultMock } from "@/components/ResultMock";
+
+// One CTA style for every card: the grid is a menu to browse, so no card's
+// button competes with the page's primary "무료로 시작하기". Product color
+// lives in the tile tint and icon, not in eleven different buttons.
+const CARD_CTA =
+  "border-2 border-forest-900/15 bg-white text-forest-900 hover:border-emerald-700 hover:bg-emerald-700 hover:text-white";
 
 /** "30원 부터" line — the price anchor shown before the CTA. */
 function CardPrice({ price, className = "" }: { price: NonNullable<ServiceCardData["price"]>; className?: string }) {
@@ -27,6 +34,7 @@ export function ServiceCard({
   wide = false,
   ribbon,
   hero = false,
+  mock,
 }: {
   card: ServiceCardData;
   featured?: boolean;
@@ -34,16 +42,18 @@ export function ServiceCard({
   wide?: boolean;
   /** Bento lead tile (2×2 on desktop): larger type + oversized icon mark. */
   hero?: boolean;
-  /** Corner ribbon label (e.g. "인기 묶음 ⭐"); omit for no ribbon. */
+  /** Corner ribbon label (e.g. "인기 묶음"); omit for no ribbon. */
   ribbon?: string;
+  /** Bento lead tile: outcome mock that fills the tile's extra height. */
+  mock?: { groupKey: string; productId: string };
 }) {
   if (wide) {
     return (
       <div
-        className={`group relative flex h-full flex-col gap-5 overflow-hidden rounded-3xl bg-gradient-to-r ${card.accent.gradient} p-6 ring-1 ring-slate-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-2 ${card.accent.cardRing} sm:flex-row sm:items-center sm:p-7`}
+        className={`group relative flex h-full flex-col gap-5 overflow-hidden rounded-3xl bg-gradient-to-r ${card.accent.gradient} p-6 ring-1 ring-slate-100 transition-shadow duration-200 hover:ring-2 ${card.accent.cardRing} sm:flex-row sm:items-center sm:p-7`}
       >
         <div
-          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-3xl shadow-md ${card.accent.iconBg} transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110`}
+          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-3xl shadow-sm ${card.accent.iconBg}`}
           aria-hidden="true"
         >
           {card.icon}
@@ -56,12 +66,9 @@ export function ServiceCard({
         <Link
           href={card.href}
           onClick={() => track("cta_click", { product_slug: card.trackId as ProductSlug })}
-          className={`flex shrink-0 items-center justify-center gap-2 rounded-xl px-8 py-3.5 text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${card.accent.button}`}
+          className={`flex min-h-12 shrink-0 items-center justify-center rounded-xl px-8 text-sm font-bold transition-colors ${CARD_CTA}`}
         >
           {card.cta}
-          <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
-            →
-          </span>
         </Link>
       </div>
     );
@@ -69,44 +76,28 @@ export function ServiceCard({
 
   return (
     <div
-      className={`group relative flex h-full flex-col overflow-hidden rounded-3xl bg-gradient-to-b ${card.accent.gradient} ring-1 ring-slate-100 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:ring-2 ${card.accent.cardRing} ${
+      className={`group relative flex h-full flex-col overflow-hidden rounded-3xl bg-gradient-to-b ${card.accent.gradient} ring-1 ring-slate-100 transition-shadow duration-200 hover:ring-2 ${card.accent.cardRing} ${
         featured ? "p-7 sm:p-8" : "p-6"
       }`}
     >
       {/* Corner ribbon */}
       {ribbon && (
-        <span className="absolute right-0 top-0 rounded-bl-2xl bg-slate-900 px-4 py-1.5 text-xs font-extrabold tracking-wide text-white">
+        <span className="absolute right-0 top-0 rounded-bl-2xl bg-forest-900 px-4 py-1.5 text-xs font-extrabold tracking-wide text-white">
           {ribbon}
         </span>
       )}
-
-      {/* Bento lead tile: oversized icon as a quiet background mark */}
-      {hero && (
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-8 -right-4 hidden rotate-12 select-none text-[10rem] leading-none opacity-[0.12] transition-transform duration-500 group-hover:rotate-6 group-hover:scale-105 lg:block"
-        >
-          {card.icon}
-        </span>
-      )}
-
-      {/* Decorative glow that wakes up on hover */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-white/60 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-      />
 
       <div className={`flex items-center ${featured ? "gap-4" : "gap-3"}`}>
         {card.brand ? (
           <BrandLogo
             brand={card.brand}
-            className={`shrink-0 rounded-2xl shadow-md transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110 ${
+            className={`shrink-0 rounded-2xl shadow-sm ${
               featured ? "h-16 w-16" : "h-13 w-13"
             }`}
           />
         ) : (
           <div
-            className={`flex shrink-0 items-center justify-center rounded-2xl shadow-md ${card.accent.iconBg} transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110 ${
+            className={`flex shrink-0 items-center justify-center rounded-2xl shadow-sm ${card.accent.iconBg} ${
               featured ? "h-16 w-16 text-4xl" : "h-13 w-13 text-3xl"
             }`}
             aria-hidden="true"
@@ -137,7 +128,7 @@ export function ServiceCard({
 
       {/* Lead tile fills its extra height with what the bundle contains */}
       {hero && card.includes && (
-        <ul className="relative mt-6 flex-1 space-y-2">
+        <ul className={`relative mt-6 space-y-2 ${mock ? "" : "flex-1"}`}>
           {card.includes.map((it) => (
             <li key={it.href}>
               <Link
@@ -153,19 +144,22 @@ export function ServiceCard({
         </ul>
       )}
 
+      {hero && mock && (
+        <div className="mt-4 hidden min-h-40 flex-1 overflow-hidden rounded-2xl ring-1 ring-slate-100 @4xl:block">
+          <ResultMock groupKey={mock.groupKey} productId={mock.productId} />
+        </div>
+      )}
+
       {card.price && <CardPrice price={card.price} className="mt-4" />}
 
       <Link
         href={card.href}
         onClick={() => track("cta_click", { product_slug: card.trackId as ProductSlug })}
-        className={`mt-6 flex w-full items-center justify-center gap-2 rounded-xl text-center font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 group-hover:gap-3.5 ${card.accent.button} ${
-          featured ? "py-4 text-base" : "py-3 text-sm"
+        className={`mt-6 flex w-full items-center justify-center rounded-xl text-center font-bold transition-colors ${CARD_CTA} ${
+          featured ? "min-h-13 text-base" : "min-h-12 text-sm"
         }`}
       >
         {card.cta}
-        <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
-          →
-        </span>
       </Link>
     </div>
   );

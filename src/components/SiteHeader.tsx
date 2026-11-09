@@ -55,6 +55,8 @@ export function SiteHeader() {
 
   // Reserve space for the always-open wing on desktop (pages have no shared
   // wrapper, so the offset lives on <body> — see globals.css .has-wing).
+  // CSS also matches body:has([data-wing]) so the offset is there on first
+  // paint; this class is the fallback for browsers without :has().
   useEffect(() => {
     document.body.classList.add("has-wing");
     return () => document.body.classList.remove("has-wing");
@@ -90,6 +92,7 @@ export function SiteHeader() {
       {/* ===== Desktop: full-height left wing ===== */}
       <nav
         aria-label="주 메뉴"
+        data-wing
         className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col overflow-y-auto border-r border-slate-100 bg-white px-3 py-5 lg:flex"
       >
         {/* Brand */}

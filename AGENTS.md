@@ -29,7 +29,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 | 경로 | 설명 |
 |---|---|
-| `/` | 스토리텔링 랜딩 (히어로 → 공감 → 다크 브릿지 → 고객여정 챕터 3 → 확인 가능한 사실(상품 수·계산기 수·약관) → 서비스 그리드(그룹 2+단독) → FAQ → 프로세스 → CTA) |
+| `/` | 가격표 중심 랜딩 (히어로: 카피 + `PriceBoard`(LANDING_CARDS 실제 시작가, 가격은 노란 가격표로만 표시) → 고민→해결 비교 → 고객여정 3단계(결과 목업, 수치 주장 없음) → 서비스 벤토(그룹 2+단독) + 노출 채널 → FAQ → 무료 계산기 → 클로징(가입 3단계 + CTA, 유일한 어두운 블록)). 인트로 스플래시·반복 장식 애니메이션 없음 |
 | `/start` | 신규/기존 분기 → 4단계 스토리 온보딩 → 가입/로그인. `?service=<slug>`로 상품 컨텍스트 유지(가입/로그인 후 해당 단가 앵커로 이동) |
 | `/services/[slug]` | 상품 상세 (스토리: 불편→해결→이럴땐이렇게 + 절차·비용·조건·준비자료 + `QuickOrder` 바로 주문(해당 상품 단가 행 → 주문창·충전, 하단 고정 바). 게스트는 `/start?service=&buy=`로 온보딩 생략 가입 후 주문창 자동 오픈). 15개 상품 slug + 그룹 `place-map`, `blog-pack`(탭, URL 해시 딥링크) |
 | `/pricing` | 공개 스토어(검색·카테고리·URL 상태). 게스트도 열람·색인 가능, 주문하기는 `/start?signup=1&next=/store/<id>/?buy=<행>`로 바로 가입 후 복귀. 게스트 전용 "회원가입 전 마케팅 상담하기!" 카드 |
@@ -58,7 +58,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - `src/components/AuthProvider.tsx` — 클라이언트 인증 컨텍스트 (stub). `hydrated` 플래그로
   세션 복원 완료를 알림 — 인증 기반 리다이렉트는 반드시 `hydrated`를 기다릴 것
 - `src/app/robots.ts`, `src/app/sitemap.ts`, `src/app/not-found.tsx` — SEO/404
-- 컴포넌트: `Landing`, `ServiceCard`, `AuthEntry`, `Onboarding`, `LoginForm`, `SignupForm`, `ConsentChecklist`, `ConsentGate`, `ProfileCard`, `SocialLoginButtons`, `LegalModal`, `SiteHeader`, `SiteFooter`, `TrackedCta`, `QuickOrder`
+- 컴포넌트: `Landing`, `Hero`, `PriceBoard`, `ServiceCard`, `AuthEntry`, `Onboarding`, `LoginForm`, `SignupForm`, `ConsentChecklist`, `ConsentGate`, `ProfileCard`, `SocialLoginButtons`, `LegalModal`, `SiteHeader`, `SiteFooter`, `TrackedCta`, `QuickOrder`
 
 ## 전환 이벤트 (6종)
 

@@ -474,11 +474,7 @@ export function OrderModal({
         )}
         <div className="mt-4 rounded-xl bg-amber-50/70 px-4 py-3 text-[12px] leading-relaxed text-slate-600 ring-1 ring-amber-100">
           <p>
-            <b className="text-slate-800">작업 시작 전에는 전액 환불</b>돼요. 시작 후에는 진행분을 뺀 나머지를 캐시로 돌려드려요.
-          </p>
-          <p className="mt-1">
-            노출·순위 같은 성과는 검색·플랫폼 환경에 따라 달라질 수 있어요. 상품에 보장 조건이 따로 적혀 있지 않으면 성과 미달을
-            이유로 한 환불은 제한될 수 있어요.{" "}
+            노출·순위 같은 성과는 검색·플랫폼 환경에 따라 달라질 수 있어요.{" "}
             <Link href="/terms/" target="_blank" className="font-semibold underline underline-offset-2">
               이용약관
             </Link>

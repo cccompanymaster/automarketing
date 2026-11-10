@@ -101,7 +101,7 @@ export function ProductOptionsModal({
             );
           })}
         </ul>
-        <p className="mt-4 text-center text-[11px] text-slate-400">표시 금액은 부가세 별도 · 작업 시작 전 전액 환불</p>
+        <p className="mt-4 text-center text-[11px] text-slate-400">표시 금액은 부가세 별도</p>
       </div>
     </div>
   );

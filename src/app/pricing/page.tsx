@@ -230,7 +230,7 @@ export default function PricingPage() {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h1 className="text-xl font-extrabold sm:text-2xl">
                 마케팅방주 스토어
-                <span className="ml-2 hidden text-sm font-semibold text-emerald-100 sm:inline">모든 단가 공개 · 작업 전 전액 환불</span>
+                <span className="ml-2 hidden text-sm font-semibold text-emerald-100 sm:inline">모든 단가 공개 · 최소 주문금액 표시</span>
               </h1>
               {authed ? (
               <div className="flex gap-1.5">

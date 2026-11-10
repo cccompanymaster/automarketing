@@ -87,7 +87,7 @@ export default async function StoreProductPage({ params }: { params: Promise<{ i
               </span>
               <h1 className="mt-2 text-2xl font-extrabold leading-snug text-slate-900 sm:text-3xl">{p.title}</h1>
               {p.summary && <p className="mt-2 text-base leading-relaxed text-slate-600">{p.summary}</p>}
-              <dl className="mt-5 grid grid-cols-2 gap-3 text-sm">
+              <dl className="mt-5 grid grid-cols-3 gap-2 text-sm sm:gap-3">
                 <div className="rounded-xl bg-slate-50 p-3">
                   <dt className="text-xs text-slate-500">시작 단가</dt>
                   <dd className="mt-0.5 font-extrabold text-slate-900">
@@ -108,10 +108,6 @@ export default async function StoreProductPage({ params }: { params: Promise<{ i
                 <div className="rounded-xl bg-slate-50 p-3">
                   <dt className="text-xs text-slate-500">옵션</dt>
                   <dd className="mt-0.5 font-extrabold text-slate-900">{p.options.length}개</dd>
-                </div>
-                <div className="rounded-xl bg-slate-50 p-3">
-                  <dt className="text-xs text-slate-500">환불</dt>
-                  <dd className="mt-0.5 font-bold text-slate-900">작업 시작 전 전액</dd>
                 </div>
               </dl>
               <p className="mt-3 text-xs text-slate-400">표시 금액은 부가세 별도 · 1캐시 = 1원</p>
@@ -210,7 +206,7 @@ export default async function StoreProductPage({ params }: { params: Promise<{ i
                   </ul>
                 </div>
                 <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                  <h2 className="text-lg font-extrabold text-slate-900">조건·환불</h2>
+                  <h2 className="text-lg font-extrabold text-slate-900">진행 조건</h2>
                   <ul className="mt-3 space-y-2 text-sm text-slate-600">
                     {service.detail.conditions.map((c) => (
                       <li key={c} className="flex gap-2">
@@ -220,7 +216,7 @@ export default async function StoreProductPage({ params }: { params: Promise<{ i
                     ))}
                     <li className="flex gap-2">
                       <span aria-hidden="true">•</span>
-                      노출·순위 같은 성과는 검색·플랫폼 환경에 따라 달라질 수 있어요. 보장 조건이 적힌 옵션이 아니면 성과 미달을 이유로 한 환불은 제한될 수 있어요(이용약관 제9조).
+                      노출·순위 같은 성과는 검색·플랫폼 환경에 따라 달라질 수 있어요.
                     </li>
                   </ul>
                 </div>

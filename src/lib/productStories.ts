@@ -247,7 +247,7 @@ export const PRODUCT_STORIES: Partial<Record<ProductSlug, ProductStory>> = {
       points: [
         "배포형 게시글(1만 원)은 여러 카페에 널리 퍼뜨려 동네 입소문을 만들어요.",
         "노출용 게시글(2만 원)은 카페 검색 결과에 걸리도록 써요. 원고가 없으면 작성 대행(5천 원)을 더하세요.",
-        "게시글 URL로 결과를 보고하고, 조기 삭제 시 재게시/환불해요.",
+        "게시글 URL로 결과를 보고하고, 조기 삭제 시 재게시해요.",
       ],
     },
     scenarios: [

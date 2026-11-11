@@ -11,6 +11,9 @@ import { CALCULATORS } from "@/lib/calc/registry";
 import { TrackedCta } from "@/components/TrackedCta";
 import { Hero } from "@/components/Hero";
 import { Stats } from "@/components/Stats";
+import { ProductPopup } from "@/components/ProductPopup";
+import { SignupFloatingBar } from "@/components/SignupFloatingBar";
+import { HomeProductDetail } from "@/components/HomeProductDetail";
 import { Channels } from "@/components/Channels";
 import { ServicesGrid } from "@/components/ServicesGrid";
 import { Reveal } from "@/components/Reveal";
@@ -22,8 +25,11 @@ import { SITE_FAQS } from "@/lib/faq";
 export function Landing() {
   return (
     <main className="flex-1">
-      {/* One-time scam / impersonation notice popup */}
+      {/* One-time scam / impersonation notice popup, then the flagship-product popup */}
       <ScamNoticePopup />
+      <ProductPopup />
+      {/* Bottom bar after the hero: 회원가입 후 실행가로 셀프마케팅 */}
+      <SignupFloatingBar />
 
       {/* Chapter 0 — intro loading splash -> animated hero */}
       <Hero />
@@ -33,6 +39,9 @@ export function Landing() {
 
       {/* Checkable facts (no unverified usage numbers) */}
       <Stats />
+
+      {/* Flagship products as an on-page detail page (tabs) */}
+      <HomeProductDetail />
 
       {/* Full catalog for visitors who want to browse everything */}
       <section id="services" className="mx-auto max-w-6xl px-5 py-16 sm:py-20">

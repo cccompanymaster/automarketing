@@ -23,6 +23,8 @@ export function ScamNoticePopup() {
 
   const close = () => {
     setOpen(false);
+    // Let the product popup know it may show now.
+    window.dispatchEvent(new Event("mb:scam-notice-closed"));
     try {
       localStorage.setItem(SEEN_KEY, "1");
     } catch {

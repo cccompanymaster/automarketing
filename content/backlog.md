@@ -62,5 +62,9 @@
 | 퇴직금 중간정산 사유 | 추정 (퇴직급여법 질문) | question | scheduled 2026-11-12 | /blog/severance-interim-settlement/ |
 | 가게 인스타그램 프로필 꾸미기 | 칼럼 (채널 운영 가이드) | question | scheduled 2026-11-12 | /column/instagram-profile-setup/ |
 | 블로그 사진 찍는 법 | 칼럼 (상품 연결: 블로그 배포·원고) | question | scheduled 2026-11-12 | /column/blog-photo-guide/ |
+| 직원 연말정산 사장님이 할 일 | 추정 (소득세법 질문) | question | scheduled 2026-11-13 | /blog/year-end-tax-settlement-employer/ |
+| 폐업 신고 방법 | 추정 (부가가치세법 질문) | question | scheduled 2026-11-13 | /blog/business-closure-report/ |
+| 협찬 광고 표시 방법 | 칼럼 (상품 연결: 블로그 배포) | question | scheduled 2026-11-13 | /column/sponsored-post-disclosure/ |
+| UTM 링크 만드는 법 | 칼럼 (성과 측정 가이드) | question | scheduled 2026-11-13 | /column/utm-link-guide/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

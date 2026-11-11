@@ -2,6 +2,11 @@
 // Shared by the standalone pages (/terms, /privacy) and the LegalModal.
 // TODO(legal): replace with text reviewed by legal counsel.
 
+import { trackersInUse } from "@/lib/trackingIds";
+
+/** Visitor-tracking tools actually switched on in this build (privacy §5 lists exactly these). */
+const TRACKERS = trackersInUse();
+
 export interface LegalSection {
   heading: string;
   body: string[];
@@ -246,9 +251,9 @@ export const PRIVACY: LegalDocument = {
     {
       heading: "5. 개인정보 자동 수집 장치(쿠키)의 설치·운영 및 거부",
       body: [
-        "회사는 방문 통계와 서비스 개선을 위해 Google LLC의 Google 애널리틱스와 Google 태그 관리자를 이용하며, 이 과정에서 쿠키가 저장·사용됩니다.",
-        "수집 항목: 방문 페이지, 접속 일시, 유입 경로, 기기·브라우저 정보, 서비스 내 클릭·가입 진행 등 이용 행태 정보. 이름·이메일·전화번호 등 개인을 직접 알아볼 수 있는 정보는 전송하지 않습니다.",
-        "보유 기간: Google 애널리틱스에서 최대 14개월간 보관한 뒤 자동 삭제됩니다.",
+        `회사는 방문 통계와 서비스 개선을 위해 다음 도구를 이용하며, 이 과정에서 쿠키 등이 저장·사용됩니다: ${TRACKERS.map((t) => `${t.name}(${t.company})`).join(", ") || "Google 애널리틱스·Google 태그 관리자(Google LLC)"}.`,
+        `수집 항목: ${(TRACKERS.length ? TRACKERS : [{ collects: "방문 페이지, 유입 경로, 기기·브라우저 정보, 클릭·가입 진행 등 이용 행태" }]).map((t) => t.collects).join(" / ")}. 이름·이메일·전화번호 등 개인을 직접 알아볼 수 있는 정보와 주문·문의 입력 내용은 전송하지 않습니다.`,
+        "보유 기간: 각 도구의 보관 정책에 따라 보관한 뒤 자동 삭제됩니다(Google 애널리틱스는 최대 14개월).",
         "거부 방법: 브라우저 설정에서 쿠키 저장을 거부하거나 삭제할 수 있으며(예: Chrome 설정 → 개인정보 보호 및 보안 → 서드파티 쿠키), Google 애널리틱스 차단 브라우저 부가기능(tools.google.com/dlpage/gaoptout)으로 수집을 거부할 수 있습니다. 쿠키를 거부해도 서비스 이용에는 제한이 없습니다.",
       ],
     },

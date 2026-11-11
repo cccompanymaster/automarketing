@@ -187,7 +187,7 @@ export function SignupForm({
         <div className="mt-6" />
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} data-clarity-mask="true" className="space-y-4">
         <div>
           <label htmlFor="signup-name" className="block text-sm font-medium text-slate-700">
             이름 <span className="text-slate-400">(선택)</span>

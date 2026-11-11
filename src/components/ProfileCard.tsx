@@ -99,7 +99,7 @@ export function ProfileCard() {
       </div>
 
       {editing ? (
-        <form onSubmit={submit} className="mt-4 grid gap-3 sm:grid-cols-2">
+        <form onSubmit={submit} data-clarity-mask="true" className="mt-4 grid gap-3 sm:grid-cols-2">
           <label className="text-xs font-medium text-slate-600">
             이름
             <input value={draft.name} onChange={set("name")} autoComplete="name" className={inputClass} />

@@ -106,7 +106,7 @@ export function LoginForm({
         <p className="mt-2 text-sm text-slate-500">
           가입하신 이메일로 비밀번호 재설정 링크를 보내드려요.
         </p>
-        <form onSubmit={handleReset} className="mt-6 space-y-4">
+        <form onSubmit={handleReset} data-clarity-mask="true" className="mt-6 space-y-4">
           <div>
             <label htmlFor="reset-email" className="block text-sm font-medium text-slate-700">
               이메일
@@ -147,7 +147,7 @@ export function LoginForm({
         다시 오셨네요. 계정으로 로그인해 주세요.
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+      <form onSubmit={handleSubmit} data-clarity-mask="true" className="mt-6 space-y-4">
         <div>
           <label htmlFor="login-email" className="block text-sm font-medium text-slate-700">
             이메일

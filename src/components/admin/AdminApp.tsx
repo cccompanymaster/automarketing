@@ -138,7 +138,8 @@ export function AdminApp({ content }: { content: ContentSummary }) {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1 bg-slate-50">
+      {/* Customer data: never in session recordings. */}
+      <main data-clarity-mask="true" className="flex-1 bg-slate-50">
         <div className="mx-auto max-w-6xl px-5 pb-12 pt-20 lg:pt-10">
           <header className="flex flex-wrap items-end justify-between gap-3">
             <div>

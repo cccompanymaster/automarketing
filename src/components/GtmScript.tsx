@@ -1,9 +1,10 @@
-// Google tags: GA4 (gtag.js, loaded directly) + the GTM container (Meta Pixel
-// and anything else added later). Ids come from lib/trackingIds; both render
-// nothing outside production builds.
+// Visitor tags: GA4 (gtag.js, loaded directly), the GTM container (Meta Pixel
+// and anything else added later), and — once their ids are set — Microsoft
+// Clarity and 네이버 애널리틱스. Ids come from lib/trackingIds; every tag
+// renders nothing outside production builds or without an id.
 
 import Script from "next/script";
-import { GA4_ID, GTM_ID } from "@/lib/trackingIds";
+import { CLARITY_ID, GA4_ID, GTM_ID, NAVER_ANALYTICS_ID } from "@/lib/trackingIds";
 
 export function GtmScript() {
   return (
@@ -24,6 +25,22 @@ gtag('config', '${GA4_ID}');`}
         </>
       )}
       {GTM_ID && <GtmContainer />}
+      {CLARITY_ID && (
+        <Script id="clarity-init" strategy="afterInteractive">
+          {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_ID}");`}
+        </Script>
+      )}
+      {NAVER_ANALYTICS_ID && (
+        <>
+          <Script id="naver-wcs-src" src="https://wcs.naver.net/wcslog.js" strategy="afterInteractive" />
+          <Script id="naver-wcs-init" strategy="afterInteractive">
+            {`window.wcs_add = window.wcs_add || {}; wcs_add["wa"] = "${NAVER_ANALYTICS_ID}";
+(function run(n){ if (window.wcs) { window.wcs_do(); } else if (n < 40) { setTimeout(function(){ run(n + 1); }, 250); } })(0);`}
+          </Script>
+        </>
+      )}
     </>
   );
 }

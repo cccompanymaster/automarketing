@@ -8,6 +8,8 @@ import { DeliverablesProvider } from "@/components/DeliverablesProvider";
 import { ConsentGate } from "@/components/ConsentGate";
 import { ProfileGate } from "@/components/ProfileGate";
 import { GtmScript, GtmNoScript } from "@/components/GtmScript";
+import { WebVitals } from "@/components/WebVitals";
+import { SITE_VERIFICATION } from "@/lib/trackingIds";
 import { ChatWidget } from "@/components/ChatWidget";
 import { CONTENT_SECURITY_POLICY } from "@/lib/csp";
 import { OG_BASE } from "@/lib/seo";
@@ -40,10 +42,12 @@ export const metadata: Metadata = {
     icon: `${BASE_PATH}/icon.svg`,
     apple: `${BASE_PATH}/icon.svg`,
   },
-  // Search-console ownership checks (네이버 서치어드바이저).
+  // Search-console ownership checks (네이버 서치어드바이저, Google Search Console, Bing).
   verification: {
+    ...(SITE_VERIFICATION.google ? { google: SITE_VERIFICATION.google } : {}),
     other: {
-      "naver-site-verification": "5422308667fd7f1bd83c5e52ef1fe02f0186ef34",
+      "naver-site-verification": SITE_VERIFICATION.naver,
+      ...(SITE_VERIFICATION.bing ? { "msvalidate.01": SITE_VERIFICATION.bing } : {}),
     },
   },
   // Link previews (KakaoTalk, Naver, Facebook).
@@ -92,6 +96,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-white text-slate-900">
         <GtmNoScript />
+        <WebVitals />
         <AuthProvider>
           <WalletProvider>
             <OrdersProvider>

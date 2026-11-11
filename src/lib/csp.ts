@@ -25,6 +25,10 @@ const DIRECTIVES: Record<string, string[]> = {
     "https://cdn.portone.io",
     // Kakao JS SDK (calculator share)
     "https://t1.kakaocdn.net",
+    // Microsoft Clarity, 네이버 애널리틱스 (load only when their ids are set)
+    "https://www.clarity.ms",
+    "https://*.clarity.ms",
+    "https://wcs.naver.net",
   ],
   "style-src": [
     "'self'",
@@ -45,6 +49,10 @@ const DIRECTIVES: Record<string, string[]> = {
     "https://www.gstatic.com",
     "https://www.facebook.com",
     "https://*.g.doubleclick.net",
+    "https://*.clarity.ms",
+    "https://c.bing.com",
+    "https://wcs.naver.com",
+    "https://wcs.naver.net",
   ],
   "connect-src": [
     "'self'",
@@ -64,6 +72,9 @@ const DIRECTIVES: Record<string, string[]> = {
     // Calculator image export re-fetches the webfont CSS to embed it.
     "https://cdn.jsdelivr.net",
     "https://*.kakao.com",
+    "https://*.clarity.ms",
+    "https://wcs.naver.net",
+    "https://wcs.naver.com",
   ],
   "frame-src": [
     "https://www.googletagmanager.com",

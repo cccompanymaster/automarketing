@@ -62,6 +62,8 @@ export function trackersInUse(): Tracker[] {
     ...(GA4_ID || GTM_ID
       ? [{ name: "Google 애널리틱스·Google 태그 관리자", company: "Google LLC", collects: "방문 페이지, 유입 경로, 기기·브라우저 정보, 클릭·가입 진행 등 이용 행태와 페이지 로딩 속도" }]
       : []),
+    // Injected by Cloudflare at the edge (Web Analytics is on for the zone); cookie-free.
+    ...(isProd ? [{ name: "Cloudflare Web Analytics", company: "Cloudflare, Inc.", collects: "쿠키 없이 방문 수·페이지 속도 집계" }] : []),
     ...(CLARITY_ID
       ? [{ name: "Microsoft Clarity", company: "Microsoft Corporation", collects: "화면 이동·클릭·스크롤 기록(입력한 내용은 가려서 수집하지 않음)" }]
       : []),

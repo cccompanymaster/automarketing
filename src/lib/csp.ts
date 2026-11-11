@@ -30,6 +30,8 @@ const BASE: Directives = {
     "https://cdn.portone.io",
     // Kakao JS SDK (calculator share)
     "https://t1.kakaocdn.net",
+    // Cloudflare Web Analytics beacon, injected by Cloudflare into every page (cookie-free)
+    "https://static.cloudflareinsights.com",
   ],
   "style-src": ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"],
   "font-src": ["'self'", "https://cdn.jsdelivr.net", "https://fonts.gstatic.com", "data:"],
@@ -61,6 +63,7 @@ const BASE: Directives = {
     // Calculator image export re-fetches the webfont CSS to embed it.
     "https://cdn.jsdelivr.net",
     "https://*.kakao.com",
+    "https://cloudflareinsights.com",
   ],
   "frame-src": ["https://td.doubleclick.net", "https://*.portone.io", "https://*.iamport.co"],
   "upgrade-insecure-requests": [],

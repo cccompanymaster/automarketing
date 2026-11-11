@@ -47,6 +47,11 @@ export function QuickOrder({
   const [inquiryTopic, setInquiryTopic] = useState<string | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const [barVisible, setBarVisible] = useState(false);
+  // Lift the chat launcher above the sticky bar while it shows (see globals.css).
+  useEffect(() => {
+    document.body.classList.toggle("has-order-bar", barVisible);
+    return () => document.body.classList.remove("has-order-bar");
+  }, [barVisible]);
 
   const isBlogWrite = product.slug === "blogwrite";
   const items = rowNames

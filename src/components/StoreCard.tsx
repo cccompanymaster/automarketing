@@ -82,7 +82,7 @@ export function StoreCard({
           {p.group.icon} {p.group.title}
         </span>
         <h3 className="mt-1.5 line-clamp-2 text-[15px] font-extrabold leading-snug text-slate-900 sm:text-base">
-          <Link href={`/store/${p.id}/`} onClick={onView} className="hover:text-emerald-800 hover:underline">
+          <Link href={`/store/${p.id}/`} onClick={onView} className="tap-overlay hover:text-emerald-800 hover:underline">
             {p.title}
           </Link>
         </h3>

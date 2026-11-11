@@ -34,7 +34,7 @@ export default async function NoticePage({ params }: { params: Promise<{ slug: s
       <SiteHeader />
       <main className="flex-1">
         <article className="mx-auto max-w-3xl px-5 py-14">
-          <Link href={NOTICE_PATH} className="text-sm font-semibold text-emerald-700 hover:underline">
+          <Link href={NOTICE_PATH} className="tap text-sm font-semibold text-emerald-700 hover:underline">
             ← 공지사항
           </Link>
           <div className="mt-4 flex items-center gap-1.5">

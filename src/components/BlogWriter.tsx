@@ -171,8 +171,8 @@ export function BlogWriter() {
     <main className="flex-1 bg-slate-50">
       {/* Header + stepper */}
       <div className="border-b border-slate-100 bg-white">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4">
-          <h1 className="flex items-center gap-2 text-lg font-extrabold text-slate-900">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-5 py-4 sm:pr-28 lg:px-5">
+          <h1 className="flex min-h-12 w-full items-center gap-2 pr-24 text-lg font-extrabold text-slate-900 sm:min-h-0 sm:w-auto sm:pr-0">
             <span aria-hidden="true">📝</span> 블로그 원고 작성
           </h1>
           <ol aria-label="작성 단계" className="flex items-center gap-1.5 sm:gap-4">
@@ -189,16 +189,16 @@ export function BlogWriter() {
                   </span>
                   <div>
                     <p
-                      className={`text-xs font-bold sm:text-sm ${
+                      className={`whitespace-nowrap text-xs font-bold sm:text-sm ${
                         step >= s.no ? "text-slate-800" : "text-slate-400"
                       }`}
                     >
                       {s.label}
                     </p>
-                    <p className="text-[10px] font-semibold text-slate-400 sm:text-[11px]">{s.sub}</p>
+                    <p className="whitespace-nowrap text-[10px] font-semibold text-slate-400 sm:text-[11px]">{s.sub}</p>
                   </div>
                 </div>
-                {i < STEPS.length - 1 && <span className="h-px w-3 bg-slate-200 sm:w-10" />}
+                {i < STEPS.length - 1 && <span className="h-px w-3 bg-slate-200 sm:w-6 lg:w-10" />}
               </li>
             ))}
           </ol>

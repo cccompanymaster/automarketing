@@ -65,13 +65,13 @@ export default async function StoreProductPage({ params }: { params: Promise<{ i
       />
       <SiteHeader />
       <main className="flex-1 bg-slate-50">
-        <div className="mx-auto max-w-5xl px-5 pb-16 pt-16 lg:pt-10">
+        <div className="mx-auto max-w-5xl px-5 pb-16 pt-20 lg:pt-10">
           <nav aria-label="이동 경로" className="text-sm text-slate-500">
-            <Link href="/pricing/" className="font-semibold text-emerald-700 hover:underline">
+            <Link href="/pricing/" className="tap font-semibold text-emerald-700 hover:underline">
               ← 상품 스토어
             </Link>
             <span className="mx-1.5 text-slate-300">/</span>
-            <Link href={`/pricing/?cat=${p.group.key}`} className="hover:underline">
+            <Link href={`/pricing/?cat=${p.group.key}`} className="tap hover:underline">
               {p.group.title}
             </Link>
           </nav>
@@ -87,7 +87,7 @@ export default async function StoreProductPage({ params }: { params: Promise<{ i
               </span>
               <h1 className="mt-2 text-2xl font-extrabold leading-snug text-slate-900 sm:text-3xl">{p.title}</h1>
               {p.summary && <p className="mt-2 text-base leading-relaxed text-slate-600">{p.summary}</p>}
-              <dl className="mt-5 grid grid-cols-3 gap-2 text-sm sm:gap-3">
+              <dl className="mt-5 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 sm:gap-3">
                 <div className="rounded-xl bg-slate-50 p-3">
                   <dt className="text-xs text-slate-500">시작 단가</dt>
                   <dd className="mt-0.5 font-extrabold text-slate-900">

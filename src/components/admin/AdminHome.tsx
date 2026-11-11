@@ -191,7 +191,7 @@ export function AdminHome({ content, onGo }: { content: ContentSummary; onGo: (t
           <p className="mt-3 text-xs text-slate-500">
             {content.nextDate ? `다음 공개: ${content.nextDate} (${content.nextCount}편)` : "예약된 글이 없어요."}
           </p>
-          <button type="button" onClick={() => onGo("content")} className="mt-2 text-xs font-semibold text-emerald-700 hover:underline">
+          <button type="button" onClick={() => onGo("content")} className="tap mt-2 text-xs font-semibold text-emerald-700 hover:underline">
             글 목록 보기 →
           </button>
         </section>
@@ -211,7 +211,7 @@ export function AdminHome({ content, onGo }: { content: ContentSummary; onGo: (t
               />
             </div>
           </div>
-          <button type="button" onClick={() => onGo("margins")} className="text-xs font-semibold text-emerald-700 hover:underline">
+          <button type="button" onClick={() => onGo("margins")} className="tap text-xs font-semibold text-emerald-700 hover:underline">
             실비 관리 →
           </button>
         </div>

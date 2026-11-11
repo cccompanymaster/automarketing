@@ -185,7 +185,7 @@ export function Assumptions({
                 <span className="mr-1.5 rounded bg-amber-100 px-1.5 py-0.5 text-[10.5px] font-bold text-amber-700">가정값</span>
               )}
               {s.url ? (
-                <a href={s.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-700">
+                <a href={s.url} target="_blank" rel="noopener noreferrer" className="tap underline underline-offset-2 hover:text-slate-700">
                   {s.source}
                 </a>
               ) : (
@@ -199,7 +199,7 @@ export function Assumptions({
       )}
       {date && <p className="mt-2.5 font-semibold text-slate-600">기준값 확인일: {date}</p>}
       <p className="mt-1.5">
-        <a href="/tools/rates/" className="font-semibold text-emerald-700 underline underline-offset-2 hover:text-emerald-900">
+        <a href="/tools/rates/" className="tap font-semibold text-emerald-700 underline underline-offset-2 hover:text-emerald-900">
           2026년 자영업자 기준값 전체 보기 (출처·확인일)
         </a>
       </p>

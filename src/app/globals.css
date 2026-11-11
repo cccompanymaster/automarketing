@@ -391,6 +391,32 @@
   }
 }
 
+/* Small text links: grow the tap area to ≥ 32px without moving the layout. */
+.tap {
+  display: inline-block;
+  padding-block: 0.4375rem;
+  margin-block: -0.4375rem;
+}
+/* A link inside a clamped title: an invisible overlay grows its hit area. */
+.tap-overlay {
+  position: relative;
+}
+.tap-overlay::after {
+  content: "";
+  position: absolute;
+  inset: -0.5rem 0;
+}
+
+/* Chat launcher: low by default; above the sticky order bar when one shows (phones/tablets). */
+@media (max-width: 1023px) {
+  body.has-order-bar .chat-fab {
+    bottom: calc(env(safe-area-inset-bottom) + 5.5rem);
+  }
+  body.has-order-bar .chat-panel {
+    bottom: calc(env(safe-area-inset-bottom) + 9.5rem);
+  }
+}
+
 /* Reserve room for the always-open left wing nav (SiteHeader adds .has-wing
    to <body> while mounted; funnel pages without the wing stay full-width). */
 @media (min-width: 1024px) {

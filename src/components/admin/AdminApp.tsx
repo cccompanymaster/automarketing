@@ -139,7 +139,7 @@ export function AdminApp({ content }: { content: ContentSummary }) {
     <>
       <SiteHeader />
       <main className="flex-1 bg-slate-50">
-        <div className="mx-auto max-w-6xl px-5 pb-12 pt-16 lg:pt-10">
+        <div className="mx-auto max-w-6xl px-5 pb-12 pt-20 lg:pt-10">
           <header className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h1 className="text-2xl font-bold text-slate-900">관리자 대시보드</h1>

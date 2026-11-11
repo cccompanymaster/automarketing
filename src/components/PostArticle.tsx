@@ -33,13 +33,13 @@ export function PostArticle({ post, collection: c }: { post: Post; collection: C
           <nav aria-label="이동 경로" className="text-sm text-slate-500">
             <ol className="flex flex-wrap items-center gap-1.5">
               <li>
-                <Link href="/" className="hover:text-slate-800">
+                <Link href="/" className="tap hover:text-slate-800">
                   홈
                 </Link>
               </li>
               <li aria-hidden="true">/</li>
               <li>
-                <Link href={c.path} className="font-semibold text-emerald-700 hover:text-emerald-900">
+                <Link href={c.path} className="tap font-semibold text-emerald-700 hover:text-emerald-900">
                   {c.name}
                 </Link>
               </li>
@@ -86,7 +86,7 @@ export function PostArticle({ post, collection: c }: { post: Post; collection: C
             <ul className="mt-2 list-disc space-y-1 pl-5 text-slate-600">
               {post.sources.map((s) => (
                 <li key={s.url + s.name}>
-                  <a href={s.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-900">
+                  <a href={s.url} target="_blank" rel="noopener noreferrer" className="tap underline underline-offset-2 hover:text-slate-900">
                     {s.name}
                   </a>
                 </li>
@@ -112,7 +112,7 @@ export function PostArticle({ post, collection: c }: { post: Post; collection: C
               <ul className="mt-2 space-y-2">
                 {related.map((r) => (
                   <li key={r.slug}>
-                    <Link href={`${c.path}${r.slug}/`} className="font-semibold text-emerald-700 underline underline-offset-2 hover:text-emerald-900">
+                    <Link href={`${c.path}${r.slug}/`} className="tap font-semibold text-emerald-700 underline underline-offset-2 hover:text-emerald-900">
                       {r.title}
                     </Link>
                   </li>

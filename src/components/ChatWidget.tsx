@@ -69,13 +69,13 @@ export function ChatWidget() {
 
   return (
     <>
-      {/* Launcher — sits above the service pages' sticky order bar on phones */}
+      {/* Launcher — low on the page; lifts above the sticky order bar when one shows (has-order-bar) */}
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label={open ? "상담 창 닫기" : "상담 챗봇 열기"}
-        className="chat-fab fixed bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] right-4 z-40 flex h-14 items-center gap-2 rounded-full bg-emerald-700 px-5 text-base font-bold text-white shadow-xl transition hover:bg-emerald-800 lg:bottom-6 lg:right-6"
+        className="chat-fab fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] right-4 z-40 flex h-12 w-12 items-center justify-center gap-2 rounded-full bg-emerald-700 text-lg font-bold text-white shadow-xl transition hover:bg-emerald-800 sm:h-14 sm:w-auto sm:px-5 sm:text-base lg:bottom-6 lg:right-6"
       >
         <span aria-hidden="true">{open ? "✕" : "💬"}</span>
         <span className="hidden sm:inline">{open ? "닫기" : "상담하기"}</span>
@@ -85,7 +85,7 @@ export function ChatWidget() {
         <section
           role="dialog"
           aria-label="마케팅방주 상담"
-          className="chat-panel fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+9.5rem)] z-40 flex max-h-[min(36rem,calc(100dvh-12rem))] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200 sm:inset-x-auto sm:right-4 sm:w-[24rem] lg:bottom-24 lg:right-6"
+          className="chat-panel fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+5rem)] z-40 flex max-h-[min(36rem,calc(100dvh-12rem))] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200 sm:inset-x-auto sm:right-4 sm:w-[24rem] lg:bottom-24 lg:right-6"
         >
           <header className="flex items-center justify-between gap-3 bg-emerald-700 px-4 py-3 text-white">
             <div>

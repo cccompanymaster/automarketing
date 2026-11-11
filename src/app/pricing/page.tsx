@@ -226,7 +226,7 @@ export default function PricingPage() {
       <main className="flex-1 bg-slate-50">
         {/* Store header + search — short on phones so products show early */}
         <section className="bg-gradient-to-br from-emerald-700 via-emerald-800 to-slate-900 text-white">
-          <div className="mx-auto max-w-6xl px-5 pb-5 pt-16 sm:pb-7 lg:pt-8">
+          <div className="mx-auto max-w-6xl px-5 pb-5 pt-20 sm:pb-7 lg:pt-8">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h1 className="text-xl font-extrabold sm:text-2xl">
                 마케팅방주 스토어

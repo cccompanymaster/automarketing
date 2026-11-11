@@ -106,7 +106,7 @@ export function SiteFooter({
                         href={COMPANY.kakaoChatUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="underline underline-offset-2 hover:text-slate-800"
+                        className="tap underline underline-offset-2 hover:text-slate-800"
                       >
                         {item.value}
                       </a>
@@ -118,7 +118,7 @@ export function SiteFooter({
                         href={`https://www.ftc.go.kr/bizCommPop.do?wrkr_no=${COMPANY.businessRegistrationNumber.replace(/-/g, "")}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="ml-1.5 underline underline-offset-2 hover:text-slate-700"
+                        className="tap ml-1.5 underline underline-offset-2 hover:text-slate-700"
                       >
                         사업자정보 확인
                       </a>

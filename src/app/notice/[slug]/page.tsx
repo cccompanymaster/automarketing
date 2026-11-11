@@ -21,7 +21,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const notice = getNotice(slug);
   if (!notice) return {};
-  return { title: notice.title, alternates: { canonical: `${NOTICE_PATH}${notice.slug}/` } };
+  // First lines of the notice as plain text, so each notice has its own search snippet.
+  const description = notice.body
+    .replace(/[#>*_`|[\]()-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 140);
+  return { title: notice.title, description, alternates: { canonical: `${NOTICE_PATH}${notice.slug}/` } };
 }
 
 export default async function NoticePage({ params }: { params: Promise<{ slug: string }> }) {

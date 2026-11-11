@@ -67,6 +67,7 @@ export function AdminInquiries() {
                     {r.name} · {r.contact}
                     {r.email && ` · ${r.email}`}
                   </p>
+                  {r.source && <p className="mt-0.5 text-xs text-slate-400">유입: {r.source}</p>}
                 </div>
                 <button
                   type="button"

@@ -43,14 +43,19 @@ export async function submitInquiry(input: InquiryInput): Promise<InquiryResult>
   const page = typeof window !== "undefined" ? window.location.href : "";
   const sb = getSupabase();
   if (sb) {
-    const { data, error } = await sb.rpc("submit_inquiry", {
+    const args = {
       p_name: input.name,
       p_contact: input.contact,
       p_email: input.email ?? "",
       p_topic: input.topic,
       p_message: input.message,
       p_page: page,
-    });
+    };
+    const source = currentSourceText();
+    let { data, error } = await sb.rpc("submit_inquiry", source ? { ...args, p_source: source } : args);
+    // p_source exists once supabase/inquiry_source.sql has run; until then the server
+    // doesn't know the argument (PGRST202), so send the inquiry without it.
+    if (error && source && error.code === "PGRST202") ({ data, error } = await sb.rpc("submit_inquiry", args));
     if (error || typeof data !== "string") {
       const key = Object.keys(SERVER_ERRORS).find((k) => error?.message?.includes(k));
       throw new InquiryError(key ? SERVER_ERRORS[key] : "접수에 실패했어요. 네트워크를 확인하고 다시 시도해 주세요.");
@@ -115,6 +120,8 @@ export interface AdminInquiry {
   topic: string;
   message: string;
   page: string | null;
+  /** Ad / search / AI channel the visitor came from (supabase/inquiry_source.sql). */
+  source?: string | null;
   status: InquiryStatus;
   createdAt: string;
 }

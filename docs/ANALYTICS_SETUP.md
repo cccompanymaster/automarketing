@@ -46,7 +46,7 @@ GitHub 변수 대신 `trackingIds.ts`의 기본값 칸에 직접 넣어도 돼�
 광고·검색·SNS·AI 답변으로 들어오면 이 브라우저에 90일 기억해 두었다가
 - 회원가입 때 Supabase `user_metadata.source`에 "처음: naver / cpc 「키워드」 → /pricing/ (11/11) | 신청: /start/" 한 줄로 저장
 - 웹훅(Apps Script) 문의에 `source` 칸으로 전송
-- Supabase 문의(`submit_inquiry`)에는 아직 안 들어가요 — 받으려면 `inquiries`에 `source` 칸 + RPC 인자 추가가 필요(DB 변경이라 별도 작업)
+- Supabase 문의(`submit_inquiry`): `supabase/inquiry_source.sql`을 SQL Editor에서 한 번 실행하면 `inquiries.source`에 저장되고 관리자 → 문의에 "유입: …"으로 보여요. 실행 전에는 사이트가 알아서 예전 방식으로 접수해요(문의가 막히지 않음)
 - GA4 설정(선택): 관리 → 맞춤 정의 → 맞춤 측정기준 `product_slug`, `step`, `metric_rating`, `ai_source` (범위: 이벤트) / 관리 → 주요 이벤트 → `signup_complete`, `purchase`, `generate_lead` / 데이터 보존 14개월 / 채널 그룹에 `AI 검색` 채널(소스 정규식 `.*(chatgpt|openai|perplexity|claude|gemini|copilot|wrtn|clova|liner|you\.com|phind|deepseek|grok).*`, '추천'보다 위).
 
 ## UTM 링크

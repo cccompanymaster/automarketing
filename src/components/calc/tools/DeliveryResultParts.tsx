@@ -4,6 +4,7 @@
 
 import type { PlatformOrder } from "@/lib/calc/delivery";
 import { formatPercent, formatWon } from "@/lib/calc/num";
+import { DEEMPH, SERIES } from "@/components/charts/palette";
 
 export function DeliveryRankList({ orders, monthlyOrders }: { orders: PlatformOrder[]; monthlyOrders: number | null }) {
   const max = Math.max(...orders.map((o) => Math.abs(o.profit)), 1);
@@ -23,10 +24,14 @@ export function DeliveryRankList({ orders, monthlyOrders }: { orders: PlatformOr
               </p>
               <p className={`num shrink-0 text-base font-extrabold ${o.profit < 0 ? "text-rose-600" : "text-slate-900"}`}>{formatWon(o.profit)}</p>
             </div>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+            {/* Emphasis: the best platform in brand green, the rest gray; a loss in the critical tone. */}
+            <div className="mt-2 h-2" aria-hidden="true">
               <div
-                className={`h-full rounded-full ${o.profit < 0 ? "bg-rose-400" : i === 0 ? "bg-emerald-500" : "bg-slate-400"}`}
-                style={{ width: `${Math.max(2, (Math.abs(o.profit) / max) * 100)}%` }}
+                className="h-full rounded-r-[4px]"
+                style={{
+                  width: `${Math.max(2, (Math.abs(o.profit) / max) * 100)}%`,
+                  background: o.profit < 0 ? "#d03b3b" : i === 0 ? SERIES[0] : DEEMPH,
+                }}
               />
             </div>
             <p className="num mt-1.5 text-xs text-slate-500">

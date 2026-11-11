@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { CalcColumns, ResultPanel, Headline, StatGrid, Breakdown, Formula, Assumptions } from "@/components/calc/results";
+import { PartsChart } from "@/components/charts";
 import { InputCard, NumberField, Segmented, issueFor } from "@/components/calc/fields";
 import { ShareBar, useUrlInputs } from "@/components/calc/share";
 import { marginOfPrice, priceForMargin } from "@/lib/calc/margin";
@@ -76,6 +77,14 @@ export function MarginCalculator() {
                       { label: "마크업률", value: formatPercent(v.markupRate, 1) },
                     ]}
                   />
+                  <PartsChart
+                    title="판매가 구성"
+                    format={formatWon}
+                    parts={[
+                      { label: "원가", value: v.cost },
+                      { label: "마진", value: v.marginAmount },
+                    ]}
+                  />
                   <Breakdown
                     rows={[
                       { label: "원가", value: formatWon(v.cost) },
@@ -106,6 +115,16 @@ export function MarginCalculator() {
                       { label: "마크업률", value: v.markupRate == null ? "계산 불가" : formatPercent(v.markupRate, 1) },
                     ]}
                   />
+                  {v.marginAmount > 0 && (
+                    <PartsChart
+                      title="판매가 구성"
+                      format={formatWon}
+                      parts={[
+                        { label: "원가", value: v.cost },
+                        { label: "마진", value: v.marginAmount },
+                      ]}
+                    />
+                  )}
                   <Breakdown
                     rows={[
                       { label: "판매가", value: formatWon(v.price) },

@@ -2,6 +2,7 @@
 
 import { useId, useMemo, useState } from "react";
 import { CalcColumns, ResultPanel, Headline, StatGrid, Formula, Assumptions } from "@/components/calc/results";
+import { PartsChart } from "@/components/charts";
 import { InputCard, NumberField, Segmented, issueFor } from "@/components/calc/fields";
 import { ShareBar, useUrlInputs } from "@/components/calc/share";
 import { LOAN_MAX_MONTHS, LOAN_METHOD_LABELS, loan, type LoanMethod, type LoanSchedule } from "@/lib/calc/loan";
@@ -209,6 +210,15 @@ export function LoanCalculator() {
                         value: gap === 0 ? "차이 없음" : formatWon(gap, { sign: true }),
                         tone: gap > 0 ? "bad" : gap < 0 ? "good" : "default",
                       },
+                    ]}
+                  />
+                  <PartsChart
+                    title="총 상환액 구성"
+                    subtitle={`${LOAN_METHOD_LABELS[sel.method]} · ${termLabel(v.months)} 동안 갚는 돈 ${formatWon(sel.totalPayment)}`}
+                    format={formatWon}
+                    parts={[
+                      { label: "원금", value: sel.totalPrincipal },
+                      { label: "이자", value: sel.totalInterest },
                     ]}
                   />
                   <CompareTable a={v.annuity} b={v.equalPrincipal} selected={method} />

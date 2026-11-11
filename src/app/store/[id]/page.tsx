@@ -128,8 +128,8 @@ export default async function StoreProductPage({ params }: { params: Promise<{ i
                 <thead className="bg-slate-50 text-xs text-slate-500">
                   <tr>
                     <th scope="col" className="px-4 py-3 font-semibold">옵션</th>
-                    <th scope="col" className="px-4 py-3 font-semibold">단가</th>
-                    <th scope="col" className="px-4 py-3 font-semibold">최소 주문</th>
+                    <th scope="col" className="px-4 py-3 text-right font-semibold">단가</th>
+                    <th scope="col" className="px-4 py-3 text-right font-semibold">최소 주문</th>
                     <th scope="col" className="px-4 py-3 font-semibold">비고</th>
                   </tr>
                 </thead>
@@ -143,7 +143,7 @@ export default async function StoreProductPage({ params }: { params: Promise<{ i
                           {o.name}
                           {o.badge && <span className="ml-1.5 rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-extrabold text-white">{o.badge}</span>}
                         </th>
-                        <td className="whitespace-nowrap px-4 py-3 text-slate-800">
+                        <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums text-slate-800">
                           {pr.kind === "order" ? (
                             <>
                               <b>{pr.main}</b>
@@ -154,7 +154,7 @@ export default async function StoreProductPage({ params }: { params: Promise<{ i
                             <span className="font-semibold text-amber-700">{pr.kind === "quote" ? "견적 문의" : "준비 중"}</span>
                           )}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-slate-700">
+                        <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums text-slate-700">
                           {min == null ? "—" : o.minQty && o.minQty > 1 ? `${o.minQty.toLocaleString("ko-KR")}${o.unit?.replace(/^1/, "") ?? ""} · ${won(min)}` : won(min)}
                         </td>
                         <td className="px-4 py-3 text-xs leading-relaxed text-slate-500">{o.note ?? ""}</td>

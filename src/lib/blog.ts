@@ -115,7 +115,23 @@ function toMeta(data: Record<string, unknown>, file: string): PostMeta {
  * would turn into strikethrough — escape it so it always renders literally.
  */
 export function renderMarkdown(md: string): string {
-  return marked.parse(md.replace(/~/g, "\\~"), { async: false }) as string;
+  const html = marked.parse(md.replace(/~/g, "\\~"), { async: false }) as string;
+  return markNumberCells(html);
+}
+
+/** A table cell that is just an amount, rate or count ("19,900원", "50%", "5건", "1~6위"). */
+const NUMERIC_CELL = /^[\s+\-−~약]*[\d][\d,.]*(?:\s*[~\-–]\s*[\d,.]+)?\s*(?:원|%|캐시|건|명|개|장|회|일|시간|분|위|년|개월|만 원|원부터|원 ~|배)?(?:\s*\(.*\))?\s*$/;
+
+/**
+ * Number cells line up on the right with even-width digits (the dataviz table
+ * rule); text cells stay left. Tables are wrapped so they scroll on phones.
+ */
+export function markNumberCells(html: string): string {
+  return html
+    .replace(/<td>([^<]*)<\/td>/g, (m, text: string) => (NUMERIC_CELL.test(text.replace(/&nbsp;/g, " ")) ? `<td class="num-cell">${text}</td>` : m))
+    .replace(/<td><strong>([^<]*)<\/strong><\/td>/g, (m, text: string) =>
+      NUMERIC_CELL.test(text) ? `<td class="num-cell"><strong>${text}</strong></td>` : m,
+    );
 }
 
 /** Every post file, any status (for the gate). */

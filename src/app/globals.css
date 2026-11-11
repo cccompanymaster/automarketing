@@ -685,3 +685,16 @@ html.is-member [data-guest-only] {
   font-weight: 700;
   color: rgb(15 23 42);
 }
+/* Data tables (dataviz rule): numbers right-aligned on even-width digits,
+   hairline rows, header in secondary ink. */
+.post-body td.num-cell {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.post-body thead th {
+  color: rgb(71 85 105);
+  font-size: 0.8125rem;
+}
+.post-body tbody tr:nth-child(even) td {
+  background: rgb(248 250 252 / 0.5);
+}

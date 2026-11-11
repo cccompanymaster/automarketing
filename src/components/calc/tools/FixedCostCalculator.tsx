@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { CalcColumns, ResultPanel, Headline, StatGrid, Breakdown, Formula, Assumptions } from "@/components/calc/results";
 import { FieldGrid, InputCard, NumberField, issueFor } from "@/components/calc/fields";
 import { ShareBar, useUrlInputs } from "@/components/calc/share";
+import { RankedBars } from "@/components/charts";
 import { calcFixedCost, FIXED_COST_ITEMS, type FixedCostKey, type FixedCostLine } from "@/lib/calc/fixedCost";
 import { formatPercent, formatWon, parseNumber } from "@/lib/calc/num";
 
@@ -23,30 +24,32 @@ const HELP: Partial<Record<FixedCostKey, string>> = {
   other: "세무 기장료, 정기 방역 등",
 };
 
-/** Accessible bar list: text carries the numbers, the bar is decorative. */
+/** Ranked bars on one baseline: text carries the numbers, the bar is decorative. */
 function ShareBars({ lines }: { lines: FixedCostLine[] }) {
   return (
     <div>
-      <h3 className="text-sm font-bold text-slate-800">항목별 비중</h3>
-      <ul className="mt-2 space-y-2.5" aria-label="고정비 항목별 비중 (큰 순서)">
-        {lines.map((l) => (
-          <li key={l.key}>
-            <div className="flex items-baseline justify-between gap-3 text-sm">
-              <span className="text-slate-700">
+      <h3 className="text-sm font-bold text-slate-800">항목별 비중 (큰 순서)</h3>
+      <div className="mt-2">
+        <RankedBars
+          ariaLabel="고정비 항목별 비중 (큰 순서)"
+          rows={lines.map((l) => ({
+            key: l.key,
+            value: l.amount,
+            label: (
+              <>
                 {l.label}
                 {l.cashOnly && <span className="ml-1 text-[11px] text-slate-400">(현금만)</span>}
-              </span>
-              <span className="num shrink-0 text-slate-900">
+              </>
+            ),
+            figure: (
+              <>
                 <strong>{formatPercent(l.share)}</strong>
                 <span className="ml-1.5 text-xs text-slate-500">{formatWon(l.amount)}</span>
-              </span>
-            </div>
-            <div aria-hidden="true" className="mt-1 h-2 overflow-hidden rounded-full bg-slate-100">
-              <div className={`h-full rounded-full ${l.cashOnly ? "bg-slate-400" : "bg-emerald-500"}`} style={{ width: `${Math.max(1, l.share * 100)}%` }} />
-            </div>
-          </li>
-        ))}
-      </ul>
+              </>
+            ),
+          }))}
+        />
+      </div>
     </div>
   );
 }

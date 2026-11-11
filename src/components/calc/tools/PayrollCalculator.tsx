@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { CalcColumns, ResultPanel, Headline, StatGrid, Breakdown, Formula, Assumptions } from "@/components/calc/results";
+import { PartsChart } from "@/components/charts";
 import { CheckboxField, InputCard, NumberField, SelectField, issueFor } from "@/components/calc/fields";
 import { ShareBar, useUrlInputs } from "@/components/calc/share";
 import { calcPayroll, minimumMonthlyWage } from "@/lib/calc/payroll";
@@ -172,6 +173,16 @@ export function PayrollCalculator() {
                     { label: "근로자 4대보험", value: formatWon(v.insurance.employeeTotal), sub: `월급의 ${formatPercent(v.employeeShareRate, 2)}` },
                     { label: "사업주 부담", value: formatWon(v.insurance.employerTotal), sub: `월급의 ${formatPercent(v.employerShareRate, 2)}` },
                     { label: "총 고용비용", value: formatWon(v.totalCost), tone: "warn", sub: "월급 + 사업주 부담" },
+                  ]}
+                />
+                <PartsChart
+                  title="총 고용비용 구성"
+                  subtitle={`사장님이 이 직원에게 매달 쓰는 돈 ${formatWon(v.totalCost)}`}
+                  format={formatWon}
+                  parts={[
+                    { label: "직원 수령 (세금 공제 전)", value: v.netPay },
+                    { label: "직원 4대보험", value: v.insurance.employeeTotal },
+                    { label: "사업주 4대보험", value: v.insurance.employerTotal },
                   ]}
                 />
                 <InsuranceTable items={v.insurance.items} employeeTotal={v.insurance.employeeTotal} employerTotal={v.insurance.employerTotal} />

@@ -102,3 +102,15 @@ describe("renderMarkdown", () => {
     expect(html).toContain("41만~659만 원");
   });
 });
+
+describe("markdown tables", () => {
+  it("right-aligns number cells only", async () => {
+    const { renderMarkdown } = await import("@/lib/blog");
+    const html = renderMarkdown("| 상품 | 단가 | 메모 |\n|---|---|---|\n| 블로그 실명 배포 | 1,200원 | 실명 블로그 |\n| 리워드 | 25~99원 | 일 100타 |\n| 마진율 | **50%** | - |");
+    expect(html).toContain('<td class="num-cell">1,200원</td>');
+    expect(html).toContain('<td class="num-cell">25~99원</td>');
+    expect(html).toContain('<td class="num-cell"><strong>50%</strong></td>');
+    expect(html).toContain("<td>블로그 실명 배포</td>");
+    expect(html).toContain("<td>일 100타</td>");
+  });
+});

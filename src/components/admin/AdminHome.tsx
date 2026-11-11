@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getAdminDashboard, monthProfit, type AdminDashboard } from "@/lib/adminDashboard";
 import type { AdminTab } from "@/components/admin/tabs";
 import type { ContentSummary } from "@/components/admin/AdminContent";
+import { ChartFrame, ColumnChart, DEEMPH, Legend, SegmentedBar, seriesColor } from "@/components/charts";
 
 export const won = (n: number) => `${Math.round(n).toLocaleString("ko-KR")}원`;
 export const wonRange = (a: number, b: number) => (a === b ? won(a) : `${won(a)} ~ ${won(b)}`);
@@ -46,42 +47,38 @@ function Todo({ icon, label, count, onClick, urgent }: { icon: string; label: st
   );
 }
 
-/** 14-day bars: order revenue and cash top-ups side by side. */
+/** Compact won for axis ticks: 0 / 5만 / 10만 / 1.5백만… */
+const axisWon = (n: number) => (n >= 10_000 ? `${(n / 10_000).toLocaleString("ko-KR", { maximumFractionDigits: 1 })}만` : n.toLocaleString("ko-KR"));
+
+/** 14-day columns: order revenue and cash top-ups (same unit, one axis). */
 function TrendChart({ days }: { days: AdminDashboard["daily"] }) {
-  const max = Math.max(1, ...days.flatMap((d) => [d.revenue, d.charges]));
   const total = days.reduce((s, d) => s + d.revenue, 0);
   return (
-    <figure>
-      <div className="flex items-center justify-between gap-2">
-        <figcaption className="text-sm font-extrabold text-slate-900">최근 14일 매출·충전</figcaption>
-        <div className="flex items-center gap-3 text-[11px] text-slate-500">
-          <span className="flex items-center gap-1">
-            <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500" /> 주문 매출
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="h-2.5 w-2.5 rounded-sm bg-sky-300" /> 캐시 충전
-          </span>
-        </div>
-      </div>
-      <p className="mt-0.5 text-xs text-slate-400">14일 주문 매출 합계 {won(total)}</p>
-      <div className="mt-4 flex h-40 items-end gap-1 sm:gap-2" role="img" aria-label={`최근 14일 주문 매출 합계 ${won(total)}`}>
-        {days.map((d) => (
-          <div key={d.date} className="flex h-full flex-1 flex-col justify-end" title={`${d.date} · 매출 ${won(d.revenue)} (${d.orders}건) · 충전 ${won(d.charges)} · 가입 ${d.signups}명`}>
-            <div className="flex h-full items-end justify-center gap-0.5">
-              <span className="w-1/2 max-w-3 rounded-t bg-emerald-500" style={{ height: `${(d.revenue / max) * 100}%`, minHeight: d.revenue ? 2 : 0 }} />
-              <span className="w-1/2 max-w-3 rounded-t bg-sky-300" style={{ height: `${(d.charges / max) * 100}%`, minHeight: d.charges ? 2 : 0 }} />
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="mt-1.5 flex gap-1 border-t border-slate-100 pt-1.5 sm:gap-2">
-        {days.map((d, i) => (
-          <span key={d.date} className="flex-1 text-center text-[10px] text-slate-400">
-            {i % 2 === days.length % 2 ? "" : d.date.slice(5).replace("-", "/")}
-          </span>
-        ))}
-      </div>
-    </figure>
+    <ChartFrame
+      title="최근 14일 매출·충전"
+      subtitle={`14일 주문 매출 합계 ${won(total)}`}
+      legend={[
+        { label: "주문 매출", color: seriesColor(0) },
+        { label: "캐시 충전", color: seriesColor(1) },
+      ]}
+      table={{
+        head: ["날짜", "주문 매출", "주문", "캐시 충전", "가입"],
+        rows: days.map((d) => [d.date, won(d.revenue), `${d.orders}건`, won(d.charges), `${d.signups}명`]),
+      }}
+    >
+      <ColumnChart
+        categories={days.map((d) => d.date)}
+        series={[
+          { name: "주문 매출", values: days.map((d) => d.revenue) },
+          { name: "캐시 충전", values: days.map((d) => d.charges) },
+        ]}
+        format={won}
+        axisFormat={axisWon}
+        tickEvery={2}
+        shortLabel={(c) => c.slice(5).replace("-", "/")}
+        extra={(i) => [`주문 ${days[i].orders}건 · 가입 ${days[i].signups}명`]}
+      />
+    </ChartFrame>
   );
 }
 
@@ -203,7 +200,17 @@ export function AdminHome({ content, onGo }: { content: ContentSummary; onGo: (t
       {/* This month by product */}
       <section aria-labelledby="prod-h" className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-5 py-4">
-          <h2 id="prod-h" className="text-sm font-extrabold text-slate-900">이번 달 상품별 매출·예상 순이익</h2>
+          <div>
+            <h2 id="prod-h" className="text-sm font-extrabold text-slate-900">이번 달 상품별 매출·예상 순이익</h2>
+            <div className="mt-1.5">
+              <Legend
+                items={[
+                  { label: "순이익", color: seriesColor(0) },
+                  { label: "실비", color: DEEMPH },
+                ]}
+              />
+            </div>
+          </div>
           <button type="button" onClick={() => onGo("margins")} className="text-xs font-semibold text-emerald-700 hover:underline">
             실비 관리 →
           </button>
@@ -212,10 +219,10 @@ export function AdminHome({ content, onGo }: { content: ContentSummary; onGo: (t
           <p className="px-5 py-6 text-sm text-slate-400">이번 달 주문이 아직 없어요.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[36rem] text-left text-sm">
+            <table className="w-full min-w-[44rem] text-left text-sm">
               <thead>
                 <tr className="text-xs text-slate-400">
-                  {["상품", "주문", "수량", "매출", "예상 순이익"].map((h) => (
+                  {["상품", "주문", "수량", "매출", "매출 구성", "예상 순이익"].map((h) => (
                     <th key={h} scope="col" className="px-4 py-2 font-medium">
                       {h}
                     </th>
@@ -229,6 +236,21 @@ export function AdminHome({ content, onGo }: { content: ContentSummary; onGo: (t
                     <td className="num px-4 py-2.5 text-slate-600">{p.orders}건</td>
                     <td className="num px-4 py-2.5 text-slate-600">{p.qty.toLocaleString("ko-KR")}</td>
                     <td className="num px-4 py-2.5 font-semibold text-slate-800">{won(p.revenue)}</td>
+                    <td className="w-32 px-4 py-2.5">
+                      {p.hasCost ? (
+                        <SegmentedBar
+                          variant="thin"
+                          label={`${p.name} 매출 구성 (실비는 범위의 중간값)`}
+                          format={won}
+                          parts={[
+                            { label: "순이익", value: Math.max(0, p.revenue - ((p.costMin ?? 0) + (p.costMax ?? 0)) / 2), color: seriesColor(0) },
+                            { label: "실비", value: ((p.costMin ?? 0) + (p.costMax ?? 0)) / 2, color: DEEMPH },
+                          ]}
+                        />
+                      ) : (
+                        <span className="text-xs text-slate-300">-</span>
+                      )}
+                    </td>
                     <td className="num px-4 py-2.5">
                       {p.hasCost ? (
                         <span className="font-semibold text-emerald-700">{wonRange(p.revenue - (p.costMax ?? 0), p.revenue - (p.costMin ?? 0))}</span>

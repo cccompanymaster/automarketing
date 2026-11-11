@@ -1,10 +1,11 @@
 // Centralized conversion tracking helper.
-// All events are funneled through a single `dataLayer.push` so the GTM
-// container can fan them out (e.g. Meta Pixel).
-//
-// GA4 is loaded directly (gtag.js), so each event is also sent there by name.
+// Every event goes to GA4 (gtag.js, by name) and `dataLayer` (for a GTM
+// container, if one is ever set), and the conversions listed in
+// lib/adPixels PIXEL_EVENTS also reach each ad pixel that is on
+// (네이버·Meta·카카오·당근) under that pixel's own event name.
 // Outside production builds no tags load and events are logged to the console.
 
+import { sendConversion } from "@/lib/adPixels";
 import { GA4_ID, GTM_ID } from "@/lib/trackingIds";
 
 export type AnalyticsParams = Record<string, unknown>;
@@ -33,7 +34,9 @@ export type AnalyticsEvent =
   | "charge_start"
   | "search"
   // Inquiry received by the site (not counted for the mail-app fallback).
-  | "generate_lead";
+  | "generate_lead"
+  // Arrived from an AI answer (ChatGPT, Perplexity, Claude, Gemini …): ai_source.
+  | "ai_referral";
 
 /**
  * Push a conversion event into the dataLayer.
@@ -48,6 +51,7 @@ export function track(event: AnalyticsEvent, params: AnalyticsParams = {}): void
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push(payload);
   if (GA4_ID) window.gtag?.("event", event, params);
+  sendConversion(event, params);
 
   if (!GTM_ID && !GA4_ID) {
     // Fallback / dev visibility — confirms events fire even without a container.

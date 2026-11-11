@@ -18,6 +18,7 @@ import {
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { getSupabase } from "@/lib/supabase";
 import { koreanAuthError } from "@/lib/authErrors";
+import { currentSourceText } from "@/lib/attribution";
 import {
   SOCIAL_PROVIDERS,
   socialProviderFromSupabase,
@@ -206,7 +207,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email,
           password,
           options: {
-            data: { name, consents, ...(profile ? { profile: { ...EMPTY_PROFILE, name: name ?? "", ...profile } } : {}) },
+            // source: the ad/search/AI channel this visitor first came from (lib/attribution), for channel reports.
+            data: { name, consents, source: currentSourceText(), ...(profile ? { profile: { ...EMPTY_PROFILE, name: name ?? "", ...profile } } : {}) },
             // The confirmation link lands on the callback page, which forwards
             // to the destination stashed by the signup form (e.g. the product).
             emailRedirectTo: `${siteRoot()}/auth/callback/`,

@@ -10,6 +10,7 @@
 
 import { COMPANY } from "@/lib/company";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
+import { currentSourceText } from "@/lib/attribution";
 
 const WEBHOOK_URL = process.env.NEXT_PUBLIC_INQUIRY_WEBHOOK_URL;
 
@@ -70,6 +71,7 @@ export async function submitInquiry(input: InquiryInput): Promise<InquiryResult>
           topic: input.topic,
           message: input.message,
           page,
+          source: currentSourceText(),
         }).toString(),
       });
     } catch {

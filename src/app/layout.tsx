@@ -9,6 +9,7 @@ import { ConsentGate } from "@/components/ConsentGate";
 import { ProfileGate } from "@/components/ProfileGate";
 import { GtmScript, GtmNoScript } from "@/components/GtmScript";
 import { WebVitals } from "@/components/WebVitals";
+import { AdPixels } from "@/components/AdPixels";
 import { SITE_VERIFICATION } from "@/lib/trackingIds";
 import { ChatWidget } from "@/components/ChatWidget";
 import { CONTENT_SECURITY_POLICY } from "@/lib/csp";
@@ -97,6 +98,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-white text-slate-900">
         <GtmNoScript />
         <WebVitals />
+        <AdPixels />
         <AuthProvider>
           <WalletProvider>
             <OrdersProvider>

@@ -212,7 +212,7 @@ export const TERMS_PREVIOUS: LegalDocument = {
 export const PRIVACY: LegalDocument = {
   key: "privacy",
   title: "개인정보처리방침",
-  updatedAt: "2026-11-05",
+  updatedAt: "2026-11-11",
   sections: [
     {
       heading: "1. 수집하는 개인정보 항목",
@@ -254,6 +254,10 @@ export const PRIVACY: LegalDocument = {
         `회사는 방문 통계와 서비스 개선을 위해 다음 도구를 이용하며, 이 과정에서 쿠키 등이 저장·사용됩니다: ${TRACKERS.map((t) => `${t.name}(${t.company})`).join(", ") || "Google 애널리틱스·Google 태그 관리자(Google LLC)"}.`,
         `수집 항목: ${(TRACKERS.length ? TRACKERS : [{ collects: "방문 페이지, 유입 경로, 기기·브라우저 정보, 클릭·가입 진행 등 이용 행태" }]).map((t) => t.collects).join(" / ")}. 이름·이메일·전화번호 등 개인을 직접 알아볼 수 있는 정보와 주문·문의 입력 내용은 전송하지 않습니다.`,
         "보유 기간: 각 도구의 보관 정책에 따라 보관한 뒤 자동 삭제됩니다(Google 애널리틱스는 최대 14개월).",
+        "광고·검색·AI 답변 등으로 들어온 경우 유입 경로(광고 캠페인 이름, 검색 키워드, 들어온 사이트 주소, 처음 연 페이지, 날짜)를 이용자의 브라우저에 90일 동안 보관했다가, 가입·주문·문의 때 함께 저장해 어떤 광고가 성과를 냈는지 확인하는 데 씁니다. 개인을 알아볼 수 있는 정보는 넣지 않습니다.",
+        ...(TRACKERS.some((t) => t.ad)
+          ? ["맞춤형 광고: 광고 도구(" + TRACKERS.filter((t) => t.ad).map((t) => t.name).join(", ") + ")는 광고를 보고 들어온 방문자가 가입·주문했는지 확인하고 관심 있을 만한 광고를 보여 주는 데 쓰이며, 행태정보는 각 광고 사업자가 정한 기간(대개 2년 이내) 동안 보관됩니다. 휴대폰 설정에서 광고 식별자를 재설정·제한하면 맞춤형 광고를 거부할 수 있습니다."]
+          : []),
         "거부 방법: 브라우저 설정에서 쿠키 저장을 거부하거나 삭제할 수 있으며(예: Chrome 설정 → 개인정보 보호 및 보안 → 서드파티 쿠키), Google 애널리틱스 차단 브라우저 부가기능(tools.google.com/dlpage/gaoptout)으로 수집을 거부할 수 있습니다. 쿠키를 거부해도 서비스 이용에는 제한이 없습니다.",
       ],
     },

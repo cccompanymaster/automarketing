@@ -10,8 +10,9 @@ import Link from "next/link";
 import { getProduct, type ProductSlug } from "@/lib/products";
 import { PRODUCT_STORIES } from "@/lib/productStories";
 import { displayPrice, minOrderLabel, productPricingItems } from "@/lib/pricing";
-import { FLAGSHIP } from "@/components/ProductPopup";
 import { track } from "@/lib/analytics";
+
+const FLAGSHIP: ProductSlug[] = ["place", "blog", "daangn", "blogwrite"];
 
 const TAB_LABEL: Partial<Record<ProductSlug, string>> = {
   place: "📍 플레이스",

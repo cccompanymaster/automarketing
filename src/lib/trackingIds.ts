@@ -8,17 +8,7 @@
 const isProd = process.env.NODE_ENV === "production";
 const prodOnly = (v: string | undefined) => (isProd ? (v ?? "").trim() : "");
 
-/**
- * Google Tag Manager container. Off by default: the published GTM-NF44W8RR
- * container had no tags (2026-11-11), and ad pixels now load from code below.
- * Set NEXT_PUBLIC_GTM_ID only if you want to manage extra tags in GTM.
- */
-export const GTM_ID = prodOnly(process.env.NEXT_PUBLIC_GTM_ID || "");
-
-/**
- * GA4 property, loaded directly with gtag.js. Don't also add a GA4 tag inside
- * GTM — page views would be counted twice.
- */
+/** GA4 uses the direct Google tag; no Tag Manager container is loaded. */
 export const GA4_ID = prodOnly(process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || "G-6SKM7F1QRJ");
 
 /** Microsoft Clarity project id (heatmaps + session replay). clarity.microsoft.com */
@@ -59,8 +49,8 @@ export interface Tracker {
 /** Visitor-tracking tools switched on in this build — the privacy policy lists exactly these. */
 export function trackersInUse(): Tracker[] {
   return [
-    ...(GA4_ID || GTM_ID
-      ? [{ name: "Google 애널리틱스·Google 태그 관리자", company: "Google LLC", collects: "방문 페이지, 유입 경로, 기기·브라우저 정보, 클릭·가입 진행 등 이용 행태와 페이지 로딩 속도" }]
+    ...(GA4_ID
+      ? [{ name: "Google 애널리틱스", company: "Google LLC", collects: "방문 페이지, 유입 경로, 기기·브라우저 정보, 클릭·가입 진행 등 이용 행태와 페이지 로딩 속도" }]
       : []),
     // Injected by Cloudflare at the edge (Web Analytics is on for the zone); cookie-free.
     ...(isProd ? [{ name: "Cloudflare Web Analytics", company: "Cloudflare, Inc.", collects: "쿠키 없이 방문 수·페이지 속도 집계" }] : []),

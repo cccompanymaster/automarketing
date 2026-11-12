@@ -12,7 +12,7 @@
 // Meta-delivered CSP ignores frame-ancestors, so clickjacking protection still
 // needs the X-Frame-Options header at the edge (Cloudflare).
 
-import { CLARITY_ID, GTM_ID, KAKAO_PIXEL_ID, KARROT_PIXEL_ID, META_PIXEL_ID, NAVER_ANALYTICS_ID } from "@/lib/trackingIds";
+import { CLARITY_ID, KAKAO_PIXEL_ID, KARROT_PIXEL_ID, META_PIXEL_ID, NAVER_ANALYTICS_ID } from "@/lib/trackingIds";
 
 type Directives = Record<string, string[]>;
 
@@ -21,7 +21,7 @@ const BASE: Directives = {
   "base-uri": ["'self'"],
   "object-src": ["'none'"],
   "form-action": ["'self'"],
-  // GA4 bootstraps inline (and GTM injects tags at runtime), so nonces aren't viable.
+  // GA4 bootstraps inline, so nonces aren't viable.
   "script-src": [
     "'self'",
     "'unsafe-inline'",
@@ -71,10 +71,6 @@ const BASE: Directives = {
 
 // Origins each optional tool loads from or reports to.
 export const TOOL_ORIGINS: Record<string, { id: string; add: Directives }> = {
-  gtm: {
-    id: GTM_ID,
-    add: { "script-src": ["https://tagmanager.google.com"], "style-src": ["https://tagmanager.google.com"], "frame-src": ["https://www.googletagmanager.com"] },
-  },
   naver: {
     id: NAVER_ANALYTICS_ID,
     add: { "script-src": ["https://wcs.naver.net"], "img-src": ["https://wcs.naver.com", "https://wcs.naver.net"], "connect-src": ["https://wcs.naver.net", "https://wcs.naver.com"] },

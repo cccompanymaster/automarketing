@@ -11,27 +11,22 @@ import { CALCULATORS } from "@/lib/calc/registry";
 import { TrackedCta } from "@/components/TrackedCta";
 import { Hero } from "@/components/Hero";
 import { Stats } from "@/components/Stats";
-import { ProductPopup } from "@/components/ProductPopup";
 import { SignupFloatingBar } from "@/components/SignupFloatingBar";
 import { HomeProductDetail } from "@/components/HomeProductDetail";
 import { Channels } from "@/components/Channels";
 import { ServicesGrid } from "@/components/ServicesGrid";
 import { Reveal } from "@/components/Reveal";
 import { StoryIntro, ProcessSection } from "@/components/StorySections";
-import { ScamNoticePopup } from "@/components/ScamNoticePopup";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { SITE_FAQS } from "@/lib/faq";
 
 export function Landing() {
   return (
     <main className="flex-1">
-      {/* One-time scam / impersonation notice popup, then the flagship-product popup */}
-      <ScamNoticePopup />
-      <ProductPopup />
       {/* Bottom bar after the hero: 회원가입 후 실행가로 셀프마케팅 */}
       <SignupFloatingBar />
 
-      {/* Chapter 0 — intro loading splash -> animated hero */}
+      {/* Chapter 0 — primary actions and safety notice */}
       <Hero />
 
       {/* Story: empathy → bridge → journey chapters (01 발견 → 02 판매 → 03 신뢰·절감) */}

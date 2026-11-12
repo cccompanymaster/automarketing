@@ -6,7 +6,7 @@
 // Outside production builds no tags load and events are logged to the console.
 
 import { sendConversion } from "@/lib/adPixels";
-import { GA4_ID, GTM_ID } from "@/lib/trackingIds";
+import { GA4_ID } from "@/lib/trackingIds";
 
 export type AnalyticsParams = Record<string, unknown>;
 
@@ -53,7 +53,7 @@ export function track(event: AnalyticsEvent, params: AnalyticsParams = {}): void
   if (GA4_ID) window.gtag?.("event", event, params);
   sendConversion(event, params);
 
-  if (!GTM_ID && !GA4_ID) {
+  if (!GA4_ID) {
     // Fallback / dev visibility — confirms events fire even without a container.
     console.log("[analytics]", event, params);
   }

@@ -1,11 +1,3 @@
-"use client";
-
-// Animated hero with an intro "loading" splash that fades out (CSS) and
-// reveals the hero. Counts up rank (48 -> 1) and exposure (+320%) while the
-// splash is visible, then the hero copy/scene rise in as the splash clears.
-// Keyframes live in globals.css.
-
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CALCULATORS } from "@/lib/calc/registry";
 import { PRICING } from "@/lib/pricing";
@@ -13,152 +5,12 @@ import { storeProducts } from "@/lib/store";
 
 const storeCount = storeProducts(PRICING).length;
 
-// Tween a number into an element's textContent with an ease-out curve.
-function tween(
-  el: HTMLElement | null,
-  from: number,
-  to: number,
-  dur: number,
-  delay: number,
-) {
-  if (!el) return;
-  const start = performance.now() + delay;
-  function step(now: number) {
-    const t = Math.min(1, Math.max(0, (now - start) / dur));
-    const e = 1 - Math.pow(1 - t, 3);
-    el!.textContent = String(Math.round(from + (to - from) * e));
-    if (t < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
+import { ScamNotice } from "@/components/ScamNotice";
 
 export function Hero() {
-  const rankRef = useRef<HTMLSpanElement>(null);
-  const expRef = useRef<HTMLSpanElement>(null);
-  // Intro splash plays only once per session (null = undecided during hydration).
-  const [intro, setIntro] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    let seen = false;
-    try {
-      seen = sessionStorage.getItem("mb_intro_seen") === "1";
-    } catch {
-      /* ignore */
-    }
-    if (seen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time session check
-      setIntro(false);
-      return;
-    }
-    try {
-      sessionStorage.setItem("mb_intro_seen", "1");
-    } catch {
-      /* ignore */
-    }
-    setIntro(true);
-  }, []);
-
-  useEffect(() => {
-    if (intro !== true) return;
-    tween(rankRef.current, 48, 1, 800, 150);
-    tween(expRef.current, 0, 320, 900, 200);
-  }, [intro]);
-
   return (
-    <>
-      {/* ===== LOADER OVERLAY (full-screen, auto fades out) — first visit only ===== */}
-      {intro === true && (
-      <div
-        className="hero-loader"
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 200,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 30,
-          background:
-            "radial-gradient(120% 95% at 50% 35%,#e6faee 0%,#f2fbf6 55%,#ffffff 100%)",
-          animation: "loaderOut 1.6s ease forwards",
-        }}
-      >
-        <div
-          className="hero-anim"
-          style={{ display: "flex", alignItems: "center", gap: 11, animation: "popIn .6s ease both" }}
-        >
-          <div
-            style={{
-              width: 42,
-              height: 42,
-              borderRadius: 13,
-              background: "linear-gradient(135deg,#18C06A,#0E8F4E)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 12px 24px rgba(16,150,80,.4)",
-            }}
-          >
-            <span style={{ fontSize: 22 }}>🌱</span>
-          </div>
-          <span style={{ fontWeight: 800, fontSize: 24, color: "#15301f", letterSpacing: "-.02em" }}>
-            마케팅방주
-          </span>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            gap: "28px 40px",
-          }}
-        >
-          {/* climbing bars */}
-          <div className="hero-anim" style={{ display: "flex", alignItems: "flex-end", gap: 11, height: 150 }}>
-            <div style={{ width: 30, height: 60, borderRadius: "9px 9px 4px 4px", background: "linear-gradient(160deg,#7fe0ab,#1aa55e)", transformOrigin: "bottom", animation: "barGrow .9s cubic-bezier(.2,.8,.2,1) .2s both" }} />
-            <div style={{ width: 30, height: 96, borderRadius: "9px 9px 4px 4px", background: "linear-gradient(160deg,#ffc188,#f2701c)", transformOrigin: "bottom", animation: "barGrow .95s cubic-bezier(.2,.8,.2,1) .38s both" }} />
-            <div style={{ width: 30, height: 128, borderRadius: "9px 9px 4px 4px", background: "linear-gradient(160deg,#9ec2ff,#2563eb)", transformOrigin: "bottom", animation: "barGrow 1s cubic-bezier(.2,.8,.2,1) .56s both" }} />
-            <div style={{ width: 30, height: 150, borderRadius: "9px 9px 4px 4px", background: "linear-gradient(160deg,#c9b3ff,#7c3aed)", transformOrigin: "bottom", animation: "barGrow 1.05s cubic-bezier(.2,.8,.2,1) .74s both" }} />
-          </div>
-          {/* before -> after rank change */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, paddingBottom: 6 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <div style={{ textAlign: "center", opacity: 0.65 }}>
-                <div style={{ fontWeight: 700, fontSize: 12, color: "#94a89c", marginBottom: 3 }}>기존 순위</div>
-                <div style={{ fontWeight: 800, fontSize: 30, color: "#9aa8a0", textDecoration: "line-through", lineHeight: 1 }}>48위</div>
-              </div>
-              <div className="hero-anim" style={{ fontWeight: 800, fontSize: 24, color: "#10b35f", animation: "drift 1.5s ease-in-out infinite" }}>→</div>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontWeight: 700, fontSize: 12, color: "#0e7a44", marginBottom: 3 }}>마케팅방주 적용 후</div>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 3, justifyContent: "center" }}>
-                  <span ref={rankRef} style={{ fontWeight: 800, fontSize: 46, color: "#0e7a44", lineHeight: 1, letterSpacing: "-.03em" }}>48</span>
-                  <span style={{ fontWeight: 800, fontSize: 18, color: "#0e7a44" }}>위</span>
-                  <span style={{ fontSize: 24 }}>🏆</span>
-                </div>
-              </div>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: 11, background: "rgba(24,192,106,.12)" }}>
-              <span style={{ fontWeight: 700, fontSize: 13, color: "#0e7a44" }}>노출</span>
-              <span style={{ fontWeight: 800, fontSize: 20, color: "#0e7a44" }}>+<span ref={expRef}>0</span>%</span>
-              <span style={{ fontWeight: 800, fontSize: 13, color: "#10a356" }}>▲ 47계단 상승</span>
-            </div>
-          </div>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 9, color: "#4d6657", fontWeight: 700, fontSize: 14 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b35f", animation: "blink 1s infinite" }} />
-          매장 데이터를 분석하고 있어요…
-        </div>
-        <p style={{ margin: 0, fontSize: 11, color: "#8ba295" }}>* 화면 연출용 예시이며 실제 고객 성과가 아니에요.</p>
-      </div>
-      )}
-
-      {/* ===== HERO ===== */}
       <section
-        className={intro === true ? undefined : "no-intro"}
+        className="no-intro"
         style={{
           position: "relative",
           width: "100%",
@@ -189,13 +41,13 @@ export function Hero() {
         >
           {/* left copy */}
           <div style={{ flex: "1 1 420px", minWidth: 0 }}>
-            <div className="hero-anim" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px", borderRadius: 999, background: "rgba(24,192,106,.13)", border: "1px solid rgba(24,192,106,.28)", animation: "rise .7s ease 1.15s both" }}>
+            <div className="hero-anim" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px", borderRadius: 999, background: "rgba(24,192,106,.13)", border: "1px solid rgba(24,192,106,.28)" }}>
               <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#10b35f", animation: "blink 1.4s infinite" }} />
               <span style={{ fontWeight: 700, fontSize: 13, color: "#0e7a44", letterSpacing: "-.01em" }}>
                 소상공인 · 온라인 셀러 · 브랜드사를 위한 셀프 마케팅
               </span>
             </div>
-            <h1 className="hero-anim" style={{ margin: "22px 0 0", fontWeight: 800, fontSize: "clamp(34px,5.2vw,62px)", lineHeight: 1.08, letterSpacing: "-.035em", color: "#13251a", textWrap: "balance", animation: "rise .8s ease 1.25s both" }}>
+            <h1 className="hero-anim" style={{ margin: "22px 0 0", fontWeight: 800, fontSize: "clamp(34px,5.2vw,62px)", lineHeight: 1.08, letterSpacing: "-.035em", color: "#13251a", textWrap: "balance" }}>
               대행사 없이도
               <br />
               손쉽게{" "}
@@ -206,22 +58,23 @@ export function Hero() {
               <br />
               시작하세요
             </h1>
-            <p className="hero-anim" style={{ margin: "22px 0 0", fontSize: "clamp(15px,1.5vw,19px)", lineHeight: 1.6, color: "#4d6657", maxWidth: 440, animation: "rise .8s ease 1.35s both" }}>
+            <p className="hero-anim" style={{ margin: "22px 0 0", fontSize: "clamp(15px,1.5vw,19px)", lineHeight: 1.6, color: "#4d6657", maxWidth: 440 }}>
               상위 노출, 손님 늘리기, 판매 올리기, 광고비 환급까지 — 우리 가게에 필요한 것만 골라서 바로 시작하면 돼요.
             </p>
             {/* flex 1 1 200px: equal full-width buttons stacked on phones, an even
                 pair side by side on wider screens. */}
-            <div className="hero-anim" style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 34, maxWidth: 460, animation: "rise .8s ease 1.45s both" }}>
+            <div className="hero-anim" style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 34, maxWidth: 460 }}>
               <Link href="/start" style={{ flex: "1 1 200px", textAlign: "center", position: "relative", overflow: "hidden", textDecoration: "none", fontWeight: 800, fontSize: 16, color: "#fff", padding: "16px 30px", borderRadius: 14, background: "linear-gradient(135deg,#0b8f52,#065f46)", boxShadow: "0 14px 30px rgba(6,95,70,.38)" }}>
                 무료로 시작하기
                 <span style={{ position: "absolute", top: 0, left: 0, width: "55%", height: "100%", background: "linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent)", animation: "sheen 3.4s ease-in-out 2s infinite" }} />
               </Link>
-              <a href="#services" style={{ flex: "1 1 200px", textAlign: "center", border: "1.5px solid #cfe4d8", textDecoration: "none", fontWeight: 700, fontSize: 16, color: "#1f5a3c", padding: "16px 28px", borderRadius: 14, background: "rgba(255,255,255,.7)" }}>
-                서비스 둘러보기 →
+              <a href="#product-detail" style={{ flex: "1 1 200px", textAlign: "center", border: "1.5px solid #cfe4d8", textDecoration: "none", fontWeight: 700, fontSize: 16, color: "#1f5a3c", padding: "16px 28px", borderRadius: 14, background: "rgba(255,255,255,.7)" }}>
+                대표 상품·단가 보기 →
               </a>
             </div>
+            <ScamNotice />
             {/* Facts anyone can check on the site (no unverified usage/growth numbers). */}
-            <div className="hero-anim" style={{ display: "flex", gap: 26, marginTop: 38, animation: "rise .8s ease 1.55s both" }}>
+            <div className="hero-anim" style={{ display: "flex", gap: 26, marginTop: 38 }}>
               <div>
                 <div style={{ fontWeight: 800, fontSize: 24, color: "#0e7a44", letterSpacing: "-.02em" }}>{storeCount}종</div>
                 <div style={{ fontSize: 13, color: "#6b8275", fontWeight: 600 }}>상품 단가 공개</div>
@@ -235,7 +88,7 @@ export function Hero() {
           </div>
 
           {/* right 3D scene */}
-          <div className="hero-anim" aria-hidden="true" style={{ flex: "1 1 420px", minWidth: 0, width: "100%", position: "relative", height: "clamp(380px,46vw,520px)", perspective: 1100, animation: "rise .9s ease 1.3s both" }}>
+          <div className="hero-anim" aria-hidden="true" style={{ flex: "1 1 420px", minWidth: 0, width: "100%", position: "relative", height: "clamp(380px,46vw,520px)", perspective: 1100 }}>
             {/* glossy 3D bars */}
             <div style={{ position: "absolute", bottom: 34, right: "6%", display: "flex", alignItems: "flex-end", gap: 14, height: 300, transform: "rotateX(6deg) rotateY(-12deg)", transformStyle: "preserve-3d" }}>
               <div style={{ width: 46, height: 120, borderRadius: "13px 13px 6px 6px", background: "linear-gradient(160deg,#7fe0ab,#1aa55e)", boxShadow: "0 18px 30px rgba(16,140,75,.28),inset 0 2px 0 rgba(255,255,255,.5)", transformOrigin: "bottom", animation: "barGrow 1s cubic-bezier(.2,.8,.2,1) both,barBob 3.6s ease-in-out 1.2s infinite" }} />
@@ -307,6 +160,5 @@ export function Hero() {
           </div>
         </div>
       </section>
-    </>
   );
 }

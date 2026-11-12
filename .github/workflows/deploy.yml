@@ -91,7 +91,6 @@ jobs:
           # AI blog writer proxy (optional). Empty = demo mode.
           NEXT_PUBLIC_BLOG_API_URL: ${{ vars.NEXT_PUBLIC_BLOG_API_URL }}
           # Tracking ids override the defaults in src/lib/trackingIds.ts (optional).
-          NEXT_PUBLIC_GTM_ID: ${{ vars.NEXT_PUBLIC_GTM_ID }}
           NEXT_PUBLIC_GA4_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_GA4_MEASUREMENT_ID }}
           NEXT_PUBLIC_CLARITY_ID: ${{ vars.NEXT_PUBLIC_CLARITY_ID }}
           NEXT_PUBLIC_NAVER_ANALYTICS_ID: ${{ vars.NEXT_PUBLIC_NAVER_ANALYTICS_ID }}

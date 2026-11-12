@@ -7,7 +7,7 @@ import { OrdersProvider } from "@/components/OrdersProvider";
 import { DeliverablesProvider } from "@/components/DeliverablesProvider";
 import { ConsentGate } from "@/components/ConsentGate";
 import { ProfileGate } from "@/components/ProfileGate";
-import { GtmScript, GtmNoScript } from "@/components/GtmScript";
+import { VisitorAnalytics } from "@/components/VisitorAnalytics";
 import { WebVitals } from "@/components/WebVitals";
 import { AdPixels } from "@/components/AdPixels";
 import { SITE_VERIFICATION } from "@/lib/trackingIds";
@@ -86,7 +86,7 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
-        <GtmScript />
+        <VisitorAnalytics />
         {/* Flag a stored login before paint (see HomeSwitch / globals.css). */}
         <script
           dangerouslySetInnerHTML={{
@@ -96,7 +96,6 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-white text-slate-900">
-        <GtmNoScript />
         <WebVitals />
         <AdPixels />
         <AuthProvider>

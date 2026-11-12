@@ -110,6 +110,9 @@ export function SiteFooter({
                       >
                         {item.value}
                       </a>
+                    ) : item.label === "이메일" ? (
+                      // Keep the public address readable and copyable without an edge rewrite of React's text node.
+                      <span><span>{item.value.split("@")[0]}</span><span>@</span><wbr /><span>{item.value.split("@")[1]}</span></span>
                     ) : (
                       item.value
                     )}

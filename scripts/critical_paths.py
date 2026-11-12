@@ -1,4 +1,5 @@
 """Fail the scheduled measurement when a customer's entry point or canonical host breaks."""
+import json
 import os
 import re
 from html.parser import HTMLParser
@@ -8,9 +9,18 @@ from urllib.parse import urlsplit
 
 class Titles(HTMLParser):
     def __init__(self):
-        super().__init__(); self.tags = []
+        super().__init__(); self.tags = []; self.ld = False; self.types = set()
     def handle_starttag(self, tag, attrs):
         self.tags.append(tag)
+        if tag == "script": self.ld = dict(attrs).get("type") == "application/ld+json"
+    def handle_endtag(self, tag):
+        if tag == "script": self.ld = False
+    def handle_data(self, data):
+        if self.ld:
+            parsed = json.loads(data)
+            for node in parsed if isinstance(parsed, list) else [parsed]:
+                if isinstance(node, dict) and isinstance(node.get("@type"), str):
+                    self.types.add(node["@type"])
 
 class NoRedirect(HTTPRedirectHandler):
     def redirect_request(self, *args): return None
@@ -19,7 +29,7 @@ CHECKS = {
     "xn--y43bx4q.kr": [("/", "h1"), ("/compare/", "h1"), ("/cars/", "h1"), ("/llms.txt", "/cars/"), ("/sitemap.xml", "/cars/")],
     "noahgroup.co.kr": [("/", "h1"), ("/contact.html", "form"), ("/pay-result.html", "noindex")],
     "noahhomepage.co.kr": [("/", "h1"), ("/contact", "form"), ("/checkout", "form"), ("/robots.txt", "ai-train=yes")],
-    "selfmarketing.ai.kr": [("/", "h1"), ("/pricing/", "application/ld+json"), ("/start/", "noindex")],
+    "selfmarketing.ai.kr": [("/", "h1"), ("/pricing/", "application/ld+json"), ("/start/", "noindex"), ("/notice/", "schema:CollectionPage"), ("/privacy/", "schema:WebPage"), ("/terms/", "schema:WebPage")],
 }
 def get(url, follow=True, ua="CC-Operations-Check/1.0"):
     try:
@@ -34,7 +44,8 @@ failures=[]
 for path, marker in CHECKS[host]:
     status, final, body, _=get(site+path)
     parser=Titles();parser.feed(body)
-    valid=marker in parser.tags if marker in ("h1","form") else marker in body
+    valid=(marker.split(":",1)[1] in parser.types if marker.startswith("schema:") else
+           marker in parser.tags if marker in ("h1","form") else marker in body)
     check(path + " " + str(status) + " " + marker, status==200 and urlsplit(final).hostname==host and valid)
 probe="/?utm_source=ops_scheme_check"
 s,_,_,h=get("http://"+host+probe,False)

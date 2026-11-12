@@ -16,8 +16,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 # Allow one concurrent deployment; cancel in-progress runs of the same group.
 concurrency:
@@ -27,6 +25,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
     steps:
       - uses: actions/checkout@v4
 
@@ -41,13 +42,13 @@ jobs:
       # Calculator unit tests + the blog publish gate (content/blog/*.md).
       # A post that fails the gate blocks the deploy.
       - name: Test (calculators + blog publish gate)
-        run: npm test
+        run: |
+          npm test
+          node --test scripts/test-payment-webhook.mjs
 
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       # A custom domain serves the site at the root, so basePath must be empty.
       # We can't read that from configure-pages on the very first run: Pages only
@@ -129,6 +130,10 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

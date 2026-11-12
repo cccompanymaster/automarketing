@@ -63,8 +63,12 @@ export function InquiryModal({
     setFailure(null);
     try {
       const res = await submitInquiry(input());
+      if (res.via === "webhook") {
+        setFailure("전송을 요청했지만 접수번호를 확인할 수 없어요. 중복 제출 전에 카카오톡이나 전화로 확인해 주세요.");
+        return;
+      }
       track("generate_lead", { topic });
-      setDone(res.via === "server" ? res.code : "");
+      setDone(res.code);
     } catch (e) {
       setFailure(e instanceof InquiryError ? e.message : "접수에 실패했어요. 잠시 후 다시 시도해 주세요.");
     } finally {

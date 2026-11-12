@@ -23,7 +23,7 @@ const SITE_DESCRIPTION =
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.example",
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.ai.kr",
   ),
   title: {
     default: SITE_TITLE,

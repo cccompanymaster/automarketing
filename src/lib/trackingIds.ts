@@ -19,7 +19,7 @@ export const GTM_ID = prodOnly(process.env.NEXT_PUBLIC_GTM_ID || "");
  * GA4 property, loaded directly with gtag.js. Don't also add a GA4 tag inside
  * GTM — page views would be counted twice.
  */
-export const GA4_ID = prodOnly(process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || "G-DFPTX589SZ");
+export const GA4_ID = prodOnly(process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || "G-6SKM7F1QRJ");
 
 /** Microsoft Clarity project id (heatmaps + session replay). clarity.microsoft.com */
 export const CLARITY_ID = prodOnly(process.env.NEXT_PUBLIC_CLARITY_ID || "");

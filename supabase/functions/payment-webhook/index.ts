@@ -14,7 +14,7 @@
 //       PortOne API 로 결제 상태/금액 재조회 → 검증되면 캐시 적립.
 
 import { createClient } from "npm:@supabase/supabase-js@^2.108.2";
-import { Webhook, PaymentClient } from "npm:@portone/server-sdk@^0.18.0";
+import { Webhook, Payment, PaymentClient } from "npm:@portone/server-sdk@0.18.0";
 
 const PORTONE_API_SECRET = Deno.env.get("PORTONE_API_SECRET");
 const PORTONE_WEBHOOK_SECRET = Deno.env.get("PORTONE_WEBHOOK_SECRET");
@@ -25,7 +25,7 @@ const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 // is credited at the supply value; before that 1원 = 1캐시.
 // Must match cashForPayment in src/lib/cash.ts and the bank-charge RPC.
 const VAT_START = Date.parse("2026-11-06T00:00:00+09:00");
-const cashFor = (krw: number) => (Date.now() >= VAT_START ? Math.floor((krw * 10) / 11) : krw);
+const cashFor = (krw: number, paidAt: number) => (paidAt >= VAT_START ? Math.floor((krw * 10) / 11) : krw);
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -60,30 +60,47 @@ Deno.serve(async (req: Request) => {
   }
 
   // 2) PortOne API 로 결제 상태/금액을 서버에서 재조회 (클라이언트 값 신뢰 금지).
-  const portone = new PaymentClient({ secret: PORTONE_API_SECRET });
-  const detail = await portone.getPayment({ paymentId: payment.paymentId });
+  const portone = PaymentClient({ secret: PORTONE_API_SECRET });
+  let detail;
+  try { detail = await portone.getPayment({ paymentId: payment.paymentId }); }
+  catch { return json({ error: "provider verification unavailable" }, 502); }
+  if (Payment.isUnrecognizedPayment(detail)) return json({ error: "unknown payment status" }, 502);
+  if (detail.id !== payment.paymentId || detail.currency !== "KRW") return json({ error: "unexpected payment" }, 422);
 
+  if (detail.status === "CANCELLED" || detail.status === "PARTIAL_CANCELLED") {
+    const amount = detail.amount;
+    if (!amount || !Number.isSafeInteger(amount.total) || !Number.isSafeInteger(amount.cancelled)
+        || amount.cancelled <= 0 || amount.total < amount.cancelled) return json({ error: "invalid verified amount" }, 502);
+    const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+    const { error } = await admin.from("payment_cancellation_reviews").insert({
+      payment_id: payment.paymentId, cancelled_krw: amount.cancelled, total_krw: amount.total,
+      provider_status: detail.status,
+    });
+    // The provider retries on a non-2xx; identical cumulative amounts are idempotent.
+    if (error && error.code !== "23505") return json({ error: "cancellation review unavailable" }, 503);
+    return json({ ok: true, review: "recorded" });
+  }
   if (detail.status !== "PAID") {
     // 아직 미결제/취소 등 — 적립하지 않음(웹훅은 200으로 수신 확인).
     return json({ ok: true, skipped: detail.status });
   }
 
-  const userId = (detail.customData ? JSON.parse(detail.customData) : {})?.userId as
-    | string
-    | undefined;
+  let userId: string | undefined;
+  try { userId = JSON.parse(detail.customData || "{}")?.userId; } catch { /* invalid provider metadata */ }
   const amountKrw = detail.amount?.total as number | undefined;
-  if (!userId || !amountKrw) return json({ error: "missing user or amount" }, 400);
+  const paidAt = Date.parse(detail.paidAt);
+  if (!userId || !amountKrw || !Number.isSafeInteger(amountKrw) || amountKrw <= 0 || !Number.isFinite(paidAt)) return json({ error: "invalid payment metadata" }, 400);
 
   // 3) service_role 로 적립. credit_payment 는 payment_id 기준 멱등 처리되므로
   //    동일 웹훅이 재전송돼도 중복 적립되지 않습니다.
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
   const { error } = await admin.rpc("credit_payment", {
     p_payment_id: payment.paymentId,
-    p_amount: cashFor(amountKrw),
+    p_amount: cashFor(amountKrw, paidAt),
     p_uid: userId,
     p_memo: `충전 (${payment.paymentId})`,
   });
-  if (error) return json({ error: error.message }, 500);
+  if (error) return json({ error: "payment credit unavailable" }, 500);
 
   return json({ ok: true });
 });

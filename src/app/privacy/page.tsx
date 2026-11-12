@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AdConsent } from "@/components/AdConsent";
 import { LegalPage } from "@/components/LegalPage";
 import { PRIVACY } from "@/lib/legal";
 
@@ -9,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPage() {
-  return <LegalPage doc={PRIVACY} />;
+  return <><LegalPage doc={PRIVACY} /><AdConsent /></>;
 }

@@ -3,12 +3,14 @@
 // Scam / impersonation notice — shown as a popup once per browser. After the
 // user dismisses it (stored in localStorage), it never shows again.
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useModal } from "@/components/useModal";
 
 const SEEN_KEY = "mb_scam_notice_seen";
 
 export function ScamNoticePopup() {
   const [open, setOpen] = useState(false);
+  const panel = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let seen = false;
@@ -30,24 +32,9 @@ export function ScamNoticePopup() {
     } catch {
       /* ignore */
     }
-    // Move the user into the services section after confirming.
-    try {
-      document.getElementById("services")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    } catch {
-      /* ignore */
-    }
   };
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [open]);
+  useModal(panel, open, close);
 
   if (!open) return null;
 
@@ -61,6 +48,7 @@ export function ScamNoticePopup() {
       style={{ zIndex: 150 }}
     >
       <div
+        ref={panel}
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-sm rounded-2xl bg-white p-7 text-center shadow-xl"
         style={{ animation: "popIn .35s ease both" }}
@@ -80,7 +68,7 @@ export function ScamNoticePopup() {
         <button
           type="button"
           onClick={close}
-          className="mt-6 w-full rounded-xl bg-emerald-600 py-3.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
+          className="mt-6 w-full rounded-xl bg-emerald-800 py-3.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
         >
           확인했어요
         </button>

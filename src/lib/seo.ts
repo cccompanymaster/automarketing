@@ -12,7 +12,7 @@ import { COMPANY } from "@/lib/company";
 import { PRICING, priceSortValue } from "@/lib/pricing";
 import type { Product } from "@/lib/products";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.example").replace(
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.ai.kr").replace(
   /\/$/,
   "",
 );

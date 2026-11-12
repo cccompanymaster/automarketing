@@ -17,7 +17,7 @@ import {
 
 export const dynamic = "force-static";
 
-const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.example").replace(/\/$/, "");
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.ai.kr").replace(/\/$/, "");
 const url = (path: string) => `${SITE}${path}`;
 const pct = (r: number) => `${Math.round(r * 100000) / 1000}%`;
 

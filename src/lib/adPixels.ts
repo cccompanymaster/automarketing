@@ -27,6 +27,10 @@ export const PIXEL_EVENTS: Record<string, { naver?: string; meta?: string; kakao
 };
 
 const ids = { naver: NAVER_ANALYTICS_ID, meta: META_PIXEL_ID, kakao: KAKAO_PIXEL_ID, karrot: KARROT_PIXEL_ID };
+export const hasAdProvider = Object.values(ids).some(Boolean);
+export function hasAdConsent() {
+  try { return typeof window !== "undefined" && localStorage.getItem("cc_ad_measure_v1") === "yes"; } catch { return false; }
+}
 const queues = { naver: [] as Array<() => void>, kakao: [] as Array<() => void>, karrot: [] as Array<() => void> };
 const ready = { naver: false, kakao: false, karrot: false };
 let started = false;
@@ -57,7 +61,7 @@ function flush(key: keyof typeof queues) {
 
 /** Load the pixels that have an id and record the first page view. Safe to call more than once. */
 export function startAdPixels() {
-  if (started || typeof window === "undefined") return;
+  if (started || !hasAdConsent()) return;
   started = true;
   const w = win();
   if (ids.naver) {
@@ -104,7 +108,7 @@ export function startAdPixels() {
 
 /** Client-side navigation: each pixel counts a new page view. */
 export function sendPageView() {
-  if (typeof window === "undefined") return;
+  if (!hasAdConsent()) return;
   const w = win();
   if (ids.naver) whenReady("naver", () => w.wcs_do?.());
   if (ids.meta) safely(() => w.fbq?.("track", "PageView"));
@@ -115,7 +119,7 @@ export function sendPageView() {
 /** Forward one funnel event to every pixel that is on. */
 export function sendConversion(event: string, params: Params = {}) {
   const map = PIXEL_EVENTS[event];
-  if (!map || typeof window === "undefined") return;
+  if (!map || !hasAdConsent()) return;
   const w = win();
   const value = Number(params.value) || 0;
   if (ids.naver && map.naver) {

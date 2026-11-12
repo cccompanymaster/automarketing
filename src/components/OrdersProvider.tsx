@@ -38,7 +38,7 @@ interface OrdersContextValue {
   orders: Order[];
   loading: boolean;
   /** Pay with cash and record the order (status starts at "received"). */
-  placeOrder: (input: PlaceOrderInput) => Promise<void>;
+  placeOrder: (input: PlaceOrderInput) => Promise<string | null>;
   refresh: () => Promise<void>;
 }
 
@@ -134,6 +134,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       if (!user) throw new Error("로그인이 필요합니다.");
       const request = input.request?.trim() || undefined;
       if (supabase) {
+        let transactionId: unknown;
         let error: { message?: string; code?: string } | null = null;
         try {
           const args = {
@@ -145,7 +146,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
           };
           // Attachments / a password go through place_order_v2 (same pricing
           // and dedup, plus the extras in the same transaction).
-          ({ error } =
+          ({ data: transactionId, error } =
             input.files?.length || input.secret
               ? await supabase.rpc("place_order_v2", { ...args, p_files: input.files ?? [], p_secret: input.secret ?? null })
               : await supabase.rpc("place_order", args));
@@ -157,7 +158,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
           await Promise.all([refresh(), refreshWallet()]).catch(() => {});
         }
         if (error) throw new Error(orderErrorMessage(error));
-        return;
+        return typeof transactionId === "string" && transactionId ? transactionId : null;
       }
       // Stub: spend locally, then keep the order alongside the session.
       const base = input.qty > 1 ? `${input.productName} ×${input.qty}` : input.productName;
@@ -173,6 +174,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       const next = [order, ...loadStub(user.id)].slice(0, 100);
       saveStub(user.id, next);
       setOrders(next);
+      return null; // Local demo orders do not represent revenue.
     },
     [supabase, user, refresh, refreshWallet, spend],
   );

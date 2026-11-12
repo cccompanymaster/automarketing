@@ -28,7 +28,7 @@ const KEY = "selfmarketing.source";
 const TTL = 90 * 864e5;
 
 const AI: Array<[RegExp, string]> = [
-  [/(^|\.)(chatgpt\.com|openai\.com)$/, "ChatGPT"], [/(^|\.)perplexity\.ai$/, "Perplexity"], [/(^|\.)claude\.ai$/, "Claude"],
+  [/(^|\.)(chatgpt\.com|chat\.openai\.com)$/, "ChatGPT"], [/(^|\.)perplexity\.ai$/, "Perplexity"], [/(^|\.)claude\.ai$/, "Claude"],
   [/^(gemini|bard)\.google\.com$/, "Gemini"], [/(^|\.)copilot\.microsoft\.com$|(^|\.)copilot\.cloud\.microsoft$/, "Copilot"],
   [/(^|\.)wrtn\.ai$/, "뤼튼"], [/^clova-x\.naver\.com$/, "CLOVA X"], [/(^|\.)liner\.com$/, "Liner"], [/(^|\.)you\.com$/, "You.com"],
   [/(^|\.)phind\.com$/, "Phind"], [/(^|\.)deepseek\.com$/, "DeepSeek"], [/(^|\.)grok\.com$/, "Grok"],
@@ -61,7 +61,7 @@ export function touchFromVisit(href: string, referrer: string, now = Date.now())
   } else if (q.has("gclid") || q.has("gbraid") || q.has("wbraid")) {
     t = { s: "google", m: "cpc" };
   } else if (q.has("fbclid")) {
-    t = { s: "meta", m: ref && /facebook|instagram/.test(ref) ? "social" : "paid" };
+    t = { s: "meta", m: "social" };
   } else if (ref) {
     t = { s: ref, m: SEARCH.test(ref) ? "organic" : SOCIAL.test(ref) ? "social" : "referral" };
   }

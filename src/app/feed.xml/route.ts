@@ -6,7 +6,7 @@ import { COMPANY } from "@/lib/company";
 
 export const dynamic = "force-static";
 
-const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.example").replace(/\/$/, "");
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.ai.kr").replace(/\/$/, "");
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const rfc822 = (d: string) => new Date(`${d}T00:00:00+09:00`).toUTCString();

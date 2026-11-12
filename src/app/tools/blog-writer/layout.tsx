@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { OG_BASE } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbLd } from "@/lib/seo";
 
 // The AI writer is a public tool page — give it its own searchable identity.
 export const metadata: Metadata = {
@@ -11,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <><JsonLd data={breadcrumbLd([{ name: "홈", path: "/" }, { name: "AI 블로그 원고 작성", path: "/tools/blog-writer/" }])} />{children}</>;
 }

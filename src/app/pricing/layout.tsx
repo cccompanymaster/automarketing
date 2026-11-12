@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
+import { absoluteUrl, breadcrumbLd } from "@/lib/seo";
+import { storeProducts } from "@/lib/store";
+import { PRICING } from "@/lib/pricing";
 
 // Public store: guests browse every product and price; ordering asks them to sign up.
 export const metadata: Metadata = {
@@ -9,5 +13,15 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return children;
+  const catalog = storeProducts(PRICING);
+  return <>
+    <JsonLd data={[
+      breadcrumbLd([{ name: "홈", path: "/" }, { name: "상품·요금", path: "/pricing/" }]),
+      { "@context": "https://schema.org", "@type": "ItemList", name: "마케팅 상품·요금",
+        itemListElement: catalog.map((product, index) => ({
+          "@type": "ListItem", position: index + 1, url: absoluteUrl("/store/" + product.id + "/"),
+        })) },
+    ]} />
+    {children}
+  </>;
 }

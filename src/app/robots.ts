@@ -4,7 +4,7 @@ import type { MetadataRoute } from "next";
 export const dynamic = "force-static";
 
 // TODO(backend): set NEXT_PUBLIC_SITE_URL to the production domain.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.example";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.ai.kr";
 
 // Logged-in skeleton — no value in search indexes.
 const PRIVATE = ["/mypage", "/admin", "/auth"];

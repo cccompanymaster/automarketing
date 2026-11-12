@@ -11,12 +11,11 @@ import { storeProducts } from "@/lib/store";
 export const dynamic = "force-static";
 
 // TODO(backend): set NEXT_PUBLIC_SITE_URL to the production domain.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.example";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://selfmarketing.ai.kr";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: `${SITE_URL}/`, priority: 1 },
-    { url: `${SITE_URL}/start/`, priority: 0.9 },
     ...GROUP_KEYS.map((key) => ({
       url: `${SITE_URL}/services/${key}/`,
       priority: 0.85,

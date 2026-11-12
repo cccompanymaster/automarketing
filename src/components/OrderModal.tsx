@@ -272,7 +272,7 @@ export function OrderModal({
     try {
       // One call: cash is deducted and the order (with the request note) is
       // recorded together, so a paid order can't go missing.
-      await placeOrder({
+      const transactionId = await placeOrder({
         productName: variant.name,
         amountCash: totalCash,
         qty: quantity,
@@ -281,7 +281,13 @@ export function OrderModal({
         files: filesOf(spec, form),
         secret: secretOf(spec, form),
       });
-      track("purchase", { item_name: variant.name, quantity, currency: "KRW", value: totalCash });
+      if (transactionId) {
+        track("purchase", {
+          transaction_id: transactionId, currency: "KRW", value: totalCash,
+          item_name: variant.name, quantity,
+          items: [{ item_name: variant.name, price: variant.unitKrw, quantity }],
+        });
+      }
       onOrdered?.();
       toast.success(`주문 완료 — ${formatCash(totalCash)} 차감되었습니다.`);
       onClose();

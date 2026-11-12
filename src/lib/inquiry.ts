@@ -40,7 +40,7 @@ const SERVER_ERRORS: Record<string, string> = {
 
 /** Submit through the site. Throws InquiryError when nothing could be sent. */
 export async function submitInquiry(input: InquiryInput): Promise<InquiryResult> {
-  const page = typeof window !== "undefined" ? window.location.href : "";
+  const page = typeof window !== "undefined" ? window.location.origin + window.location.pathname : "";
   const sb = getSupabase();
   if (sb) {
     const args = {

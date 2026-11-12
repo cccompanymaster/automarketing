@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
+import { absoluteUrl } from "@/lib/seo";
 import { AdConsent } from "@/components/AdConsent";
 import { LegalPage } from "@/components/LegalPage";
 import { PRIVACY } from "@/lib/legal";
@@ -10,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPage() {
-  return <><LegalPage doc={PRIVACY} /><AdConsent /></>;
+  return <><JsonLd data={{ "@context": "https://schema.org", "@type": "WebPage", name: "개인정보처리방침", url: absoluteUrl("/privacy/"), inLanguage: "ko" }} /><LegalPage doc={PRIVACY} /><AdConsent /></>;
 }

@@ -1,6 +1,8 @@
 // 공지사항 목록.
 
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
+import { absoluteUrl } from "@/lib/seo";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -16,6 +18,7 @@ export default function NoticeListPage() {
   const notices = sortedNotices();
   return (
     <>
+      <JsonLd data={{ "@context": "https://schema.org", "@type": "CollectionPage", name: "공지사항", url: absoluteUrl(NOTICE_PATH), mainEntity: { "@type": "ItemList", itemListElement: notices.map((n, i) => ({ "@type": "ListItem", position: i + 1, name: n.title, url: absoluteUrl(NOTICE_PATH + n.slug + "/") })) } }} />
       <SiteHeader />
       <main className="flex-1">
         <div className="mx-auto max-w-3xl px-5 py-14">

@@ -2,6 +2,8 @@
 // terms in full, as 약관규제법 requires posting both together.
 
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
+import { absoluteUrl } from "@/lib/seo";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -37,6 +39,7 @@ export default async function NoticePage({ params }: { params: Promise<{ slug: s
 
   return (
     <>
+      <JsonLd data={{ "@context": "https://schema.org", "@type": "Article", headline: notice.title, datePublished: notice.date, mainEntityOfPage: absoluteUrl(NOTICE_PATH + notice.slug + "/"), author: { "@type": "Organization", name: "마케팅방주", url: absoluteUrl("/") } }} />
       <SiteHeader />
       <main className="flex-1">
         <article className="mx-auto max-w-3xl px-5 py-14">

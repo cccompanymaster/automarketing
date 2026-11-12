@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
+import { absoluteUrl } from "@/lib/seo";
 import { LegalPage } from "@/components/LegalPage";
 import { TERMS } from "@/lib/legal";
 import { NOTICE_PATH } from "@/lib/notices";
@@ -11,6 +13,8 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
+    <>
+    <JsonLd data={{ "@context": "https://schema.org", "@type": "WebPage", name: "이용약관", url: absoluteUrl("/terms/"), inLanguage: "ko" }} />
     <LegalPage
       doc={TERMS}
       notice={{
@@ -18,5 +22,6 @@ export default function TermsPage() {
         label: "개정 약관은 2026년 11월 6일부터 시행돼요 — 개정 안내 보기",
       }}
     />
+    </>
   );
 }

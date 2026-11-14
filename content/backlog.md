@@ -74,5 +74,9 @@
 | 사업장현황신고 기한 | 추정 (소득세법 질문) | question | scheduled 2026-11-15 | /blog/business-status-report/ |
 | 광고 문자 보내는 규칙 | 칼럼 (채널 운영 가이드) | question | scheduled 2026-11-15 | /column/ad-sms-rules/ |
 | 마케팅 성과 지표 뜻 | 칼럼 (성과 측정 가이드) | glossary | scheduled 2026-11-15 | /column/marketing-metrics-glossary/ |
+| 임금 지급 원칙 | 추정 (근로기준법 질문) | question | scheduled 2026-11-16 | /blog/wage-payment-rules/ |
+| 청소년 아르바이트 고용 조건 | 추정 (근로기준법 질문) | question | scheduled 2026-11-16 | /blog/teen-part-time-hiring/ |
+| 할인 이벤트 기획 방법 | 칼럼 (운영 가이드·계산기 연결) | question | scheduled 2026-11-16 | /column/store-promotion-planning/ |
+| 사장님 인터뷰 글 쓰는 법 | 칼럼 (상품 연결: 전문가 칼럼·인터뷰) | question | scheduled 2026-11-16 | /column/owner-interview-content/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

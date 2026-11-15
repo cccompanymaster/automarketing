@@ -6,7 +6,7 @@
 
 import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
-import { stashPendingConsents, type ConsentChoice } from "@/lib/consents";
+import { stashPendingConsents, takePendingConsents, type ConsentChoice } from "@/lib/consents";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { useEffect, useState } from "react";
 import {
@@ -86,6 +86,7 @@ export function SocialLoginButtons({
   const start = async (provider: SocialProvider) => {
     const choice = consents?.() ?? null;
     if (isSupabaseConfigured) {
+      takePendingConsents();
       if (choice) stashPendingConsents(choice);
       stashOAuthReturn({ intent, next });
     }
@@ -93,11 +94,12 @@ export function SocialLoginButtons({
       await loginWithSocial(provider);
       if (!isSupabaseConfigured) onDone?.();
     } catch (err) {
+      takePendingConsents();
       toast.error(err instanceof Error ? err.message : "로그인을 시작하지 못했습니다.");
     }
   };
 
-  const verb = intent === "signup" ? "로 3초만에 시작하기" : "로 로그인";
+  const verb = intent === "signup" ? "로 가입하기" : "로 로그인";
 
   return (
     <div className="space-y-2.5">

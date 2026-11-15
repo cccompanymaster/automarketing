@@ -20,15 +20,10 @@ import { LoginForm } from "@/components/LoginForm";
 import { pricingHref } from "@/components/ProductDetailBody";
 import { COMPANY } from "@/lib/company";
 import { getProduct } from "@/lib/products";
+import { safeOAuthNext } from "@/lib/socialAuth";
 import { BUY_PARAM } from "@/components/QuickOrder";
 
 type Stage = "entry" | "onboarding" | "signup" | "login";
-
-/** Only same-site paths ("/store/x/?buy=…"), never "//host" or a full URL. */
-function safeNext(v: string | null): string | undefined {
-  if (!v || !v.startsWith("/") || v.startsWith("//") || v.includes("\\")) return undefined;
-  return v;
-}
 
 function StartFunnel() {
   const searchParamsForStage = useSearchParams();
@@ -41,7 +36,7 @@ function StartFunnel() {
   const service = getProduct(searchParams.get("service") ?? "");
   const buy = searchParams.get(BUY_PARAM);
   // `next`: an internal page to return to (the store's 주문하기); `signup=1` skips the story.
-  const next = safeNext(searchParams.get("next"));
+  const next = safeOAuthNext(searchParams.get("next"));
   const nextBuy = next ? new URL(next, "https://selfmarketing.ai.kr").searchParams.get(BUY_PARAM) : null;
   const straightToSignup = Boolean(buy) || searchParams.get("signup") === "1";
   const afterHref =

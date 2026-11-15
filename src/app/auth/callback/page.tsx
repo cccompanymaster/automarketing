@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { track } from "@/lib/analytics";
 import { takeOAuthReturn } from "@/lib/socialAuth";
+import { takePendingConsents } from "@/lib/consents";
 
 // How long to wait for the session after hydration before giving up.
 const SESSION_WAIT_MS = 5000;
@@ -23,8 +24,6 @@ function providerError(): string | null {
   if (!code) return null;
   if (code === "access_denied") return "로그인을 취소하셨어요.";
   const detail = params.get("error_description") ?? "";
-  // Keep provider/Supabase English details out of the UI (console only).
-  if (detail) console.warn("[auth callback]", code, detail);
   if (/email/i.test(detail)) return "이메일 제공에 동의해야 가입할 수 있어요. 다시 시도하면서 이메일 항목에 동의해 주세요.";
   if (/expired|invalid/i.test(detail)) return "인증 링크가 만료됐거나 이미 사용됐어요.";
   return "로그인 중 문제가 생겼어요.";
@@ -38,7 +37,8 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     if (!hydrated || settled.current) return;
-    if (user) {
+    const err = providerError();
+    if (user && !err) {
       settled.current = true;
       const ret = takeOAuthReturn();
       track(ret?.intent === "signup" ? "signup_complete" : "login_success");
@@ -47,7 +47,10 @@ export default function AuthCallbackPage() {
     }
     // Provider errors come back immediately; otherwise give the session a
     // moment to land via onAuthStateChange before calling it a failure.
-    const err = providerError();
+    if (err) {
+      takePendingConsents();
+      takeOAuthReturn();
+    }
     const timer = setTimeout(
       () => {
         if (settled.current) return;

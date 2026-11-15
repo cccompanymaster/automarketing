@@ -127,7 +127,7 @@ export type ConsentChoice = Omit<ConsentState, "agreedAt">;
 
 export function stashPendingConsents(c: ConsentChoice): void {
   try {
-    localStorage.setItem(PENDING_KEY, JSON.stringify({ ...c, at: Date.now() }));
+    sessionStorage.setItem(PENDING_KEY, JSON.stringify({ ...c, at: Date.now() }));
   } catch {
     /* ignore */
   }
@@ -136,8 +136,8 @@ export function stashPendingConsents(c: ConsentChoice): void {
 /** Read and clear the parked choice (null if absent or stale). */
 export function takePendingConsents(): ConsentChoice | null {
   try {
-    const raw = localStorage.getItem(PENDING_KEY);
-    localStorage.removeItem(PENDING_KEY);
+    const raw = sessionStorage.getItem(PENDING_KEY);
+    sessionStorage.removeItem(PENDING_KEY);
     if (!raw) return null;
     const c = JSON.parse(raw) as ConsentChoice & { at?: number };
     if (!c.at || Date.now() - c.at > PENDING_MAX_AGE_MS) return null;

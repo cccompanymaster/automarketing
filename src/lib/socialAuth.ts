@@ -2,7 +2,7 @@
 //
 // OAuth leaves the site and comes back to /auth/callback, so anything the page
 // knew before the redirect (where to land afterwards, whether this was a
-// signup) is parked in localStorage here and picked up on return.
+// signup) is kept in the initiating tab and picked up on return.
 
 import { isSupabaseConfigured } from "@/lib/supabase";
 
@@ -45,6 +45,16 @@ export function socialProviderFromSupabase(id: string | undefined): SocialProvid
   return hit ?? null;
 }
 
+export function safeOAuthNext(value?: string | null): string | undefined {
+  if (!value?.startsWith("/") || value.includes("\\") || Array.from(value).some(c => c.charCodeAt(0) < 32 || c.charCodeAt(0) === 127)) return undefined;
+  const base = "https://selfmarketing.ai.kr";
+  try {
+    return new URL(value, base).origin === base ? value : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 const RETURN_KEY = "selfmarketing.oauth.return";
 // A handoff older than this belongs to an abandoned attempt, not this return.
 const MAX_AGE_MS = 30 * 60 * 1000;
@@ -57,7 +67,7 @@ export interface OAuthReturn {
 
 export function stashOAuthReturn(r: OAuthReturn): void {
   try {
-    localStorage.setItem(RETURN_KEY, JSON.stringify({ ...r, at: Date.now() }));
+    sessionStorage.setItem(RETURN_KEY, JSON.stringify({ ...r, at: Date.now() }));
   } catch {
     /* ignore */
   }
@@ -66,13 +76,13 @@ export function stashOAuthReturn(r: OAuthReturn): void {
 /** Read and clear the handoff. Only site-relative paths are honored. */
 export function takeOAuthReturn(): OAuthReturn | null {
   try {
-    const raw = localStorage.getItem(RETURN_KEY);
-    localStorage.removeItem(RETURN_KEY);
+    const raw = sessionStorage.getItem(RETURN_KEY);
+    sessionStorage.removeItem(RETURN_KEY);
     if (!raw) return null;
     const r = JSON.parse(raw) as OAuthReturn & { at?: number };
     if (!r.at || Date.now() - r.at > MAX_AGE_MS) return null;
     // Never redirect off-site (e.g. "//evil.example") from stored state.
-    const next = r.next && r.next.startsWith("/") && !r.next.startsWith("//") ? r.next : undefined;
+    const next = safeOAuthNext(r.next);
     return { intent: r.intent === "signup" ? "signup" : "login", next };
   } catch {
     return null;

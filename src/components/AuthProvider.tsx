@@ -261,9 +261,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           provider: SOCIAL_PROVIDERS[provider].supabaseId as "kakao",
           options: {
             redirectTo: `${siteRoot()}/auth/callback/`,
-            // Kakao: ask for the same extra items the signup form collects
-            // (휴대폰 필수, 성별·연령대 선택) — must match the 동의항목 review.
-            ...(provider === "kakao" ? { scopes: "phone_number gender age_range" } : {}),
+            // The account email is used to deliver purchased work. Other profile fields can be entered on site.
+            ...(provider === "kakao" ? { queryParams: { scope: "profile_nickname account_email" } } : {}),
           },
         });
         if (error) throw new Error(koreanAuthError(error.message));

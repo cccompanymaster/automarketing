@@ -78,5 +78,9 @@
 | 청소년 아르바이트 고용 조건 | 추정 (근로기준법 질문) | question | scheduled 2026-11-16 | /blog/teen-part-time-hiring/ |
 | 할인 이벤트 기획 방법 | 칼럼 (운영 가이드·계산기 연결) | question | scheduled 2026-11-16 | /column/store-promotion-planning/ |
 | 사장님 인터뷰 글 쓰는 법 | 칼럼 (상품 연결: 전문가 칼럼·인터뷰) | question | scheduled 2026-11-16 | /column/owner-interview-content/ |
+| 성희롱 예방교육 의무 | 추정 (남녀고용평등법 질문) | question | scheduled 2026-11-17 | /blog/harassment-prevention-training/ |
+| 가게 CCTV 설치 규칙 | 추정 (개인정보 보호법 질문) | question | scheduled 2026-11-17 | /blog/store-cctv-rules/ |
+| 가게 오픈 전 마케팅 준비 | 칼럼 (상품 연결: 플레이스 SEO 세팅) | question | scheduled 2026-11-17 | /column/store-opening-marketing-checklist/ |
+| 가게 SNS 콘텐츠 캘린더 만드는 법 | 칼럼 (상품 연결: AI 원고) | question | scheduled 2026-11-17 | /column/content-calendar-guide/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

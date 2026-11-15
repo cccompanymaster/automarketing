@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 // OAuth landing page — transient, never worth indexing.
 export const metadata: Metadata = {
   title: "로그인 중",
+  referrer: "no-referrer",
   robots: { index: false, follow: false },
 };
 

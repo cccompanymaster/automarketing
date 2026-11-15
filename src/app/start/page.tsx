@@ -20,15 +20,10 @@ import { LoginForm } from "@/components/LoginForm";
 import { pricingHref } from "@/components/ProductDetailBody";
 import { COMPANY } from "@/lib/company";
 import { getProduct } from "@/lib/products";
+import { safeNext } from "@/lib/socialAuth";
 import { BUY_PARAM } from "@/components/QuickOrder";
 
 type Stage = "entry" | "onboarding" | "signup" | "login";
-
-/** Only same-site paths ("/store/x/?buy=…"), never "//host" or a full URL. */
-function safeNext(v: string | null): string | undefined {
-  if (!v || !v.startsWith("/") || v.startsWith("//") || v.includes("\\")) return undefined;
-  return v;
-}
 
 function StartFunnel() {
   const searchParamsForStage = useSearchParams();

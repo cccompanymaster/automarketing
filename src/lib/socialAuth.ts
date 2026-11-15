@@ -45,6 +45,21 @@ export function socialProviderFromSupabase(id: string | undefined): SocialProvid
   return hit ?? null;
 }
 
+/**
+ * A same-site path to return to ("/store/x/?buy=…"), or undefined. Judged by
+ * the browser's own URL parser: "//host", "/\\host" and "/<tab>/host" (tabs and
+ * newlines are dropped) all resolve off-site and are refused.
+ */
+export function safeNext(v: string | null | undefined): string | undefined {
+  if (!v?.startsWith("/")) return undefined;
+  const base = "https://same.invalid";
+  try {
+    return new URL(v, base).origin === base ? v : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 const RETURN_KEY = "selfmarketing.oauth.return";
 // A handoff older than this belongs to an abandoned attempt, not this return.
 const MAX_AGE_MS = 30 * 60 * 1000;
@@ -71,9 +86,7 @@ export function takeOAuthReturn(): OAuthReturn | null {
     if (!raw) return null;
     const r = JSON.parse(raw) as OAuthReturn & { at?: number };
     if (!r.at || Date.now() - r.at > MAX_AGE_MS) return null;
-    // Never redirect off-site (e.g. "//evil.example") from stored state.
-    const next = r.next && r.next.startsWith("/") && !r.next.startsWith("//") ? r.next : undefined;
-    return { intent: r.intent === "signup" ? "signup" : "login", next };
+    return { intent: r.intent === "signup" ? "signup" : "login", next: safeNext(r.next) };
   } catch {
     return null;
   }

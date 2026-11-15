@@ -1,6 +1,8 @@
 -- 마케팅방주 — 인증 + 캐시(포인트) 스키마
 -- Supabase SQL Editor에 붙여넣어 실행하세요. (1원 = 1캐시)
 -- 인증(회원가입/로그인)은 Supabase Auth가 담당하므로 별도 user 테이블은 불필요합니다.
+-- ⚠ 운영 DB는 이 파일보다 앞서 있습니다(맨 아래 "applied as migration" 목록).
+--   운영 프로젝트에 이 파일 전체를 다시 실행하지 말고, 바뀐 부분만 마이그레이션으로 적용하세요.
 
 -- 캐시 거래 원장 ------------------------------------------------------------
 create table if not exists public.cash_transactions (
@@ -22,7 +24,7 @@ alter table public.cash_transactions enable row level security;
 drop policy if exists "own rows readable" on public.cash_transactions;
 create policy "own rows readable"
   on public.cash_transactions for select
-  using (auth.uid() = user_id);
+  using ((select auth.uid()) = user_id);
 
 -- 충전 RPC ------------------------------------------------------------------
 -- 보안: 이 함수는 "돈을 만드는" 함수이므로 클라이언트가 직접 호출하면 결제 없이
@@ -133,7 +135,7 @@ alter table public.orders enable row level security;
 drop policy if exists "own orders readable" on public.orders;
 create policy "own orders readable"
   on public.orders for select
-  using (auth.uid() = user_id);
+  using ((select auth.uid()) = user_id);
 
 -- 주문 생성은 place_order RPC(캐시 차감과 한 트랜잭션)로만 가능합니다 — 아래 참고.
 -- 클라이언트 INSERT 정책은 두지 않습니다(결제 없이 주문 행을 만들 수 있었음).
@@ -223,8 +225,9 @@ security definer
 set search_path = public
 as $$
   select exists (
-    select 1 from public.admin_users
-    where email = lower(coalesce(auth.jwt() ->> 'email', ''))
+    select 1 from auth.users u
+    join public.admin_users a on a.email = lower(u.email)
+    where u.id = auth.uid() and u.email_confirmed_at is not null
   );
 $$;
 
@@ -254,7 +257,7 @@ alter table public.deliverables enable row level security;
 drop policy if exists "deliverables readable" on public.deliverables;
 create policy "deliverables readable"
   on public.deliverables for select
-  using (auth.uid() = user_id or public.is_admin());
+  using ((select auth.uid()) = user_id or (select public.is_admin()));
 -- INSERT/UPDATE 정책 없음 → 아래 RPC 로만 변경 가능.
 
 -- 관리자: 이메일로 회원을 찾아 산출물 업로드.
@@ -343,13 +346,13 @@ alter table public.consent_logs enable row level security;
 drop policy if exists "own consents readable" on public.consent_logs;
 create policy "own consents readable"
   on public.consent_logs for select
-  using (auth.uid() = user_id or public.is_admin());
+  using ((select auth.uid()) = user_id or (select public.is_admin()));
 
 -- 본인 동의 기록 추가만 허용 (수정·삭제 정책 없음 → append-only).
 drop policy if exists "own consents insertable" on public.consent_logs;
 create policy "own consents insertable"
   on public.consent_logs for insert
-  with check (auth.uid() = user_id);
+  with check ((select auth.uid()) = user_id);
 
 -- 최신 동의 상태 조회용 뷰 (사용자별 1행).
 -- security_invoker: 뷰는 기본적으로 소유자 권한으로 실행돼 RLS를 우회하고,
@@ -370,61 +373,10 @@ alter table public.orders add column if not exists request text;
 
 drop policy if exists "own orders insertable" on public.orders;  -- 이제 place_order 로만 생성
 
-create or replace function public.place_order(
-  p_product_name text,
-  p_amount bigint,
-  p_qty integer default 1,
-  p_request text default null
-)
-returns uuid
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  v_uid uuid := auth.uid();
-  v_balance bigint;
-  v_order uuid;
-  v_memo text;
-begin
-  if v_uid is null then
-    raise exception 'not authenticated';
-  end if;
-  if p_amount <= 0 then
-    raise exception 'amount must be positive';
-  end if;
-  if coalesce(trim(p_product_name), '') = '' then
-    raise exception 'product is required';
-  end if;
-  -- NOTE: 단가는 클라이언트 값입니다(단가표가 코드/시트에 있음). 관리자 화면에서
-  -- 상품·수량 대비 금액을 확인하세요. 서버 단가표 도입 시 여기서 검증합니다.
-
-  perform pg_advisory_xact_lock(hashtextextended(v_uid::text, 0));
-
-  select coalesce((
-    select balance_after from public.cash_transactions
-    where user_id = v_uid order by created_at desc limit 1
-  ), 0) into v_balance;
-
-  if v_balance < p_amount then
-    raise exception '캐시가 부족합니다';
-  end if;
-
-  insert into public.orders (user_id, product_name, amount_cash, qty, status, request)
-  values (v_uid, trim(p_product_name), p_amount, greatest(coalesce(p_qty, 1), 1), 'received',
-          nullif(left(trim(coalesce(p_request, '')), 1000), ''))
-  returning id into v_order;
-
-  v_memo := trim(p_product_name) || case when coalesce(p_qty, 1) > 1 then ' ×' || p_qty else '' end;
-  insert into public.cash_transactions (user_id, type, amount, balance_after, memo)
-  values (v_uid, 'use', -p_amount, v_balance - p_amount, v_memo);
-
-  return v_order;
-end;
-$$;
-
-revoke all on function public.place_order(text, bigint, integer, text) from public, anon;
-grant execute on function public.place_order(text, bigint, integer, text) to authenticated;
+-- The original place_order(name, amount, qty, request) charged the amount the
+-- client sent. It is replaced by the server-priced place_order(..., client_key)
+-- below (migration "server_priced_orders") and dropped for good.
+drop function if exists public.place_order(text, bigint, integer, text);
 
 -- 관리자 대시보드 ---------------------------------------------------------------
 -- auth.users 와 다른 회원의 원장·주문은 RLS 로 막혀 있으므로, is_admin() 확인 후
@@ -762,7 +714,6 @@ alter table public.charge_requests add column if not exists cash_amount bigint;
 -- (unit price × qty), refuses unknown rows / under-minimum / off-step
 -- quantities and a client amount that no longer matches ('price_changed'),
 -- and returns the existing order for a repeated client_key (no double charge).
--- The old 4-argument place_order delegates to it without a key.
 -- Whenever prices change: edit pricing.ts → npm run catalog:sql → apply
 -- supabase/catalog.sql as a migration (the test suite fails until the file
 -- matches pricing.ts).
@@ -783,3 +734,13 @@ alter table public.charge_requests add column if not exists cash_amount bigint;
 --     their own orders / cash_transactions / deliverables / charge_requests /
 --     consent_logs (RLS) and INSERT consent_logs. All other writes go through
 --     SECURITY DEFINER RPCs that check auth.uid() / is_admin().
+
+-- Security/backend pass (applied as migration "security_backend_20261109"):
+--   * drop function public.place_order(text, bigint, integer, text) — unused; the
+--     client always sends p_client_key, and this file still held its old
+--     client-priced body.
+--   * RLS policies wrap auth.uid() / is_admin() in (select ...) so they run once
+--     per query (advisor auth_rls_initplan), including the migration-only
+--     charge_requests policy:
+--       alter policy "own charge requests readable" on public.charge_requests
+--         using (user_id = (select auth.uid()));

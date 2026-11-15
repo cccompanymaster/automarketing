@@ -141,7 +141,7 @@ function StartShell() {
           <h1 className="text-xl font-extrabold text-slate-900">{COMPANY.serviceName} 무료 가입</h1>
           <p className="mt-2 text-sm leading-relaxed text-slate-600">
             가입은 무료예요. 네이버 플레이스·블로그·카카오맵·당근·인스타그램 마케팅 상품의 단가를 확인하고, 필요한 것만 캐시로
-            바로 주문할 수 있어요. 카카오·네이버 간편가입도 지원해요.
+            바로 주문할 수 있어요.
           </p>
         </div>
       </div>

@@ -82,5 +82,9 @@
 | 가게 CCTV 설치 규칙 | 추정 (개인정보 보호법 질문) | question | scheduled 2026-11-17 | /blog/store-cctv-rules/ |
 | 가게 오픈 전 마케팅 준비 | 칼럼 (상품 연결: 플레이스 SEO 세팅) | question | scheduled 2026-11-17 | /column/store-opening-marketing-checklist/ |
 | 가게 SNS 콘텐츠 캘린더 만드는 법 | 칼럼 (상품 연결: AI 원고) | question | scheduled 2026-11-17 | /column/content-calendar-guide/ |
+| 손님 개인정보 수집 동의 받는 법 | 추정 (개인정보 보호법 질문) | question | scheduled 2026-11-18 | /blog/customer-privacy-consent/ |
+| 상가 계약갱신요구권 | 추정 (상가건물 임대차보호법 질문) | question | scheduled 2026-11-18 | /blog/commercial-lease-renewal/ |
+| 단골 손님 만드는 법 | 칼럼 (운영 가이드·계산기 연결) | question | scheduled 2026-11-18 | /column/loyalty-program-guide/ |
+| 가게 숏폼 영상 찍는 법 | 칼럼 (상품 연결: 당근 스토리 영상) | question | scheduled 2026-11-18 | /column/shortform-video-guide/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

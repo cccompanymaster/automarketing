@@ -86,5 +86,9 @@
 | 상가 계약갱신요구권 | 추정 (상가건물 임대차보호법 질문) | question | scheduled 2026-11-18 | /blog/commercial-lease-renewal/ |
 | 단골 손님 만드는 법 | 칼럼 (운영 가이드·계산기 연결) | question | scheduled 2026-11-18 | /column/loyalty-program-guide/ |
 | 가게 숏폼 영상 찍는 법 | 칼럼 (상품 연결: 당근 스토리 영상) | question | scheduled 2026-11-18 | /column/shortform-video-guide/ |
+| 휴업수당 계산 | 추정 (근로기준법 질문) | question | scheduled 2026-11-19 | /blog/shutdown-allowance/ |
+| 평균임금 통상임금 차이 | 추정 (근로기준법 질문) | comparison | scheduled 2026-11-19 | /blog/average-vs-ordinary-wage/ |
+| 가게 홈페이지 필요한가 | 칼럼 (상품 연결: AEO 기본 세팅) | comparison | scheduled 2026-11-19 | /column/store-website-needed/ |
+| 메뉴판 잘 만드는 법 | 칼럼 (운영 가이드·계산기 연결) | question | scheduled 2026-11-19 | /column/menu-price-board-guide/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

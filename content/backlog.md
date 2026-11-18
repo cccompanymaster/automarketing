@@ -90,5 +90,9 @@
 | 평균임금 통상임금 차이 | 추정 (근로기준법 질문) | comparison | scheduled 2026-11-19 | /blog/average-vs-ordinary-wage/ |
 | 가게 홈페이지 필요한가 | 칼럼 (상품 연결: AEO 기본 세팅) | comparison | scheduled 2026-11-19 | /column/store-website-needed/ |
 | 메뉴판 잘 만드는 법 | 칼럼 (운영 가이드·계산기 연결) | question | scheduled 2026-11-19 | /column/menu-price-board-guide/ |
+| 직원 퇴사 통보 기간 | 추정 (민법·근로기준법 질문) | question | scheduled 2026-11-20 | /blog/employee-resignation-notice/ |
+| 부가세 환급 언제 받나요 | 추정 (부가가치세법 질문) | question | scheduled 2026-11-20 | /blog/vat-refund-timing/ |
+| 경쟁 가게 분석 방법 | 칼럼 (상품 연결: 플레이스 SEO 세팅) | question | scheduled 2026-11-20 | /column/competitor-analysis-guide/ |
+| 손님 후기 사진 홍보에 써도 되나요 | 칼럼 (채널 운영 가이드) | question | scheduled 2026-11-20 | /column/customer-photo-permission/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

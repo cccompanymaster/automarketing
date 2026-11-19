@@ -94,5 +94,9 @@
 | 부가세 환급 언제 받나요 | 추정 (부가가치세법 질문) | question | scheduled 2026-11-20 | /blog/vat-refund-timing/ |
 | 경쟁 가게 분석 방법 | 칼럼 (상품 연결: 플레이스 SEO 세팅) | question | scheduled 2026-11-20 | /column/competitor-analysis-guide/ |
 | 손님 후기 사진 홍보에 써도 되나요 | 칼럼 (채널 운영 가이드) | question | scheduled 2026-11-20 | /column/customer-photo-permission/ |
+| 음식점 보건증 발급 대상 | 추정 (식품위생법 질문) | question | scheduled 2026-11-21 | /blog/food-handler-health-certificate/ |
+| 사업용 계좌 신고 대상 | 추정 (소득세법 질문) | question | scheduled 2026-11-21 | /blog/business-bank-account-report/ |
+| 가게 이름 상표 등록 해야 하나요 | 칼럼 (운영 가이드) | comparison | scheduled 2026-11-21 | /column/store-name-trademark/ |
+| 가게 전단지 현수막 홍보 규칙 | 칼럼 (오프라인 홍보 가이드) | question | scheduled 2026-11-21 | /column/flyer-banner-rules/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

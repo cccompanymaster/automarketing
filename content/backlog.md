@@ -98,5 +98,9 @@
 | 사업용 계좌 신고 대상 | 추정 (소득세법 질문) | question | scheduled 2026-11-21 | /blog/business-bank-account-report/ |
 | 가게 이름 상표 등록 해야 하나요 | 칼럼 (운영 가이드) | comparison | scheduled 2026-11-21 | /column/store-name-trademark/ |
 | 가게 전단지 현수막 홍보 규칙 | 칼럼 (오프라인 홍보 가이드) | question | scheduled 2026-11-21 | /column/flyer-banner-rules/ |
+| 직원 채용 서류 체크리스트 | 추정 (근로기준법 질문) | question | scheduled 2026-11-22 | /blog/new-hire-documents/ |
+| 프리랜서 근로자 구분 기준 | 추정 (근로기준법 질문) | comparison | scheduled 2026-11-22 | /blog/freelancer-vs-employee/ |
+| 마케팅 결과 보고서 확인 방법 | 칼럼 (상품 연결: 산출물 컨펌·AI 인용 리포트) | question | scheduled 2026-11-22 | /column/marketing-report-review/ |
+| 가게 문의 응대 방법 | 칼럼 (운영 가이드) | question | scheduled 2026-11-22 | /column/inquiry-response-guide/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

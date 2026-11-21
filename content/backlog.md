@@ -102,5 +102,9 @@
 | 프리랜서 근로자 구분 기준 | 추정 (근로기준법 질문) | comparison | scheduled 2026-11-22 | /blog/freelancer-vs-employee/ |
 | 마케팅 결과 보고서 확인 방법 | 칼럼 (상품 연결: 산출물 컨펌·AI 인용 리포트) | question | scheduled 2026-11-22 | /column/marketing-report-review/ |
 | 가게 문의 응대 방법 | 칼럼 (운영 가이드) | question | scheduled 2026-11-22 | /column/inquiry-response-guide/ |
+| 지각 결근 임금 공제 | 추정 (근로기준법 질문) | question | scheduled 2026-11-23 | /blog/lateness-absence-pay-deduction/ |
+| 취업규칙 작성 의무 | 추정 (근로기준법 질문) | question | scheduled 2026-11-23 | /blog/work-rules-10-employees/ |
+| 가게 SNS 계정 보안 방법 | 칼럼 (채널 운영 가이드) | question | scheduled 2026-11-23 | /column/sns-account-security/ |
+| 연말 마케팅 준비 방법 | 칼럼 (시즌 가이드·블로그 배포 연결) | question | scheduled 2026-11-23 | /column/year-end-marketing-plan/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

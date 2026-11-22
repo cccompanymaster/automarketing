@@ -106,5 +106,9 @@
 | 취업규칙 작성 의무 | 추정 (근로기준법 질문) | question | scheduled 2026-11-23 | /blog/work-rules-10-employees/ |
 | 가게 SNS 계정 보안 방법 | 칼럼 (채널 운영 가이드) | question | scheduled 2026-11-23 | /column/sns-account-security/ |
 | 연말 마케팅 준비 방법 | 칼럼 (시즌 가이드·블로그 배포 연결) | question | scheduled 2026-11-23 | /column/year-end-marketing-plan/ |
+| 알바 산재 처리 방법 | 추정 (산재보험법 질문) | question | scheduled 2026-11-24 | /blog/workplace-injury-insurance/ |
+| 거래처 선물 비용 처리 | 추정 (소득세법·부가세법 질문) | comparison | scheduled 2026-11-24 | /blog/holiday-gift-expense/ |
+| 인스타그램 게시물 스토리 릴스 차이 | 칼럼 (채널 운영 가이드) | comparison | scheduled 2026-11-24 | /column/instagram-formats-guide/ |
+| 구글 비즈니스 프로필 등록 방법 | 칼럼 (상품 연결: AEO 기본 세팅) | question | scheduled 2026-11-24 | /column/google-business-profile/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

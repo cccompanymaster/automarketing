@@ -6,7 +6,7 @@
 // quieter 상세 보기 link. Channel color is only an accent.
 
 import Link from "next/link";
-import { ResultMock } from "@/components/ResultMock";
+import { ProductVisual } from "@/components/ProductVisual";
 import { displayPrice, minOrderLabel } from "@/lib/pricing";
 import { isOrderable, productFrom, type StoreProduct } from "@/lib/store";
 
@@ -66,9 +66,13 @@ export function StoreCard({
           // eslint-disable-next-line @next/next/no-img-element -- static export, local asset
           <img src={`${BASE}${p.image}`} alt="" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
         ) : (
-          <span className="block h-full w-full transition-transform duration-300 group-hover:scale-[1.03]">
-            <ResultMock groupKey={p.group.key} productId={p.id} />
-          </span>
+          <ProductVisual
+            id={p.id}
+            groupKey={p.group.key}
+            groupTitle={p.group.title}
+            variant="card"
+            className="h-full w-full transition-transform duration-300 group-hover:scale-[1.03]"
+          />
         )}
         {p.badge && (
           <span className={`absolute right-2 top-2 rounded-full px-2 py-0.5 text-[11px] font-extrabold shadow ${BADGE_STYLE[p.badge]}`}>

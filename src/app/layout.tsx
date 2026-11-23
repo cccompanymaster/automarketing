@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   // otherwise the tag points at /icon.svg on the domain root and 404s.
   icons: {
     icon: `${BASE_PATH}/icon.svg`,
-    apple: `${BASE_PATH}/icon.svg`,
+    apple: `${BASE_PATH}/apple-icon.png`,
   },
   // Search-console ownership checks (네이버 서치어드바이저, Google Search Console, Bing).
   verification: {

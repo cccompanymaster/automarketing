@@ -26,11 +26,19 @@ import { isPriceAmount, type Product } from "@/lib/products";
 
 export const BUY_PARAM = "buy";
 
+/** Same badge colors as the store cards. */
+const BADGE_STYLE: Record<string, string> = {
+  인기: "bg-rose-500 text-white",
+  추천: "bg-emerald-600 text-white",
+  신규: "bg-sky-500 text-white",
+};
+
 export function QuickOrder({
   product,
   rowNames,
   label,
   fromLabel,
+  tone = "light",
 }: {
   product: Product;
   /** Store product pages: order exactly these price rows (live prices kept). */
@@ -38,6 +46,8 @@ export function QuickOrder({
   /** Name / start price for the sticky bar when it isn't the service's own. */
   label?: string;
   fromLabel?: string;
+  /** dark: store product pages, sitting on the page's navy order band. */
+  tone?: "light" | "dark";
 }) {
   const router = useRouter();
   const { isAuthenticated, hydrated } = useAuth();
@@ -114,9 +124,119 @@ export function QuickOrder({
 
   const from = fromLabel ?? product.detail.fromPrice;
   const orderable = items.some((it) => it.amountKrw != null && !it.inquiry);
+  const intro = isBlogWrite
+    ? "주제만 입력하면 바로 원고가 나와요. 1건 500캐시."
+    : orderable
+      ? "원하는 상품을 골라 수량만 정하면 끝. 1캐시 = 1원(부가세 별도), 부족하면 주문 창에서 바로 충전돼요."
+      : "상품 특성상 맞춤 견적으로 진행돼요. 문의 남겨 주시면 24시간 안에 연락드려요.";
+  const headline = isBlogWrite
+    ? ["주제만 입력하면,", "바로 원고가 나와요."]
+    : orderable
+      ? ["원하는 옵션을 고르고,", "수량만 정하면 끝."]
+      : ["맞춤 견적으로,", "24시간 안에 연락드려요."];
+  // The dark headline already says the first half, so its intro skips it.
+  const darkIntro = isBlogWrite
+    ? "1건 500캐시."
+    : orderable
+      ? "1캐시 = 1원(부가세 별도). 잔액이 부족하면 주문 창에서 바로 충전돼요."
+      : "상품 특성상 맞춤 견적으로 진행돼요. 원하는 옵션의 견적 문의를 남겨 주세요.";
+
+  const darkSection = (
+    <section id="order" ref={sectionRef} className="scroll-mt-20 lg:scroll-mt-6">
+      <span className="inline-block rounded-md bg-emerald-300/15 px-2.5 py-1 text-sm font-bold text-emerald-200">{orderable || isBlogWrite ? "바로 주문하기" : "견적 문의"}</span>
+      <h2 className="mt-3 text-[26px] font-extrabold leading-tight tracking-tight text-white sm:text-[34px]">
+        {headline[0]}
+        <br />
+        <span className="text-emerald-300">{headline[1]}</span>
+      </h2>
+      <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-slate-300">{darkIntro}</p>
+
+      {isBlogWrite ? (
+        <Link
+          href="/tools/blog-writer"
+          onClick={() => track("cta_click", { product_slug: product.slug })}
+          className="mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-emerald-600 px-10 text-base font-bold text-white transition hover:bg-emerald-500 sm:w-auto"
+        >
+          AI 원고 바로 쓰기 →
+        </Link>
+      ) : items.length > 0 ? (
+        <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => {
+            const price = displayPrice(item);
+            return (
+              <li key={item.name} className="flex flex-col gap-2 rounded-2xl border border-white/15 bg-white/[0.06] p-5">
+                <p className="flex flex-wrap items-center gap-1.5 text-base font-bold leading-snug text-white">
+                  {item.name}
+                  {item.badge && (
+                    <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-extrabold ${BADGE_STYLE[item.badge]}`}>{item.badge}</span>
+                  )}
+                </p>
+                {price.kind === "order" ? (
+                  <p className="text-slate-300">
+                    <span className="num text-2xl font-extrabold tracking-tight text-emerald-300">{price.main}</span>
+                    {price.from && <span className="text-sm"> 부터</span>}
+                    {price.unit && <span className="num text-sm"> / {price.unit}</span>}
+                  </p>
+                ) : (
+                  <span
+                    className={`w-fit rounded-md px-2.5 py-1 text-sm font-extrabold ${
+                      price.kind === "quote" ? "bg-amber-300/15 text-amber-200" : "bg-white/10 text-slate-300"
+                    }`}
+                  >
+                    {price.kind === "quote" ? "견적 문의" : "준비 중"}
+                  </span>
+                )}
+                {item.note && <p className="text-[13px] leading-relaxed text-slate-400">{item.note}</p>}
+                {minOrderLabel(item) && <p className="text-[13px] font-semibold text-slate-300">{minOrderLabel(item)}</p>}
+                <div className="mt-auto pt-2">
+                  {price.kind === "order" ? (
+                    <button
+                      type="button"
+                      onClick={() => order(item)}
+                      className="flex h-11 w-full items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white transition hover:bg-emerald-500"
+                    >
+                      주문하기
+                    </button>
+                  ) : price.kind === "soon" ? (
+                    <span className="flex h-11 w-full items-center justify-center rounded-xl bg-white/5 text-sm font-semibold text-slate-400">준비 중</span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setInquiryTopic(item.name)}
+                      className="flex h-11 w-full items-center justify-center rounded-xl border border-white/30 text-sm font-bold text-white transition hover:bg-white/10"
+                    >
+                      견적 문의
+                    </button>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setInquiryTopic(product.name)}
+          className="mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-emerald-600 px-10 text-base font-bold text-white transition hover:bg-emerald-500 sm:w-auto"
+        >
+          견적·상담 신청하기
+        </button>
+      )}
+
+      {(orderable || isBlogWrite) && (
+        <p className="mt-6 text-[13px] leading-relaxed text-slate-400">
+          노출·순위 같은 성과는 검색·플랫폼 환경에 따라 달라질 수 있어요(보장 조건이 적힌 상품 제외).
+        </p>
+      )}
+      {!authed && (orderable || isBlogWrite) && (
+        <p className="mt-2 text-[13px] text-slate-300">처음이면 1분 가입 후, 고른 상품의 주문 화면으로 바로 돌아와요.</p>
+      )}
+    </section>
+  );
 
   return (
     <>
+      {tone === "dark" ? darkSection : (
       <section
         id="order"
         ref={sectionRef}
@@ -124,13 +244,7 @@ export function QuickOrder({
       >
         <div className="bg-emerald-700 px-6 py-5 sm:px-8">
           <h2 className="text-xl font-extrabold text-white">바로 주문하기</h2>
-          <p className="mt-1 text-sm text-emerald-50">
-            {isBlogWrite
-              ? "주제만 입력하면 바로 원고가 나와요. 1건 500캐시."
-              : orderable
-                ? "원하는 상품을 골라 수량만 정하면 끝. 1캐시 = 1원(부가세 별도), 부족하면 주문 창에서 바로 충전돼요."
-                : "상품 특성상 맞춤 견적으로 진행돼요. 문의 남겨 주시면 24시간 안에 연락드려요."}
-          </p>
+          <p className="mt-1 text-sm text-emerald-50">{intro}</p>
         </div>
 
         {isBlogWrite ? (
@@ -207,6 +321,7 @@ export function QuickOrder({
           </p>
         )}
       </section>
+      )}
 
       {/* Sticky order bar (hidden once the section itself is on screen) */}
       <div

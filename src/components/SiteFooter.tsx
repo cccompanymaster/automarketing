@@ -3,6 +3,7 @@
 // asks for it on the site's first screen; other pages link back to it.
 
 import Link from "next/link";
+import { SiteLogo } from "@/components/SiteLogo";
 import { COMPANY } from "@/lib/company";
 
 export function SiteFooter({
@@ -31,10 +32,7 @@ export function SiteFooter({
       <div className="safe-x mx-auto max-w-6xl px-5 py-10">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <div className="flex items-center gap-2 font-extrabold text-slate-900">
-              <span className="text-lg">🌱</span>
-              <span>{COMPANY.serviceName}</span>
-            </div>
+            <SiteLogo className="h-7 w-auto" />
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-500">
               대행사 없이도 손쉽게 시작하는 우리 매장 마케팅. 소상공인·온라인
               셀러·매장 운영자를 위한 셀프 마케팅 플랫폼입니다.

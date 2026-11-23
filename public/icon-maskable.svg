@@ -1,16 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="셀프마케팅">
-  <defs>
-    <linearGradient id="bgm" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#10b981"/>
-      <stop offset="1" stop-color="#047857"/>
-    </linearGradient>
-  </defs>
-  <!-- Full-bleed background for maskable safe zone -->
-  <rect width="512" height="512" fill="url(#bgm)"/>
-  <!-- Mark kept within the central 80% safe area -->
-  <g transform="translate(0,8)">
-    <path d="M256 372 V248" stroke="#ffffff" stroke-width="24" stroke-linecap="round"/>
-    <path d="M256 276 C256 212 204 178 148 178 C148 240 200 276 256 276 Z" fill="#ffffff" opacity="0.95"/>
-    <path d="M256 258 C256 202 304 170 356 170 C356 226 308 258 256 258 Z" fill="#d1fae5"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="마케팅방주"><rect width="512" height="512" fill="#059669"/><g transform="translate(128 120) scale(4)"><path d="M3.5 31.5 10 36h44l6.5-4.5-6.3 16.6A8.6 8.6 0 0 1 46.2 53.5H17.8a8.6 8.6 0 0 1-8-5.4z" fill="#FFFFFF"/><path d="M9 59.2c2.6 0 2.6-1.8 5.2-1.8s2.6 1.8 5.2 1.8 2.6-1.8 5.2-1.8 2.6 1.8 5.2 1.8 2.6-1.8 5.2-1.8 2.6 1.8 5.2 1.8 2.6-1.8 5.2-1.8 2.6 1.8 5.2 1.8" stroke="#D1FAE5" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M32 36V22" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" fill="none"/><path d="M31.4 24.5C30.5 15.8 24.6 11 15 11.2c-.2 9.4 6.1 14.6 16.4 13.3z" fill="#D1FAE5"/><path d="M32.6 22.6c.6-9.6 7.4-15.3 18.2-14.9.3 10.6-6.6 16.4-18.2 14.9z" fill="#FFFFFF"/></g></svg>

@@ -8,6 +8,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { SiteLogo, SiteSymbol } from "@/components/SiteLogo";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { useWallet } from "@/components/WalletProvider";
@@ -97,8 +98,7 @@ export function SiteHeader() {
           href="/"
           className="flex h-14 items-center gap-3 rounded-xl px-3 font-extrabold text-slate-900 transition hover:bg-emerald-50"
         >
-          <span className="shrink-0 text-2xl" aria-hidden="true">🌱</span>
-          <span className="whitespace-nowrap text-xl">{COMPANY.serviceName}</span>
+          <SiteLogo className="h-8 w-auto" />
         </Link>
 
         <div className="mx-3 my-3 h-px bg-slate-100" aria-hidden="true" />
@@ -169,7 +169,7 @@ export function SiteHeader() {
         aria-expanded={open}
         className="fixed right-[max(1rem,env(safe-area-inset-right))] top-[max(1rem,env(safe-area-inset-top))] z-40 flex h-12 items-center gap-2 rounded-2xl border border-slate-100 bg-white/90 px-3.5 shadow-lg backdrop-blur transition hover:shadow-xl lg:hidden"
       >
-        <span className="text-lg" aria-hidden="true">🌱</span>
+        <SiteSymbol className="h-6 w-6" />
         <span className="flex flex-col gap-[5px]" aria-hidden="true">
           <span className="h-0.5 w-5 rounded bg-slate-800" />
           <span className="h-0.5 w-5 rounded bg-slate-800" />
@@ -193,9 +193,8 @@ export function SiteHeader() {
           />
           <div className="absolute inset-y-0 right-0 flex w-72 max-w-[85vw] flex-col bg-white p-5 pt-[max(1.25rem,env(safe-area-inset-top))] shadow-2xl">
             <div className="flex items-center justify-between">
-              <Link href="/" className="flex items-center gap-2 font-extrabold text-slate-900">
-                <span className="text-xl" aria-hidden="true">🌱</span>
-                <span>{COMPANY.serviceName}</span>
+              <Link href="/" className="flex items-center">
+                <SiteLogo className="h-7 w-auto" />
               </Link>
               <button
                 type="button"

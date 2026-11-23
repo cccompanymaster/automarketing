@@ -49,6 +49,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - `src/lib/products.ts` — 15개 상품 + 그룹 2종(place-map, blog-pack) 카탈로그, `LANDING_CARDS`
 - `src/lib/pricing.ts` — 주문 가능 단가표(그룹·행·amountKrw). 상세/스토리 가격과 반드시 동기화. `productPricingItems(slug)`로 상품별 행(상세페이지 바로 주문)
 - `src/lib/productStories.ts` — 상품별 스토리(불편 3·해결 3·시나리오 3)
+- `src/lib/productVisuals.ts` — 스토어 상품별 대표 비주얼(일러스트 종류·위에 얹는 문구)·플랫폼 칩·OG 이미지 경로. 그림은 `public/illustrations/`(글자 없음), 문구는 `ProductVisual`이 실제 텍스트로 얹음
+- `src/lib/storeFaq.ts` — `/store/<id>/` FAQ. 페이지에 이미 있는 데이터(가격·최소 주문·준비 자료·조건)로만 답을 조립
 - `src/lib/deliverables.ts` — 산출물 컨펌 도메인(관리자 업로드→고객 승인/수정요청)
 - `src/lib/company.ts` — 푸터 사업자 정보 (더미값)
 - `src/lib/legal.ts` — 약관/방침 본문 (모달·페이지 공용)
@@ -58,7 +60,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - `src/components/AuthProvider.tsx` — 클라이언트 인증 컨텍스트 (stub). `hydrated` 플래그로
   세션 복원 완료를 알림 — 인증 기반 리다이렉트는 반드시 `hydrated`를 기다릴 것
 - `src/app/robots.ts`, `src/app/sitemap.ts`, `src/app/not-found.tsx` — SEO/404
-- 컴포넌트: `Landing`, `ServiceCard`, `AuthEntry`, `Onboarding`, `LoginForm`, `SignupForm`, `ConsentChecklist`, `ConsentGate`, `ProfileCard`, `SocialLoginButtons`, `LegalModal`, `SiteHeader`, `SiteFooter`, `TrackedCta`, `QuickOrder`
+- 컴포넌트: `Landing`, `ServiceCard`, `AuthEntry`, `Onboarding`, `LoginForm`, `SignupForm`, `ConsentChecklist`, `ConsentGate`, `ProfileCard`, `SocialLoginButtons`, `LegalModal`, `SiteHeader`, `SiteFooter`, `SiteLogo`(로고 `public/brand/`), `TrackedCta`, `QuickOrder`(`tone="dark"`는 스토어 상세 전용), `ProductVisual`
 
 ## 전환 이벤트 (6종)
 

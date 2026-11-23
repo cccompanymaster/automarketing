@@ -110,5 +110,9 @@
 | 거래처 선물 비용 처리 | 추정 (소득세법·부가세법 질문) | comparison | scheduled 2026-11-24 | /blog/holiday-gift-expense/ |
 | 인스타그램 게시물 스토리 릴스 차이 | 칼럼 (채널 운영 가이드) | comparison | scheduled 2026-11-24 | /column/instagram-formats-guide/ |
 | 구글 비즈니스 프로필 등록 방법 | 칼럼 (상품 연결: AEO 기본 세팅) | question | scheduled 2026-11-24 | /column/google-business-profile/ |
+| 대기시간 근로시간 포함 | 추정 (근로기준법 질문) | question | scheduled 2026-11-25 | /blog/working-time-standby/ |
+| 보상휴가제 연장근로수당 대신 휴가 | 추정 (근로기준법 질문) | question | scheduled 2026-11-25 | /blog/compensatory-leave/ |
+| 배달앱 메뉴 사진 잘 찍는 법 | 칼럼 (배달 운영 가이드·계산기 연결) | question | scheduled 2026-11-25 | /column/delivery-app-menu-optimization/ |
+| 작은 가게 브랜딩 방법 | 칼럼 (운영 가이드) | question | scheduled 2026-11-25 | /column/store-brand-basics/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

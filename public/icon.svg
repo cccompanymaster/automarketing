@@ -1,13 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="셀프마케팅">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#10b981"/>
-      <stop offset="1" stop-color="#047857"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <!-- Stylized sprout / growth mark -->
-  <path d="M256 392 V236" stroke="#ffffff" stroke-width="26" stroke-linecap="round"/>
-  <path d="M256 268 C256 196 196 156 132 156 C132 228 192 268 256 268 Z" fill="#ffffff" opacity="0.95"/>
-  <path d="M256 248 C256 184 312 148 372 148 C372 214 316 248 256 248 Z" fill="#d1fae5"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><rect width="64" height="64" rx="14" fill="#059669"/><g transform="translate(7 7) scale(0.78)"><path d="M3.5 31.5 10 36h44l6.5-4.5-6.3 16.6A8.6 8.6 0 0 1 46.2 53.5H17.8a8.6 8.6 0 0 1-8-5.4z" fill="#FFFFFF"/><path d="M32 36V22" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" fill="none"/><path d="M31.4 24.5C30.5 15.8 24.6 11 15 11.2c-.2 9.4 6.1 14.6 16.4 13.3z" fill="#D1FAE5"/><path d="M32.6 22.6c.6-9.6 7.4-15.3 18.2-14.9.3 10.6-6.6 16.4-18.2 14.9z" fill="#FFFFFF"/></g></svg>

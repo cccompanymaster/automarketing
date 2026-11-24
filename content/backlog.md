@@ -114,5 +114,9 @@
 | 보상휴가제 연장근로수당 대신 휴가 | 추정 (근로기준법 질문) | question | scheduled 2026-11-25 | /blog/compensatory-leave/ |
 | 배달앱 메뉴 사진 잘 찍는 법 | 칼럼 (배달 운영 가이드·계산기 연결) | question | scheduled 2026-11-25 | /column/delivery-app-menu-optimization/ |
 | 작은 가게 브랜딩 방법 | 칼럼 (운영 가이드) | question | scheduled 2026-11-25 | /column/store-brand-basics/ |
+| 상가 권리금 회수 방법 | 추정 (상가건물 임대차보호법 질문) | question | scheduled 2026-11-26 | /blog/key-money-protection/ |
+| 간편장부 대상자 기준 | 추정 (소득세법 질문) | question | scheduled 2026-11-26 | /blog/simple-bookkeeping/ |
+| 카카오톡 채널 활용 방법 | 칼럼 (채널 운영 가이드) | question | scheduled 2026-11-26 | /column/kakao-channel-guide/ |
+| 가게 리뷰 늘리는 방법 | 칼럼 (리뷰 운영 가이드) | question | scheduled 2026-11-26 | /column/honest-review-growth/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

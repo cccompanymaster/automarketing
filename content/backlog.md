@@ -118,5 +118,9 @@
 | 간편장부 대상자 기준 | 추정 (소득세법 질문) | question | scheduled 2026-11-26 | /blog/simple-bookkeeping/ |
 | 카카오톡 채널 활용 방법 | 칼럼 (채널 운영 가이드) | question | scheduled 2026-11-26 | /column/kakao-channel-guide/ |
 | 가게 리뷰 늘리는 방법 | 칼럼 (리뷰 운영 가이드) | question | scheduled 2026-11-26 | /column/honest-review-growth/ |
+| 상가 확정일자 받는 법 | 추정 (상가건물 임대차보호법 질문) | question | scheduled 2026-11-27 | /blog/commercial-lease-fixed-date/ |
+| 가게 월세 부가세 공제 | 추정 (부가가치세법 질문) | question | scheduled 2026-11-27 | /blog/rent-vat-invoice/ |
+| 가게 이전 홍보 방법 | 칼럼 (운영 가이드·블로그 배포 연결) | question | scheduled 2026-11-27 | /column/store-relocation-notice/ |
+| 셀프마케팅 대행사 비교 | 칼럼 (상품 연결: 공개 단가) | comparison | scheduled 2026-11-27 | /column/self-marketing-vs-agency/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

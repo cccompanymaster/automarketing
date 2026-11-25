@@ -155,6 +155,7 @@ export default async function StoreProductPage({ params }: { params: Promise<{ i
               id={p.id}
               groupKey={p.group.key}
               groupTitle={p.group.title}
+              image={p.image}
               className="rounded-3xl ring-1 ring-emerald-100"
             />
             <div className="flex flex-col">
@@ -384,7 +385,7 @@ export default async function StoreProductPage({ params }: { params: Promise<{ i
                       href={`/store/${r.id}/`}
                       className="group block h-full overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200 transition hover:ring-emerald-400"
                     >
-                      <ProductVisual id={r.id} groupKey={r.group.key} groupTitle={r.group.title} variant="card" />
+                      <ProductVisual id={r.id} groupKey={r.group.key} groupTitle={r.group.title} variant="card" image={r.image} />
                       <span className="block p-4">
                         <span className="block font-bold text-slate-900 group-hover:text-emerald-700">{r.title}</span>
                         {r.summary && <span className="mt-1 block text-sm leading-relaxed text-slate-500">{r.summary}</span>}

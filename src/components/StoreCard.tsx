@@ -10,7 +10,6 @@ import { ProductVisual } from "@/components/ProductVisual";
 import { displayPrice, minOrderLabel } from "@/lib/pricing";
 import { isOrderable, productFrom, type StoreProduct } from "@/lib/store";
 
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export const BADGE_STYLE: Record<string, string> = {
   인기: "bg-rose-500 text-white",
@@ -62,18 +61,14 @@ export function StoreCard({
         aria-hidden="true"
         className="relative block aspect-[4/3] overflow-hidden border-b border-slate-100"
       >
-        {p.image ? (
-          // eslint-disable-next-line @next/next/no-img-element -- static export, local asset
-          <img src={`${BASE}${p.image}`} alt="" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
-        ) : (
-          <ProductVisual
-            id={p.id}
-            groupKey={p.group.key}
-            groupTitle={p.group.title}
-            variant="card"
-            className="h-full w-full transition-transform duration-300 group-hover:scale-[1.03]"
-          />
-        )}
+        <ProductVisual
+          id={p.id}
+          groupKey={p.group.key}
+          groupTitle={p.group.title}
+          variant="card"
+          image={p.image}
+          className="h-full w-full transition-transform duration-300 group-hover:scale-[1.03]"
+        />
         {p.badge && (
           <span className={`absolute right-2 top-2 rounded-full px-2 py-0.5 text-[11px] font-extrabold shadow ${BADGE_STYLE[p.badge]}`}>
             {p.badge}

@@ -80,8 +80,11 @@ a golden trophy with a ribbon standing on top of a smartphone that shows a simpl
 
 ## 5. 사이트에 넣는 법
 
-1. 만든 이미지를 1304×976 webp로 저장해 `public/store/`에 넣어요 (예: `public/store/blog-guarantee.webp`).
-2. `src/lib/store.ts`의 `STORE_IMAGES`에 한 줄 추가해요.
-   - 묶음 상품: `"blog-guarantee": "/store/blog-guarantee.webp"`
-   - 단일 상품: `"blog-write": "/store/blog-write.webp"`, `"cafe-partnership": "/store/cafe-partnership.webp"`
-3. 이미지가 없으면 지금처럼 채널 색 그라데이션이 나와요. 이미지 위에는 사이트가 상품명·채널·배지를 자동으로 얹어요.
+1. 이미지를 **4:3, 1304×976 webp**(장당 200KB 이하)로 저장해 `public/store/<상품 id>.webp`에 넣어요 (예: `public/store/blog-guarantee.webp`).
+2. `src/lib/store.ts`의 `STORE_IMAGES` 목록에 상품 id를 추가해요 (단일 상품 id 예: `blog-write`, `cafe-partnership`).
+3. 이미지는 스토어 카드, 상품 상세 상단, 상세의 "같은 채널 다른 상품"에 4:3으로 나와요. 이미지가 없는 상품은 기본 일러스트(`ProductVisual`)가 나와요.
+4. `npm test`가 목록의 파일이 실제로 있는지, 모든 상품에 썸네일이 있는지 확인해요.
+
+## 6. 현재 적용된 썸네일 (2026-11-25)
+
+사장님이 만든 20장(3D 글자 + 캐릭터, 채널별 파스텔 배경)이 전 상품에 적용돼 있어요. 상품명이 이미지 안에 들어가 있으니, **상품 이름을 바꾸면 썸네일도 다시 만들어야** 해요. 카드 오른쪽 위에는 "인기·추천" 배지가 올라가므로 그 자리는 비워 두세요. 플랫폼 공식 로고·캐릭터는 넣지 않아요.

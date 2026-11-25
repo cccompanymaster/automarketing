@@ -30,6 +30,7 @@ export function ProductVisual({
   groupKey,
   groupTitle,
   variant = "square",
+  image,
   className = "",
 }: {
   id: string;
@@ -37,8 +38,18 @@ export function ProductVisual({
   groupTitle: string;
   /** square: detail hero. card: 4:3 crop for store cards and related products. */
   variant?: "square" | "card";
+  /** Uploaded 4:3 thumbnail (public/store/, see STORE_IMAGES). Replaces the illustration and is always shown at 4:3. */
+  image?: string;
   className?: string;
 }) {
+  if (image) {
+    return (
+      <div aria-hidden="true" className={`relative aspect-[4/3] overflow-hidden bg-slate-100 ${className}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- static export, local asset */}
+        <img src={`${BASE}${image}`} alt="" className="h-full w-full object-cover" />
+      </div>
+    );
+  }
   const v = productVisual(id, groupKey);
   const icon = GROUP_ICON_PATH[groupKey];
 

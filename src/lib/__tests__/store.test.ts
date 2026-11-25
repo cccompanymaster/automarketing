@@ -30,3 +30,15 @@ describe("goal tabs, combos and related products", () => {
       for (const s of [k, ...list]) expect(PRODUCT_SLUGS as string[], s).toContain(s);
   });
 });
+
+describe("store thumbnails", () => {
+  it("every STORE_IMAGES entry points at a file in public/ and every product has one", async () => {
+    const { existsSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { STORE_IMAGES } = await import("@/lib/store");
+    for (const [id, src] of Object.entries(STORE_IMAGES)) {
+      expect(existsSync(join(process.cwd(), "public", src)), `${id}: ${src}`).toBe(true);
+    }
+    for (const p of storeProducts(PRICING)) expect(p.image, `${p.id} has no thumbnail`).toBeTruthy();
+  });
+});

@@ -300,7 +300,30 @@ export const BUNDLES: BundleDef[] = [
  * single, e.g. "blog-write"). Drop the file in public/store/ and add it here — see
  * docs/STORE_THUMBNAILS.md for the concept and image prompts.
  */
-export const STORE_IMAGES: Record<string, string> = {};
+export const STORE_IMAGES: Record<string, string> = Object.fromEntries(
+  [
+    "ai-aeo",
+    "blog-deploy",
+    "blog-guarantee",
+    "blog-influencer",
+    "blog-neighbor",
+    "blog-write",
+    "cafe-partnership",
+    "cafe-post",
+    "commerce",
+    "daangn-content",
+    "daangn-project",
+    "daangn-reaction",
+    "daangn-review",
+    "instagram",
+    "kakaomap-review",
+    "kakaomap-trend",
+    "place-basics",
+    "place-reward",
+    "press",
+    "youtube",
+  ].map((id) => [id, `/store/${id}.webp`]),
+);
 
 const GROUP_DETAIL: Record<string, string> = {
   blog: "/services/blog/",

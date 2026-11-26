@@ -35,8 +35,11 @@ export function StoreCard({
   onOpen,
   onInquiry,
   onView,
+  hideChannel = false,
 }: {
   product: StoreProduct;
+  /** Inside a channel section the heading already names the channel. */
+  hideChannel?: boolean;
   /** Bundle: show options. Single orderable row: open its order window. */
   onOpen: () => void;
   onInquiry: () => void;
@@ -77,10 +80,12 @@ export function StoreCard({
       </Link>
 
       <div className="flex flex-1 flex-col p-3 sm:p-4">
-        <span className={`w-fit rounded-md px-1.5 py-0.5 text-[11px] font-bold ${GROUP_CHIP[p.group.key] ?? "bg-slate-100 text-slate-600"}`}>
-          {p.group.icon} {p.group.title}
-        </span>
-        <h3 className="mt-1.5 line-clamp-2 text-[15px] font-extrabold leading-snug text-slate-900 sm:text-base">
+        {!hideChannel && (
+          <span className={`mb-1.5 w-fit rounded-md px-1.5 py-0.5 text-[11px] font-bold ${GROUP_CHIP[p.group.key] ?? "bg-slate-100 text-slate-600"}`}>
+            {p.group.icon} {p.group.title}
+          </span>
+        )}
+        <h3 className="line-clamp-2 text-[15px] font-extrabold leading-snug text-slate-900 sm:text-base">
           <Link href={`/store/${p.id}/`} onClick={onView} className="tap-overlay hover:text-emerald-800 hover:underline">
             {p.title}
           </Link>
@@ -177,5 +182,32 @@ export function ConsultCard({ onOpen }: { onOpen: () => void }) {
         </div>
       </div>
     </article>
+  );
+}
+
+/** Guest consult offer as one slim row — used above the channel sections. */
+export function ConsultBanner({ onOpen }: { onOpen: () => void }) {
+  return (
+    <div className="mt-4 flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm ring-2 ring-emerald-300 sm:flex-row sm:items-center sm:gap-4 sm:px-5">
+      <span aria-hidden="true" className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-2xl sm:flex">
+        💬
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-[15px] font-extrabold text-slate-900 sm:text-base">
+          회원가입 전 마케팅 상담하기!
+          <span className="ml-2 rounded-full bg-emerald-50 px-2 py-0.5 align-middle text-[11px] font-bold text-emerald-700">무료 · 가입 없이</span>
+        </p>
+        <p className="mt-1 text-xs leading-relaxed text-slate-500 sm:text-[13px]">
+          어떤 상품이 맞을지 모르겠다면, 업종과 목표만 남겨 주세요. 담당자가 맞는 상품과 예산을 안내해요.
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="flex h-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 px-5 text-sm font-bold text-white transition hover:bg-emerald-700"
+      >
+        상담 신청하기
+      </button>
+    </div>
   );
 }

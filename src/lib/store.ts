@@ -417,6 +417,16 @@ export function sortStore(list: StoreProduct[], sort: StoreSort): StoreProduct[]
   return copy.sort((a, b) => (BADGE_RANK[a.badge ?? ""] ?? 9) - (BADGE_RANK[b.badge ?? ""] ?? 9));
 }
 
+/** Products split into channel sections, in the catalog's channel order; empty channels are dropped. */
+export function groupByChannel(list: StoreProduct[], channelOrder: string[]): { group: PricingGroup; items: StoreProduct[] }[] {
+  const byKey = new Map<string, StoreProduct[]>();
+  for (const p of list) byKey.set(p.group.key, [...(byKey.get(p.group.key) ?? []), p]);
+  const rank = (k: string) => (channelOrder.includes(k) ? channelOrder.indexOf(k) : channelOrder.length);
+  return [...byKey.entries()]
+    .sort(([a], [b]) => rank(a) - rank(b))
+    .map(([, items]) => ({ group: items[0].group, items }));
+}
+
 /** The product as the search engine sees it (title > aliases/keywords > summary > category/tags > options). */
 export function searchableOf(p: StoreProduct): SearchableProduct {
   return {

@@ -42,3 +42,15 @@ describe("store thumbnails", () => {
     for (const p of storeProducts(PRICING)) expect(p.image, `${p.id} has no thumbnail`).toBeTruthy();
   });
 });
+
+describe("groupByChannel", () => {
+  it("keeps every product once, in catalog channel order", async () => {
+    const { groupByChannel, sortStore } = await import("@/lib/store");
+    const all = sortStore(storeProducts(PRICING), "recommended");
+    const order = PRICING.map((g) => g.key);
+    const secs = groupByChannel(all, order);
+    expect(secs.flatMap((s) => s.items).length).toBe(all.length);
+    expect(secs.map((s) => s.group.key)).toEqual(order.filter((k) => all.some((p) => p.group.key === k)));
+    for (const s of secs) for (const p of s.items) expect(p.group.key).toBe(s.group.key);
+  });
+});

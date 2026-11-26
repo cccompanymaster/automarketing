@@ -19,7 +19,7 @@ import type { OrderDraft } from "@/components/OrderModal";
 import { ResumeOrderBanner } from "@/components/ResumeOrderBanner";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { ConsultCard, GUEST_CONSULT_TOPIC, StoreCard } from "@/components/StoreCard";
+import { ConsultBanner, ConsultCard, GUEST_CONSULT_TOPIC, StoreCard } from "@/components/StoreCard";
 import { BUY_PARAM } from "@/components/QuickOrder";
 import { ProductOptionsModal } from "@/components/ProductOptionsModal";
 import { ProductFinder } from "@/components/ProductFinder";
@@ -28,6 +28,7 @@ import { PRICING, type PricingGroup, type PricingItem } from "@/lib/pricing";
 import {
   GOALS,
   PACKAGES,
+  groupByChannel,
   isOrderable,
   searchStoreSplit,
   searchableOf,
@@ -147,6 +148,11 @@ export default function PricingPage() {
   }, [all, channel, goal, pack, orderableOnly, query, sort]);
   const suggestions = useMemo(() => suggest(all.map(searchableOf), query), [all, query]);
   const browsing = !query && !goal && !pack && !channel;
+  // Default view (no search/filter, 추천순): one section per channel so a channel's products sit together.
+  const sections = useMemo(
+    () => (browsing && sort === "recommended" ? groupByChannel(shown, groups.map((g) => g.key)) : null),
+    [browsing, sort, shown, groups],
+  );
   const activePack = PACKAGES.find((x) => x.key === pack);
   const activeGoal = GOALS.find((x) => x.key === goal);
 
@@ -203,7 +209,7 @@ export default function PricingPage() {
     setOrderableOnly(false);
   };
 
-  const renderGrid = (list: StoreProduct[], withConsult = false) => (
+  const renderGrid = (list: StoreProduct[], withConsult = false, hideChannel = false) => (
     <div className="@container mt-4">
       <ul className="grid grid-cols-2 gap-3 @3xl:grid-cols-3 @5xl:grid-cols-4 sm:gap-4">
         {withConsult && !authed && (
@@ -213,7 +219,7 @@ export default function PricingPage() {
         )}
         {list.map((p) => (
           <li key={p.id}>
-            <StoreCard product={p} onOpen={() => openCard(p)} onInquiry={() => setInquiryTopic(p.title)} onView={rememberScroll} />
+            <StoreCard product={p} onOpen={() => openCard(p)} onInquiry={() => setInquiryTopic(p.title)} onView={rememberScroll} hideChannel={hideChannel} />
           </li>
         ))}
       </ul>
@@ -475,7 +481,36 @@ export default function PricingPage() {
             </div>
           </div>
 
-          {shown.length > 0 ? (
+          {shown.length > 0 && sections ? (
+            <>
+              {!authed && <ConsultBanner onOpen={() => setInquiryTopic(GUEST_CONSULT_TOPIC)} />}
+              {sections.map(({ group, items }) => (
+                <section key={group.key} aria-labelledby={`sec-${group.key}`} className="mt-8 first:mt-6">
+                  <div className="flex items-end justify-between gap-3 border-b border-slate-200 pb-2">
+                    <div className="min-w-0">
+                      <h2 id={`sec-${group.key}`} className="flex items-center gap-1.5 text-lg font-extrabold text-slate-900">
+                        <span aria-hidden="true">{group.icon}</span>
+                        {group.title}
+                        <span className="num ml-0.5 text-sm font-semibold text-slate-400">{items.length}</span>
+                      </h2>
+                      {group.description && <p className="mt-0.5 line-clamp-1 text-xs text-slate-500">{group.description}</p>}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setChannel(group.key);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                      className="tap shrink-0 whitespace-nowrap text-sm font-bold text-emerald-700 hover:underline"
+                    >
+                      이 채널만 보기 →
+                    </button>
+                  </div>
+                  {renderGrid(items, false, true)}
+                </section>
+              ))}
+            </>
+          ) : shown.length > 0 ? (
             renderGrid(shown, true)
           ) : (
             <div className="mt-6 rounded-2xl bg-white p-8 text-center ring-1 ring-slate-100">

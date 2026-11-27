@@ -24,6 +24,7 @@ import { BUY_PARAM } from "@/components/QuickOrder";
 import { ProductOptionsModal } from "@/components/ProductOptionsModal";
 import { ProductFinder } from "@/components/ProductFinder";
 import { InquiryModal } from "@/components/InquiryModal";
+import { MoreSectionsButton, sectionHeadingId } from "@/components/MoreSectionsButton";
 import { PRICING, type PricingGroup, type PricingItem } from "@/lib/pricing";
 import {
   GOALS,
@@ -153,6 +154,7 @@ export default function PricingPage() {
     () => (browsing && sort === "recommended" ? groupByChannel(shown, groups.map((g) => g.key)) : null),
     [browsing, sort, shown, groups],
   );
+  const sectionRefs = useMemo(() => (sections ?? []).map(({ group }) => ({ key: group.key, icon: group.icon, title: group.title })), [sections]);
   const activePack = PACKAGES.find((x) => x.key === pack);
   const activeGoal = GOALS.find((x) => x.key === goal);
 
@@ -484,11 +486,11 @@ export default function PricingPage() {
           {shown.length > 0 && sections ? (
             <>
               {!authed && <ConsultBanner onOpen={() => setInquiryTopic(GUEST_CONSULT_TOPIC)} />}
-              {sections.map(({ group, items }) => (
-                <section key={group.key} aria-labelledby={`sec-${group.key}`} className="mt-8 first:mt-6">
+              {sections.map(({ group, items }, i) => (
+                <section key={group.key} aria-labelledby={sectionHeadingId(group.key)} className="mt-8 scroll-mt-24 first:mt-6">
                   <div className="flex items-end justify-between gap-3 border-b border-slate-200 pb-2">
                     <div className="min-w-0">
-                      <h2 id={`sec-${group.key}`} className="flex items-center gap-1.5 text-lg font-extrabold text-slate-900">
+                      <h2 id={sectionHeadingId(group.key)} className="flex items-center gap-1.5 text-lg font-extrabold text-slate-900">
                         <span aria-hidden="true">{group.icon}</span>
                         {group.title}
                         <span className="num ml-0.5 text-sm font-semibold text-slate-400">{items.length}</span>
@@ -507,8 +509,27 @@ export default function PricingPage() {
                     </button>
                   </div>
                   {renderGrid(items, false, true)}
+                  {i === 0 && sections.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        track("select_item", { item_list_name: "store_more_sections", item_id: sections[1].group.key });
+                        document.getElementById(sectionHeadingId(sections[1].group.key))?.closest("section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }}
+                      className="mt-5 flex w-full flex-col items-center justify-center gap-0.5 rounded-2xl bg-white px-4 py-3 text-center ring-1 ring-emerald-200 transition hover:bg-emerald-50"
+                    >
+                      <span className="text-sm font-extrabold text-emerald-800">
+                        더 많은 서비스 확인하기 <span aria-hidden="true">↓</span>
+                      </span>
+                      <span className="text-xs font-semibold text-slate-500">
+                        {sections.slice(1).map((x) => x.group.title).slice(0, 3).join(" · ")}
+                        {sections.length > 4 && ` 외 ${sections.length - 4}개`}
+                      </span>
+                    </button>
+                  )}
                 </section>
               ))}
+              <MoreSectionsButton sections={sectionRefs} />
             </>
           ) : shown.length > 0 ? (
             renderGrid(shown, true)

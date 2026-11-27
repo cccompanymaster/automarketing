@@ -126,5 +126,9 @@
 | 화재배상책임보험 가입 대상 | 추정 (다중이용업소법 질문) | question | scheduled 2026-11-28 | /blog/fire-liability-insurance/ |
 | 예약 노쇼 줄이는 방법 | 칼럼 (운영 가이드) | question | scheduled 2026-11-28 | /column/no-show-prevention/ |
 | 주변 가게 제휴 마케팅 방법 | 칼럼 (오프라인 홍보 가이드) | question | scheduled 2026-11-28 | /column/local-partnership-marketing/ |
+| 통신판매업 신고 대상 | 추정 (전자상거래법 질문) | question | scheduled 2026-11-29 | /blog/mail-order-business-report/ |
+| 적격증빙 3만 원 기준 | 추정 (소득세법 질문) | question | scheduled 2026-11-29 | /blog/qualified-receipts-30000/ |
+| 상세페이지 잘 만드는 법 | 칼럼 (온라인 판매 가이드) | question | scheduled 2026-11-29 | /column/product-detail-page-guide/ |
+| 네이버 검색광고 시작하는 방법 | 칼럼 (광고 운영 가이드·플레이스 연결) | question | scheduled 2026-11-29 | /column/naver-search-ads-start/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |

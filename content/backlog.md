@@ -130,5 +130,9 @@
 | 적격증빙 3만 원 기준 | 추정 (소득세법 질문) | question | scheduled 2026-11-29 | /blog/qualified-receipts-30000/ |
 | 상세페이지 잘 만드는 법 | 칼럼 (온라인 판매 가이드) | question | scheduled 2026-11-29 | /column/product-detail-page-guide/ |
 | 네이버 검색광고 시작하는 방법 | 칼럼 (광고 운영 가이드·플레이스 연결) | question | scheduled 2026-11-29 | /column/naver-search-ads-start/ |
+| 매출 없을 때 세금 신고 | 추정 (부가세법·소득세법 질문) | question | scheduled 2026-11-30 | /blog/zero-sales-tax-filing/ |
+| 가게 계약 전 건축물 용도 확인 | 추정 (건축법 질문) | question | scheduled 2026-11-30 | /blog/building-use-check/ |
+| 가게 QR코드 활용 방법 | 칼럼 (오프라인 홍보 가이드) | question | scheduled 2026-11-30 | /column/qr-code-marketing/ |
+| 가게 연간 마케팅 계획 세우는 법 | 칼럼 (시즌 가이드·블로그 배포 연결) | question | scheduled 2026-11-30 | /column/annual-marketing-calendar-2027/ |
 | 카카오맵 가게 등록 | 키워드 리스트 C | question | backlog | |
 | 업종별 마케팅 (카페·미용실·네일샵·식당·학원·필라테스·병원) | 키워드 리스트 B | question | hold | 업종별 실데이터 확보 후 — 틀만 같은 글 양산 금지 |
